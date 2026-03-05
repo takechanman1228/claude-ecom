@@ -1,11 +1,5 @@
 #!/usr/bin/env bash
-# validate-skills.sh — Validate SKILL.md frontmatter for ecom-analytics skills
-#
-# Checks:
-#   1. Each SKILL.md has a YAML frontmatter block (--- ... ---)
-#   2. Required fields: name, description
-#   3. Main orchestrator has argument-hint and allowed-tools
-#   4. name field matches directory name
+# validate-skills.sh — Validate SKILL.md frontmatter for claude-ecom skill
 
 set -euo pipefail
 
@@ -49,16 +43,14 @@ for skill_md in "$SKILLS_DIR"/*/SKILL.md; do
         ERRORS=$((ERRORS + 1))
     fi
 
-    # Orchestrator-specific: check argument-hint and allowed-tools
-    if [ "$dir_name" = "ecom-analytics" ]; then
-        if ! echo "$frontmatter" | grep -q '^argument-hint:'; then
-            echo "FAIL  $dir_name: Orchestrator missing 'argument-hint'"
-            ERRORS=$((ERRORS + 1))
-        fi
-        if ! echo "$frontmatter" | grep -q '^allowed-tools:'; then
-            echo "FAIL  $dir_name: Orchestrator missing 'allowed-tools'"
-            ERRORS=$((ERRORS + 1))
-        fi
+    # Check argument-hint and allowed-tools
+    if ! echo "$frontmatter" | grep -q '^argument-hint:'; then
+        echo "FAIL  $dir_name: Missing 'argument-hint'"
+        ERRORS=$((ERRORS + 1))
+    fi
+    if ! echo "$frontmatter" | grep -q '^allowed-tools:'; then
+        echo "FAIL  $dir_name: Missing 'allowed-tools'"
+        ERRORS=$((ERRORS + 1))
     fi
 done
 
@@ -66,33 +58,14 @@ done
 echo ""
 echo "=== Reference File Validation ==="
 echo ""
-ref_dir="$SKILLS_DIR/ecom-analytics/references"
+ref_dir="$SKILLS_DIR/ecom/references"
 
 if [ ! -d "$ref_dir" ]; then
     echo "FAIL  Reference directory not found: $ref_dir"
     ERRORS=$((ERRORS + 1))
 else
-    for skill_md in "$SKILLS_DIR"/*/SKILL.md; do
-        dir_name="$(basename "$(dirname "$skill_md")")"
-        # Extract referenced .md filenames from ecom-analytics/references/ context
-        refs=$(grep -oE '[a-z][-a-z]*\.md' "$skill_md" | grep -v 'SKILL.md' | sort -u || true)
-        for ref in $refs; do
-            # Skip output files (generated, not references)
-            if echo "$ref" | grep -qiE '^(audit-report|action-plan|quick-wins)'; then
-                continue
-            fi
-            # Check against actual files in references directory
-            known_refs=$(ls "$ref_dir"/*.md 2>/dev/null | xargs -I{} basename {} | sort)
-            if echo "$known_refs" | grep -qx "$ref"; then
-                if [ ! -f "$ref_dir/$ref" ]; then
-                    echo "FAIL  $dir_name: Reference '$ref' not found in $ref_dir"
-                    ERRORS=$((ERRORS + 1))
-                else
-                    echo "PASS  $dir_name: '$ref' exists"
-                fi
-            fi
-        done
-    done
+    ref_count=$(ls "$ref_dir"/*.md 2>/dev/null | wc -l | tr -d ' ')
+    echo "PASS  Found $ref_count reference files in $ref_dir"
 fi
 
 echo ""

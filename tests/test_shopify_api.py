@@ -1,10 +1,10 @@
-"""Tests for ecom_analytics.shopify_api."""
+"""Tests for claude_ecom.shopify_api."""
 
 import json
 import os
 import pytest
 
-from ecom_analytics.shopify_api import (
+from claude_ecom.shopify_api import (
     parse_jsonl_stream,
     build_parent_child_map,
     build_orders_query,
@@ -12,7 +12,7 @@ from ecom_analytics.shopify_api import (
     ShopifyClient,
     ShopifyAPIError,
 )
-from ecom_analytics.config import ShopifyConfig
+from claude_ecom.config import ShopifyConfig
 
 FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures", "shopify_api")
 
@@ -106,7 +106,7 @@ class TestBuildOrdersQuery:
 
 class TestShopifyClient:
     def test_requires_httpx(self, monkeypatch):
-        import ecom_analytics.shopify_api as mod
+        import claude_ecom.shopify_api as mod
         original = mod.httpx
         monkeypatch.setattr(mod, "httpx", None)
         try:

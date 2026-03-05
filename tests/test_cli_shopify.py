@@ -1,12 +1,12 @@
-"""Tests for Shopify CLI commands in ecom_analytics.cli."""
+"""Tests for Shopify CLI commands in claude_ecom.cli."""
 
 import os
 import pytest
 from click.testing import CliRunner
 
-from ecom_analytics.cli import cli
-from ecom_analytics.shopify_api import parse_jsonl_stream
-from ecom_analytics.normalize import (
+from claude_ecom.cli import cli
+from claude_ecom.shopify_api import parse_jsonl_stream
+from claude_ecom.normalize import (
     normalize_orders,
     normalize_order_items,
     normalize_products,
@@ -40,7 +40,7 @@ def synced_data_dir(tmp_path):
     products = normalize_products(product_rows)
     inv = normalize_inventory(inventory_rows)
 
-    data_dir = tmp_path / ".ecom-analytics" / "data"
+    data_dir = tmp_path / ".claude-ecom" / "data"
     data_dir.mkdir(parents=True)
 
     orders.to_csv(data_dir / "orders.csv", index=False)
@@ -100,15 +100,15 @@ class TestAuditWithSyncedData:
 
     def test_audit_with_presynced_data(self, runner, synced_data_dir, monkeypatch):
         """Test audit pipeline with pre-synced data, bypassing live API."""
-        from ecom_analytics import cli as cli_module
-        from ecom_analytics.sync import load_synced_data
+        from claude_ecom import cli as cli_module
+        from claude_ecom.sync import load_synced_data
 
         # Monkeypatch _audit_shopify to skip the sync step and just load data
-        data_dir = synced_data_dir / ".ecom-analytics" / "data"
+        data_dir = synced_data_dir / ".claude-ecom" / "data"
 
-        def mock_audit_shopify(output, since, until):
-            from ecom_analytics.metrics import compute_revenue_kpis, compute_cohort_kpis
-            from ecom_analytics.scoring import score_checks
+        def mock_audit_shopify(output, since, until, site_url=None):
+            from claude_ecom.metrics import compute_revenue_kpis, compute_cohort_kpis
+            from claude_ecom.scoring import score_checks
 
             orders, products, inventory = load_synced_data(str(data_dir))
             rev_kpis = compute_revenue_kpis(orders)

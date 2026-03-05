@@ -1,10 +1,10 @@
-"""Tests for ecom_analytics.sync."""
+"""Tests for claude_ecom.sync."""
 
 import os
 import pytest
 import pandas as pd
 
-from ecom_analytics.sync import (
+from claude_ecom.sync import (
     SyncState,
     write_state,
     read_state,
@@ -12,14 +12,14 @@ from ecom_analytics.sync import (
     _write_dataframe,
     _read_dataframe,
 )
-from ecom_analytics.shopify_api import parse_jsonl_stream
-from ecom_analytics.normalize import (
+from claude_ecom.shopify_api import parse_jsonl_stream
+from claude_ecom.normalize import (
     normalize_orders,
     normalize_order_items,
     normalize_products,
     normalize_inventory,
 )
-from ecom_analytics.loader import validate_schema
+from claude_ecom.loader import validate_schema
 
 FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures", "shopify_api")
 

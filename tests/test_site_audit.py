@@ -1,17 +1,17 @@
-"""Tests for ecom_analytics.site_audit.
+"""Tests for claude_ecom.site_audit.
 
 All tests use mock PageAuditData — no browser/Playwright required.
 """
 
 import pytest
 
-from ecom_analytics.site_audit import (
+from claude_ecom.site_audit import (
     PageAuditData,
     build_site_checks,
     build_site_checks_single,
     _trust_signal_count,
 )
-from ecom_analytics.scoring import score_checks, CATEGORY_WEIGHTS
+from claude_ecom.scoring import score_checks, CATEGORY_WEIGHTS
 
 
 def _healthy_page(**overrides) -> PageAuditData:
@@ -402,7 +402,7 @@ class TestScoringIntegration:
         assert health.category_scores["site"].score == 100.0
 
     def test_site_mixes_with_other_categories(self):
-        from ecom_analytics.scoring import CheckResult
+        from claude_ecom.scoring import CheckResult
 
         site_checks = build_site_checks_single(_healthy_page())
         other_checks = [

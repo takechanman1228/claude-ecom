@@ -29,5 +29,5 @@ jobs:
         with:
           python-version: "3.12"
       - run: pip install ruff
-      - run: ruff check ecom_analytics/ tests/
-      - run: ruff format --check ecom_analytics/ tests/
+      - run: ruff check claude_ecom/ tests/
+      - run: ruff format --check claude_ecom/ tests/

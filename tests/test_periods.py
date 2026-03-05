@@ -2,7 +2,7 @@
 
 from datetime import date
 
-from ecom_analytics.periods import (
+from claude_ecom.periods import (
     PeriodRange,
     last_complete_month,
     last_complete_quarter,

@@ -1,10 +1,10 @@
-"""Tests for ecom_analytics.metrics."""
+"""Tests for claude_ecom.metrics."""
 
 import os
 import pytest
 
-from ecom_analytics.loader import load_orders, load_products, load_inventory
-from ecom_analytics.metrics import (
+from claude_ecom.loader import load_orders, load_products, load_inventory
+from claude_ecom.metrics import (
     compute_revenue_kpis,
     compute_cohort_kpis,
     compute_product_kpis,

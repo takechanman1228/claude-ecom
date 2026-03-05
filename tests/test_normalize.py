@@ -1,11 +1,11 @@
-"""Tests for ecom_analytics.normalize."""
+"""Tests for claude_ecom.normalize."""
 
 import os
 import pytest
 import pandas as pd
 
-from ecom_analytics.shopify_api import parse_jsonl_stream
-from ecom_analytics.normalize import (
+from claude_ecom.shopify_api import parse_jsonl_stream
+from claude_ecom.normalize import (
     normalize_orders,
     normalize_order_items,
     normalize_products,
@@ -14,7 +14,7 @@ from ecom_analytics.normalize import (
     _hash_email,
     _guest_id,
 )
-from ecom_analytics.loader import validate_schema
+from claude_ecom.loader import validate_schema
 
 FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures", "shopify_api")
 

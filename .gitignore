@@ -12,6 +12,13 @@ htmlcov/
 *.parquet
 .venv/
 .env
+.claude-ecom/
 .ecom-analytics/
 .DS_Store
 miki-house-data/
+/AUDIT-REPORT.md
+/executive-summary.md
+/scores.json
+/MBR.md
+/QBR.md
+/ABR.md

@@ -1,8 +1,8 @@
-"""Tests for ecom_analytics.scoring."""
+"""Tests for claude_ecom.scoring."""
 
 import pytest
 
-from ecom_analytics.scoring import (
+from claude_ecom.scoring import (
     CheckResult,
     CATEGORY_WEIGHTS,
     SEVERITY_MULTIPLIERS,

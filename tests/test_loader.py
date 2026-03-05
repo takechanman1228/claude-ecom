@@ -1,10 +1,10 @@
-"""Tests for ecom_analytics.loader."""
+"""Tests for claude_ecom.loader."""
 
 import os
 import pytest
 import pandas as pd
 
-from ecom_analytics.loader import (
+from claude_ecom.loader import (
     load_orders,
     load_products,
     load_inventory,

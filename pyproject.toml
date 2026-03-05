@@ -3,18 +3,18 @@ requires = ["setuptools>=68.0", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "ecom-analytics"
-version = "0.3.0"
-description = "EC-specialized data analytics toolkit — audit, diagnose, and improve your ecommerce store"
+name = "claude-ecom"
+version = "1.0.0"
+description = "Claude-powered ecommerce audit toolkit — run /ecom audit to get a full-store health score with prioritized fixes"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
     {name = "Hajime Takeda"},
 ]
-keywords = ["ecommerce", "analytics", "audit", "shopify", "data-science"]
+keywords = ["ecommerce", "analytics", "audit", "shopify", "data-science", "claude"]
 classifiers = [
-    "Development Status :: 3 - Alpha",
+    "Development Status :: 4 - Beta",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
@@ -42,13 +42,13 @@ api = [
 ]
 parquet = ["pyarrow>=14.0"]
 site = ["playwright>=1.40"]
-all = ["ecom-analytics[api,parquet,site]"]
+all = ["claude-ecom[api,parquet,site]"]
 
 [project.scripts]
-ecom-analytics = "ecom_analytics.cli:cli"
+ecom = "claude_ecom.cli:cli"
 
 [tool.setuptools.packages.find]
-include = ["ecom_analytics*"]
+include = ["claude_ecom*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]

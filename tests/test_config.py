@@ -1,9 +1,9 @@
-"""Tests for ecom_analytics.config."""
+"""Tests for claude_ecom.config."""
 
 import os
 import pytest
 
-from ecom_analytics.config import ShopifyConfig, load_config, save_config, _ensure_gitignore
+from claude_ecom.config import ShopifyConfig, load_config, save_config, _ensure_gitignore
 
 
 @pytest.fixture
@@ -73,7 +73,7 @@ class TestSaveAndLoad:
     def test_global_save(self, tmp_path, sample_config, monkeypatch):
         monkeypatch.setattr("pathlib.Path.home", lambda: tmp_path)
         result = save_config(sample_config, global_=True)
-        assert ".ecom-analytics" in str(result)
+        assert ".claude-ecom" in str(result)
         assert result.exists()
 
 
@@ -82,7 +82,7 @@ class TestEnsureGitignore:
         _ensure_gitignore(tmp_path)
         gitignore = tmp_path / ".gitignore"
         assert gitignore.exists()
-        assert ".ecom-analytics/" in gitignore.read_text()
+        assert ".claude-ecom/" in gitignore.read_text()
 
     def test_appends_to_existing_gitignore(self, tmp_path):
         gitignore = tmp_path / ".gitignore"
@@ -90,17 +90,17 @@ class TestEnsureGitignore:
         _ensure_gitignore(tmp_path)
         content = gitignore.read_text()
         assert "node_modules/" in content
-        assert ".ecom-analytics/" in content
+        assert ".claude-ecom/" in content
 
     def test_no_duplicate_entry(self, tmp_path):
         gitignore = tmp_path / ".gitignore"
-        gitignore.write_text(".ecom-analytics/\n")
+        gitignore.write_text(".claude-ecom/\n")
         _ensure_gitignore(tmp_path)
         content = gitignore.read_text()
-        assert content.count(".ecom-analytics/") == 1
+        assert content.count(".claude-ecom/") == 1
 
     def test_gitignore_injection_on_save(self, tmp_path, sample_config):
-        save_config(sample_config, path=tmp_path / ".ecom-analytics" / "config.toml")
+        save_config(sample_config, path=tmp_path / ".claude-ecom" / "config.toml")
         gitignore = tmp_path / ".gitignore"
         assert gitignore.exists()
-        assert ".ecom-analytics/" in gitignore.read_text()
+        assert ".claude-ecom/" in gitignore.read_text()
