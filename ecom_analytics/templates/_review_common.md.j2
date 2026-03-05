@@ -1,0 +1,119 @@
+{# Shared macros for business review templates #}
+
+{% macro format_delta(value) -%}
+{% if value is number -%}
+{% if value > 0 %}↑{{ "%.1f" | format(value * 100) }}%{% elif value < 0 %}↓{{ "%.1f" | format(value * -100) }}%{% else %}—{% endif %}
+{%- else %}—{% endif %}
+{%- endmacro %}
+
+{% macro format_currency(value) -%}
+{{ "{:,.0f}".format(value) }}
+{%- endmacro %}
+
+{% macro format_pct(value) -%}
+{{ "%.1f" | format(value * 100) }}%
+{%- endmacro %}
+
+{% macro render_kpi_table(target, comparisons) -%}
+| Metric | {{ target.period_label }} |
+{%- for c in comparisons %} {{ c.label }} |{% endfor %}
+
+| --- | ---: |
+{%- for c in comparisons %} ---: |{% endfor %}
+
+| Revenue | {{ format_currency(target.summary.revenue) }} |
+{%- for c in comparisons %} {{ format_delta(c.delta.revenue) }} |{% endfor %}
+
+| Orders | {{ target.summary.orders }} |
+{%- for c in comparisons %} {{ format_delta(c.delta.orders) }} |{% endfor %}
+
+| AOV | {{ format_currency(target.summary.aov) }} |
+{%- for c in comparisons %} {{ format_delta(c.delta.aov) }} |{% endfor %}
+
+| Customers | {{ target.summary.customers }} |
+{%- for c in comparisons %} {{ format_delta(c.delta.customers) }} |{% endfor %}
+
+| New Customers | {{ target.summary.new_customers }} |
+{%- for c in comparisons %} {{ format_delta(c.delta.new_customers) }} |{% endfor %}
+
+| Returning Customers | {{ target.summary.returning_customers }} |
+{%- for c in comparisons %} {{ format_delta(c.delta.returning_customers) }} |{% endfor %}
+
+| Discount Rate | {{ format_pct(target.summary.avg_discount_rate) }} |
+{%- for c in comparisons %} {{ format_delta(c.delta.avg_discount_rate) }} |{% endfor %}
+
+{%- endmacro %}
+
+{% macro render_decomposition(waterfall, new_vs_returning) -%}
+### Orders x AOV Bridge
+{% if waterfall -%}
+| Component | Impact |
+| --- | ---: |
+| AOV Effect | {{ format_currency(waterfall.aov_effect) }} |
+| Order Count Effect | {{ format_currency(waterfall.order_count_effect) }} |
+| **Total Change** | **{{ format_currency(waterfall.total_change) }}** |
+{% else -%}
+_Insufficient data for waterfall analysis._
+{% endif %}
+
+### New vs Returning Revenue
+| Segment | Revenue | Share |
+| --- | ---: | ---: |
+| New Customers | {{ format_currency(new_vs_returning.new_revenue) }} | {{ format_pct(1 - new_vs_returning.returning_share) }} |
+| Returning Customers | {{ format_currency(new_vs_returning.returning_revenue) }} | {{ format_pct(new_vs_returning.returning_share) }} |
+{%- endmacro %}
+
+{% macro render_customer_analysis(customer) -%}
+**F2 Rate:** {{ format_pct(customer.f2_rate) }} | **Avg Purchase Interval:** {{ "%.0f" | format(customer.avg_purchase_interval_days) }} days | **Total Customers:** {{ customer.total_customers }}
+
+| Segment | Count |
+| --- | ---: |
+{% for seg, count in customer.rfm_segments.items() -%}
+| {{ seg }} | {{ count }} |
+{% endfor -%}
+{%- endmacro %}
+
+{% macro render_product_analysis(product) -%}
+### ABC Summary
+| Rank | SKUs |
+| --- | ---: |
+{% for rank, count in product.abc_summary.items() -%}
+| {{ rank }} | {{ count }} |
+{% endfor %}
+
+### Top 10 Products
+| Product | Revenue | Share | Rank |
+| --- | ---: | ---: | --- |
+{% for p in product.top_products -%}
+| {{ p.get("sku", p.get("product_name", "N/A")) }} | {{ format_currency(p.get("revenue", 0)) }} | {{ format_pct(p.get("revenue_share", 0)) }} | {{ p.get("abc_rank", "") }} |
+{% endfor %}
+
+### Lifecycle Distribution
+| Stage | Count |
+| --- | ---: |
+{% for stage, count in product.lifecycle_distribution.items() -%}
+| {{ stage }} | {{ count }} |
+{% endfor -%}
+{%- endmacro %}
+
+{% macro render_findings(findings) -%}
+{% for f in findings %}
+### Finding {{ loop.index }}: {{ f.title }}
+
+**Situation:** {{ f.situation }}
+
+**Complication:** {{ f.complication }}
+
+**Decision:** {{ f.decision }}
+
+{% endfor -%}
+{%- endmacro %}
+
+{% macro render_trailing(trailing) -%}
+| Metric | Past 30 Days | Past 90 Days |
+| --- | ---: | ---: |
+| Revenue | {{ format_currency(trailing["30d"].revenue) }} | {{ format_currency(trailing["90d"].revenue) }} |
+| Orders | {{ trailing["30d"].orders }} | {{ trailing["90d"].orders }} |
+| AOV | {{ format_currency(trailing["30d"].aov) }} | {{ format_currency(trailing["90d"].aov) }} |
+| Customers | {{ trailing["30d"].customers }} | {{ trailing["90d"].customers }} |
+{%- endmacro %}

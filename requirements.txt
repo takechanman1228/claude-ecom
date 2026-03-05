@@ -1,0 +1,5 @@
+pandas>=2.0
+click>=8.0
+jinja2>=3.0
+numpy>=1.24
+scipy>=1.10
