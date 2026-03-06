@@ -33,22 +33,8 @@ class TestReviewBasic:
         runner.invoke(cli, ["review", ORDERS_CSV, "--output", str(tmp_path)])
         data = json.loads((tmp_path / "review.json").read_text())
         assert "health" in data
-        assert "checks" in data["health"] or "category_scores" in data["health"]
-
-    def test_category_scores_are_reasonable(self, tmp_path):
-        runner = CliRunner()
-        runner.invoke(cli, ["review", ORDERS_CSV, "--output", str(tmp_path)])
-        data = json.loads((tmp_path / "review.json").read_text())
-        for cat, info in data["health"]["category_scores"].items():
-            assert 0 <= info["score"] <= 100, f"{cat} score out of range"
-
-    def test_categories_present(self, tmp_path):
-        runner = CliRunner()
-        runner.invoke(cli, ["review", ORDERS_CSV, "--output", str(tmp_path)])
-        data = json.loads((tmp_path / "review.json").read_text())
-        cats = data["health"]["category_scores"]
-        assert "revenue" in cats
-        assert "customer" in cats
+        assert "checks" in data["health"]
+        assert isinstance(data["health"]["checks"], list)
 
 
 class TestReviewNoData:

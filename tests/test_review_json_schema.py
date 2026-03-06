@@ -50,11 +50,6 @@ class TestReviewJsonHealth:
         for check in review_data["health"]["checks"]:
             assert check["result"] in valid_results, f"{check['id']} invalid result: {check['result']}"
 
-    def test_category_scores_bounded(self, review_data):
-        for cat, info in review_data["health"]["category_scores"].items():
-            assert 0 <= info["score"] <= 100, f"{cat} score out of range: {info['score']}"
-
-
 class TestReviewJsonNoNaN:
     """Ensure review data never contains NaN -- breaks JSON parsing."""
 

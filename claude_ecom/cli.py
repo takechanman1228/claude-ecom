@@ -51,11 +51,6 @@ def review(orders_path, period, output, fmt, nrows):
     covered = [p for p, v in cov.items() if v]
     click.echo(f"  Data coverage: {', '.join(covered) if covered else 'insufficient data'}")
 
-    # Display health scores
-    health = review_data["health"]
-    for cat, info in health["category_scores"].items():
-        click.echo(f"  {cat:>10}: {info['score']}/100 ({info['level']})")
-
     click.echo(f"\nGenerating review.json to {output} ...")
     path = generate_review_json(review_data, output_dir=output)
     click.echo(f"Done. Output: {path}")

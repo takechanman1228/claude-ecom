@@ -10,7 +10,7 @@ don't activate correctly, the report misses key business insights.
 import pytest
 
 from claude_ecom.report import _build_clusters
-from claude_ecom.scoring import CheckResult
+from claude_ecom.checks import CheckResult
 
 
 def _make_check(check_id, category, severity, result):

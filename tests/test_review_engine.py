@@ -127,15 +127,13 @@ class TestBuildReviewData:
             assert "orders" in summary
             assert "aov" in summary
 
-    def test_health_has_category_scores(self, orders):
+    def test_health_has_checks(self, orders):
         data = build_review_data(orders)
         health = data["health"]
-        assert "category_scores" in health
         assert "checks" in health
         assert "top_issues" in health
-        for cat, info in health["category_scores"].items():
-            assert "score" in info
-            assert "level" in info
+        assert isinstance(health["checks"], list)
+        assert len(health["checks"]) > 0
 
     def test_specific_period_filter(self, orders):
         data = build_review_data(orders, period="30d")
@@ -176,14 +174,37 @@ class TestComputeDrivers:
 
 
 class TestMonthlyTrend:
-    def test_returns_12_months(self, orders):
-        trend = _compute_monthly_trend(orders, 2025)
-        assert len(trend) == 12
-        assert trend[0]["month"] == "2025-01"
-        assert trend[11]["month"] == "2025-12"
+    def test_returns_only_data_months(self, orders):
+        ref = orders["order_date"].max().date()
+        trend = _compute_monthly_trend(orders, ref, days=365)
+        # Should not have months with zero data
+        for entry in trend:
+            assert entry["orders"] > 0 or entry["revenue"] > 0
+
+    def test_no_future_months_with_zero(self, orders):
+        ref = orders["order_date"].max().date()
+        trend = _compute_monthly_trend(orders, ref, days=365)
+        for entry in trend:
+            assert entry["revenue"] > 0 or entry["orders"] > 0, (
+                f"Month {entry['month']} has zero data but was included"
+            )
+
+    def test_trailing_window_bounds(self, orders):
+        ref = orders["order_date"].max().date()
+        trend = _compute_monthly_trend(orders, ref, days=365)
+        from datetime import timedelta
+        window_start = ref - timedelta(days=364)
+        for entry in trend:
+            year, month = map(int, entry["month"].split("-"))
+            # Month must overlap with [window_start, ref]
+            assert date(year, month, 1) <= ref
+            import calendar
+            last_day = calendar.monthrange(year, month)[1]
+            assert date(year, month, last_day) >= window_start
 
     def test_each_entry_has_keys(self, orders):
-        trend = _compute_monthly_trend(orders, 2025)
+        ref = orders["order_date"].max().date()
+        trend = _compute_monthly_trend(orders, ref, days=365)
         for entry in trend:
             assert "month" in entry
             assert "revenue" in entry
@@ -192,6 +213,137 @@ class TestMonthlyTrend:
             assert "customers" in entry
             assert "new_customers" in entry
             assert "returning_customers" in entry
+            assert "days_with_data" in entry
+
+    def test_partial_flag_on_short_month(self):
+        """A month with only 3 days of data should have partial=True."""
+        dates = pd.date_range("2025-12-01", "2025-12-31", freq="D")
+        rows = []
+        for i, d in enumerate(dates):
+            rows.append({
+                "order_id": f"O-{i}", "order_date": d,
+                "customer_id": f"C-{i}", "amount": 100.0,
+            })
+        # Add 3 days in Jan 2026
+        for i in range(3):
+            d = pd.Timestamp("2026-01-01") + pd.Timedelta(days=i)
+            rows.append({
+                "order_id": f"O-jan-{i}", "order_date": d,
+                "customer_id": f"C-jan-{i}", "amount": 100.0,
+            })
+        df = pd.DataFrame(rows)
+        df["order_date"] = pd.to_datetime(df["order_date"])
+
+        trend = _compute_monthly_trend(df, date(2026, 1, 3), days=365)
+        jan_entry = [e for e in trend if e["month"] == "2026-01"]
+        assert len(jan_entry) == 1
+        assert jan_entry[0].get("partial") is True
+        assert jan_entry[0]["days_with_data"] == 3
+
+
+class TestPartialMonth:
+    """Tests that partial last month does not cause false-positive MoM checks."""
+
+    def _make_orders_with_partial_month(self):
+        """Create orders: full Dec + 3 days of Jan."""
+        rows = []
+        # Full December
+        for i in range(31):
+            d = pd.Timestamp("2025-12-01") + pd.Timedelta(days=i)
+            rows.append({
+                "order_id": f"O-dec-{i}", "order_date": d,
+                "customer_id": f"C-{i}", "amount": 1000.0,
+                "sku": "SKU-1", "product_name": "P1",
+            })
+        # Full November
+        for i in range(30):
+            d = pd.Timestamp("2025-11-01") + pd.Timedelta(days=i)
+            rows.append({
+                "order_id": f"O-nov-{i}", "order_date": d,
+                "customer_id": f"C-{i}", "amount": 1000.0,
+                "sku": "SKU-1", "product_name": "P1",
+            })
+        # 3 days of January (partial)
+        for i in range(3):
+            d = pd.Timestamp("2026-01-01") + pd.Timedelta(days=i)
+            rows.append({
+                "order_id": f"O-jan-{i}", "order_date": d,
+                "customer_id": f"C-jan-{i}", "amount": 100.0,
+                "sku": "SKU-1", "product_name": "P1",
+            })
+        df = pd.DataFrame(rows)
+        df["order_date"] = pd.to_datetime(df["order_date"])
+        return df
+
+    def test_mom_not_false_negative(self):
+        """MoM should not report -87.8% from 3 days vs full month."""
+        from claude_ecom.metrics import compute_revenue_kpis
+        orders = self._make_orders_with_partial_month()
+        kpis = compute_revenue_kpis(orders)
+        assert kpis["partial_last_month"] is True
+        # MoM should compare Nov vs Dec (both full), not Jan(partial) vs Dec
+        mom = kpis["mom_growth_latest"]
+        # Nov and Dec have similar revenue, so MoM should be close to 0
+        assert abs(mom) < 0.2, f"MoM {mom:.1%} looks like a partial-month false positive"
+
+    def test_r01_check_has_partial_note(self):
+        """R01 check message should note partial month exclusion."""
+        from claude_ecom.metrics import compute_revenue_kpis, compute_cohort_kpis
+        orders = self._make_orders_with_partial_month()
+        rev_kpis = compute_revenue_kpis(orders)
+        cohort_kpis = compute_cohort_kpis(orders)
+        from claude_ecom.review_engine import _build_checks
+        checks = _build_checks(rev_kpis, cohort_kpis, orders)
+        r01 = [c for c in checks if c.check_id == "R01"][0]
+        assert "partial month excluded" in r01.message
+
+
+class TestDataQuality:
+    def test_data_quality_in_review_json(self, orders):
+        data = build_review_data(orders)
+        assert "data_quality" in data
+        assert isinstance(data["data_quality"], list)
+
+    def test_short_data_warns(self):
+        """Fewer than 90 days of data should produce a short_data_span warning."""
+        rows = []
+        for i in range(30):
+            d = pd.Timestamp("2025-12-01") + pd.Timedelta(days=i)
+            rows.append({
+                "order_id": f"O-{i}", "order_date": d,
+                "customer_id": f"C-{i}", "amount": 100.0,
+                "sku": "SKU-1", "product_name": "P1",
+            })
+        df = pd.DataFrame(rows)
+        df["order_date"] = pd.to_datetime(df["order_date"])
+        data = build_review_data(df)
+        types = [w["type"] for w in data["data_quality"]]
+        assert "short_data_span" in types
+
+    def test_partial_month_warning(self):
+        """Partial last month should produce a partial_period warning."""
+        rows = []
+        # Full November + December
+        for i in range(61):
+            d = pd.Timestamp("2025-11-01") + pd.Timedelta(days=i)
+            rows.append({
+                "order_id": f"O-{i}", "order_date": d,
+                "customer_id": f"C-{i % 20}", "amount": 100.0,
+                "sku": "SKU-1", "product_name": "P1",
+            })
+        # 3 days of January (partial)
+        for i in range(3):
+            d = pd.Timestamp("2026-01-01") + pd.Timedelta(days=i)
+            rows.append({
+                "order_id": f"O-jan-{i}", "order_date": d,
+                "customer_id": f"C-jan-{i}", "amount": 100.0,
+                "sku": "SKU-1", "product_name": "P1",
+            })
+        df = pd.DataFrame(rows)
+        df["order_date"] = pd.to_datetime(df["order_date"])
+        data = build_review_data(df)
+        types = [w["type"] for w in data["data_quality"]]
+        assert "partial_period" in types
 
 
 class TestMonthlyTrendIn365dBlock:
@@ -199,4 +351,7 @@ class TestMonthlyTrendIn365dBlock:
         data = build_review_data(orders)
         if data["data_coverage"]["365d"] and "365d" in data["periods"]:
             assert "monthly_trend" in data["periods"]["365d"]
-            assert len(data["periods"]["365d"]["monthly_trend"]) == 12
+            trend = data["periods"]["365d"]["monthly_trend"]
+            # All entries should have data
+            for entry in trend:
+                assert entry["orders"] > 0 or entry["revenue"] > 0

@@ -34,7 +34,7 @@ claude_ecom/          # Python package (pip install -e .)
   cli.py              # Click CLI: ecom review | validate
   loader.py           # CSV/Parquet data loading
   metrics.py          # KPI computation
-  scoring.py          # Health scoring (0-100, strong/needs_attention/weak)
+  checks.py           # Check result types, impact estimation, action builders
   report.py           # Report generation (generate_review_json)
   review_engine.py    # Unified period-based review builder (30d/90d/365d)
   periods.py          # Trailing window + data coverage utilities
@@ -59,8 +59,8 @@ ecom review orders.csv --period 90d  # Focus on specific period
 - Package name: `claude-ecom` (pip), `claude_ecom` (import)
 - CLI entry point: `ecom` (defined in pyproject.toml)
 - All check IDs follow pattern: `{CATEGORY}{NUMBER}` (e.g., R01, C01, P06)
-- 3 categories: Revenue (40%), Customer (30%), Product (30%)
-- Health levels: strong (75-100), needs_attention (50-74), weak (<50)
+- 3 categories: Revenue, Customer, Product
+- Each check returns pass / watch / fail (no numeric scores)
 - Python handles computation; Claude handles interpretation
 - Reference files (references/*.md) are the knowledge base for LLM interpretation
 - Reports output to current directory by default (--output flag)

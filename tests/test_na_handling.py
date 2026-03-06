@@ -5,61 +5,10 @@ import math
 import pandas as pd
 import pytest
 
-from claude_ecom.scoring import (
+from claude_ecom.checks import (
     CheckResult,
-    CategoryScore,
     estimate_revenue_impact,
-    score_category,
-    score_checks,
 )
-
-
-class TestNAScoring:
-    def test_na_excluded_from_denominator(self):
-        checks = [
-            CheckResult("R01", "revenue", "high", "pass"),
-            CheckResult("R02", "revenue", "medium", "na"),
-            CheckResult("R03", "revenue", "critical", "fail"),
-        ]
-        cs = score_category(checks)
-        # N/A check should not count in weighted sum or weight total
-        # Only R01 (pass, high=3.0) and R03 (fail, critical=5.0) count
-        # score = (1.0*3.0 + 0.0*5.0) / (3.0+5.0) * 100 = 37.5
-        assert cs.score == 37.5
-        assert cs.passed == 1
-        assert cs.failed == 1
-        assert cs.na == 1
-        assert cs.total_checks == 3
-
-    def test_all_na_scores_100(self):
-        checks = [
-            CheckResult("R01", "revenue", "high", "na"),
-            CheckResult("R02", "revenue", "medium", "na"),
-        ]
-        cs = score_category(checks)
-        assert cs.score == 100.0
-        assert cs.na == 2
-        assert cs.passed == 0
-        assert cs.failed == 0
-
-    def test_na_not_in_critical_fails(self):
-        checks = [
-            CheckResult("R01", "revenue", "critical", "na"),
-        ]
-        cs = score_category(checks)
-        assert cs.critical_fails == []
-
-    def test_score_checks_total_na(self):
-        checks = [
-            CheckResult("R01", "revenue", "high", "pass"),
-            CheckResult("R02", "revenue", "medium", "na"),
-            CheckResult("C01", "customer", "critical", "na"),
-            CheckResult("C02", "customer", "high", "fail"),
-        ]
-        health = score_checks(checks)
-        assert health.total_na == 2
-        assert health.total_passed == 1
-        assert health.total_failed == 1
 
 
 class TestNAImpactEstimation:
@@ -112,9 +61,14 @@ class TestNAMetrics:
         assert math.isnan(kpis["mom_growth_latest"])
 
     def test_two_months_mom_is_valid(self):
+        """With sparse data (2 days per month), the last month is partial.
+
+        Need 3 months so partial-month logic can compare the two earlier
+        (both sparse but complete-enough relative to each other).
+        """
         from claude_ecom.metrics import compute_revenue_kpis
 
-        orders = self._make_orders(months=2)
+        orders = self._make_orders(months=3)
         kpis = compute_revenue_kpis(orders)
         assert not math.isnan(kpis["mom_growth_latest"])
 

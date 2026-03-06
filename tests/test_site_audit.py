@@ -11,8 +11,6 @@ from claude_ecom.site_audit import (
     build_site_checks_single,
     _trust_signal_count,
 )
-from claude_ecom.scoring import score_checks, CATEGORY_WEIGHTS
-
 
 def _healthy_page(**overrides) -> PageAuditData:
     """Create a PageAuditData with all signals in a healthy state."""
@@ -389,42 +387,6 @@ class TestBuildSiteChecks:
     def test_empty_pages_returns_empty(self):
         checks = build_site_checks([])
         assert checks == []
-
-
-class TestScoringIntegration:
-    """Verify that site checks integrate correctly with the scoring system."""
-
-    def test_site_category_appears_in_health_score(self):
-        page = _healthy_page()
-        checks = build_site_checks_single(page)
-        health = score_checks(checks)
-        assert "site" in health.category_scores
-        assert health.category_scores["site"].score == 100.0
-
-    def test_site_mixes_with_other_categories(self):
-        from claude_ecom.scoring import CheckResult
-
-        site_checks = build_site_checks_single(_healthy_page())
-        other_checks = [
-            CheckResult("R01", "revenue", "high", "pass"),
-            CheckResult("C01", "customer", "critical", "pass"),
-        ]
-        health = score_checks(site_checks + other_checks)
-        assert "site" in health.category_scores
-        assert "revenue" in health.category_scores
-        assert "customer" in health.category_scores
-        assert health.overall_score == 100.0
-
-    def test_site_failures_reduce_score(self):
-        page = _healthy_page(
-            cta_above_fold_desktop=False,
-            cta_above_fold_mobile=False,
-            has_viewport_meta=False,
-        )
-        checks = build_site_checks_single(page)
-        health = score_checks(checks)
-        assert health.category_scores["site"].score < 100
-        assert health.category_scores["site"].failed > 0
 
 
 class TestMultiPage:

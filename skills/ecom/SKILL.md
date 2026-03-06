@@ -108,6 +108,15 @@ NOT invent data that isn't here.
     "revenue_definition": "Net sales after discounts, before tax and shipping"
   },
 
+  // --- Data quality warnings (empty array = no issues) ---
+  "data_quality": [
+    // Example entries (only present when issues detected):
+    // { "type": "partial_period", "period": "2026-02", "days_with_data": 3,
+    //   "message": "Latest month (2026-02) has only 3 days of data. MoM comparisons use prior complete months." }
+    // { "type": "short_data_span", "days": 45, "message": "Data spans only 45 days..." }
+    // { "type": "limited_data_span", "days": 200, "message": "Data spans 200 days (<1 year)..." }
+  ],
+
   // --- Data coverage: which periods are available ---
   "data_coverage": {
     "30d": true,       // true if >=45 days of data exist
@@ -138,8 +147,7 @@ NOT invent data that isn't here.
         "returning_customer_revenue_share": 0.612,
         "returning_customers": 192,
         "returning_customers_change": -0.03,
-        "returning_customer_aov": 312,
-        "f2_rate": 0.96                // first-to-second purchase conversion
+        "returning_customer_aov": 312
       },
       "drivers": {
         "aov_effect": 1200,            // revenue change attributable to AOV
@@ -150,20 +158,17 @@ NOT invent data that isn't here.
     "90d": { /* same structure */ },
     "365d": {
       /* same structure as 30d (summary, kpi_tree, drivers) plus: */
+      "repeat_purchase_rate": 0.38,   // only in 365d block
       "monthly_trend": [
-        { "month": "2025-01", "revenue": 95000, "orders": 420, "aov": 226, "customers": 310, "new_customers": 180, "returning_customers": 130 }
-        // ... 12 months
+        { "month": "2025-01", "revenue": 95000, "orders": 420, "aov": 226, "customers": 310, "new_customers": 180, "returning_customers": 130, "days_with_data": 31 },
+        // ... only months with actual data (no zero-fill for future months)
+        { "month": "2025-12", "revenue": 12000, "orders": 45, "aov": 267, "customers": 38, "new_customers": 10, "returning_customers": 28, "days_with_data": 3, "partial": true }
       ]
     }
   },
 
-  // --- Health checks (internal scoring, powers 🟢/🟡/🔴 markers) ---
+  // --- Health checks (powers 🟢/🟡/🔴 markers) ---
   "health": {
-    "category_scores": {
-      "revenue": { "score": 82.6, "level": "strong" },
-      "customer": { "score": 89.3, "level": "strong" },
-      "product": { "score": 57.1, "level": "needs_attention" }
-    },
     "checks": [
       {
         "id": "R01",                    // internal only, never expose
@@ -212,7 +217,9 @@ NOT invent data that isn't here.
   filtered/sorted subset (fail and watch only, max 10, sorted by severity × impact)
 - `action_candidates` are suggestions from Python; Claude refines, merges, and
   rewrites them in business language for the report
-- `category_scores.level` is one of: `strong` (75-100), `needs_attention` (50-74), `weak` (<50)
+- `monthly_trend` contains only months with actual order data (no zero-fill for future months)
+- `monthly_trend` entries with `"partial": true` have less than half the month's days with data
+- When `data_quality` is non-empty, mention relevant warnings in Data Notes
 
 ---
 
@@ -235,6 +242,24 @@ Load on-demand -- do NOT load all at startup.
 
 One report. Three parts. **Target: ~150 lines.** Tighter is better.
 
+### Report Construction Checklist (MANDATORY)
+
+Before writing, verify your report contains ALL sections in this exact order.
+Missing or reordered sections are a format violation.
+
+1. [ ] Executive Summary -- narrative blockquote (4-6 lines) + Scoreboard table
+2. [ ] 30d Pulse section (if data available) -- KPI tree + max 1 finding
+3. [ ] 90d Momentum section (if data available) -- KPI tree + drivers + max 2 findings
+4. [ ] 365d Structure section (if data available) -- KPI tree + drivers + max 3 findings
+5. [ ] Action Plan -- max 5 items grouped by time horizon + Guardrails
+6. [ ] Data Notes -- 2-4 lines
+
+Structural rules:
+- Sections MUST appear in this order. Do NOT reorganize by theme.
+- Period sections MUST use the KPI tree format with emoji markers.
+- Do NOT create standalone sections like "What's Working Well" or "Issues to Address".
+- Positive signals belong in Executive Summary narrative and KPI tree markers.
+
 ---
 
 ### Part 1: Executive Summary
@@ -245,7 +270,8 @@ Synthesize across all available periods. Structure:
 
 ```
 [North Star result + trend across periods]
-[What's driving it -- connect long to short]
+[What's working: 1-2 strengths confirmed by data -- 80/20 rule]
+[What needs attention: the key tension/risk, with data]
 [Most important action, with timeline]
 ```
 
@@ -272,6 +298,8 @@ Only show periods that data supports.
 ---
 
 ### Part 2: Period Sections
+
+**CRITICAL: Each period gets its own heading and its own KPI tree. Do NOT merge periods into thematic sections.**
 
 All periods use the same skeleton. **But they are not equal length:**
 
@@ -301,7 +329,7 @@ Revenue $X (vs prior period: +X%)
 |-- 🟡 Existing Customer Revenue $X (X% of total)
     |-- Returning Customers: X (+X%)
     |-- Returning AOV: $X (+X%)
-    |-- F2 Rate: X% -- first-to-second purchase conversion
+    |-- Repeat Purchase Rate: X% -- first-to-second purchase conversion (365d only)
 ```
 
 🟢 healthy / 🟡 watch / 🔴 problem (driven by health check results).
@@ -313,11 +341,24 @@ Was the change volume-driven or price-driven? Connect to KPI tree nodes.
 **Findings** (within period cap):
 
 Each follows Finding Quality Standards. Findings should weave trend data and
-health check diagnostics together, not present them separately.
+health check diagnostics together, not present them separately. Use this format:
+
+### [Finding title]
+
+**What is:** [1 sentence, quantitative fact]
+
+**Why it matters:** [Data-backed tension with "however"/"despite"/"but"]
+
+**What to do:** [Direction only — 1 sentence. Details go in Action Plan.]
 
 ---
 
 ### Part 3: Action Plan (unified, max 5 items)
+
+**Hard cap: 5 action items. Exceeding 5 is a format violation.**
+
+Action Plan is the single source of truth for deadlines and success metrics.
+Findings point to the problem and direction; Action Plan specifies the execution.
 
 One list synthesizing across all periods. Group by time horizon:
 
@@ -338,8 +379,10 @@ For each item:
 - **When** (specific deadline)
 - **Success metric** (measurable)
 
-End with:
-> **Guardrails:** [2-3 metrics that must not deteriorate]
+End with (REQUIRED -- omitting Guardrails is a format violation):
+> **Guardrails:** [2-3 metrics that must not deteriorate while executing above actions]
+>
+> Example: AOV must stay above $X | Repeat purchase rate must not drop below X% | Discount rate must stay under X%
 
 ---
 
@@ -368,8 +411,9 @@ Always include:
 - **What is:** 1 sentence. Quantitative fact. No interpretation.
 - **Why it matters:** Data-backed tension. Must show contrast ("despite", "however").
   Abstract concerns like "growth must be validated" are PROHIBITED.
-- **What to do:** Concrete action + deadline + success metric. "Consider",
-  "improve", "optimize", "explore" are PROHIBITED.
+- **What to do:** Direction and rationale only — 1 sentence. Deadlines and
+  success metrics belong in the Action Plan. "Consider", "improve", "optimize",
+  "explore" are PROHIBITED.
 
 **Good:**
 ```
@@ -377,8 +421,7 @@ What is:       Annual revenue grew 25.7% YoY.
 Why it matters: However, despite a 25.4% reduction in discount rate, new customer
                revenue share remains at 42.3% -- growth depends entirely on
                existing customer AOV increases (+14.8%).
-What to do:    Reallocate 20% of retention budget to acquisition channels. Start
-               channel test by end of this month. Target: CPA below $XX in 3 months.
+What to do:    Reallocate retention budget toward acquisition channels to diversify growth sources.
 ```
 
 **Bad (PROHIBITED):**
@@ -396,6 +439,25 @@ What to do:    Consider improving acquisition. <-- banned verb, no deadline
 - Don't apologize. Never say "unfortunately..."
 - Shorter data = shorter report.
 - All gaps noted in Data Notes only.
+
+---
+
+## Language and Data Scope Rules
+
+### Language
+- Write entire report in ONE language (match user's prompt/store language)
+- Data Notes follows same language as body
+
+### Data Scope: review.json Only
+- All numbers MUST come from review.json or be derived from its values
+- Do NOT reference external sources (Shopify Analytics, GA, etc.)
+- If additional data would help, note as recommended investigation in "What to do"
+- PROHIBITED: "CVR from Shopify shows 2.1%" (CVR not in review.json)
+- ALLOWED: "Investigate CVR in Shopify Analytics to determine root cause"
+
+### data_quality Warnings
+- When `data_quality` array is non-empty, mention relevant warnings in Data Notes
+- Do NOT present partial-month MoM as real performance signals
 
 ---
 
@@ -417,54 +479,9 @@ What to do:    Consider improving acquisition. <-- banned verb, no deadline
 
 ## Internal: Health Check Engine
 
-> Implementation details below are never exposed in the report. They power
-> the 🟢/🟡/🔴 markers, inform findings, and prioritize actions.
-
-### Health Score (0-100)
-
-```
-Category Score = Sum(result * severity_mult) / Sum(severity_mult) * 100
-```
-
-### Category Weights
-
-| Category | Weight | Covers |
-|----------|--------|--------|
-| Revenue | 40% | Growth, stability, concentration, volatility, discount behavior |
-| Customer | 30% | Repeat behavior, segments, lifecycle, new vs returning |
-| Product | 30% | SKU concentration, basket composition, cross-sell, lifecycle |
-
-> Pricing checks (discount rate, depth, discounted order ratio) belong to
-> Revenue. They measure revenue quality, not a separate domain.
->
-> "Product" = what purchase patterns reveal about your product mix.
-> Does not require a product catalog.
-
-### Severity Multipliers
-
-| Severity | Multiplier |
-|----------|-----------|
-| Critical | 5.0x |
-| High | 3.0x |
-| Medium | 1.5x |
-| Low | 0.5x |
-
-### Health Levels
-
-| Score | Level | Meaning |
-|-------|-------|---------|
-| 75-100 | strong | Working well |
-| 50-74 | needs_attention | Issues to address |
-| < 50 | weak | Significant problems |
-
-### Check → KPI Tree Mapping
-
-Each check maps to KPI tree nodes. Node marker = worst signal among its checks:
-- 🟢 all checks pass
-- 🟡 any check in watch
-- 🔴 any check failing
-
-Mapping defined in `references/health-checks.md`.
+> Each check returns pass / watch / fail. These power the 🟢🟡🔴 KPI tree markers.
+> Check definitions in `references/health-checks.md`.
+> Do NOT use numeric scores, letter grades, or percentage-based health ratings.
 
 ---
 
@@ -478,4 +495,4 @@ ecom review orders.csv --period 90d
 ```
 
 Modules: `loader`, `metrics`, `decomposition`, `cohort`, `product`,
-`scoring`, `report`, `review_engine`, `config`, `normalize`, `periods`.
+`checks`, `report`, `review_engine`, `config`, `normalize`, `periods`.

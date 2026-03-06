@@ -1,7 +1,7 @@
 # Vertical-Specific Benchmarks
 <!-- Updated: 2026-03-06 | Source: DR1 -->
 
-This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calendars, structural challenges, and strategy playbooks for six ecommerce verticals. Use the KPI tables to contextualize review findings by swapping in vertical-appropriate expectations for four high-variance metrics: F2 rate (C01), AOV, Discount rate (R08), and Gross margin (R14). Thresholds assume a typical ecommerce operator in a competitive market; apply additional modifiers for subscription, marketplace, dropship, luxury, or B2B business models.
+This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calendars, structural challenges, and strategy playbooks for six ecommerce verticals. Use the KPI tables to contextualize review findings by swapping in vertical-appropriate expectations for four high-variance metrics: Repeat Purchase Rate (C01), AOV, Discount rate (R08), and Gross margin (R14). Thresholds assume a typical ecommerce operator in a competitive market; apply additional modifiers for subscription, marketplace, dropship, luxury, or B2B business models.
 
 ---
 
@@ -11,7 +11,7 @@ This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calend
 
 | KPI | Pass | Watch | Fail |
 |---|---:|---:|---:|
-| F2 rate (C01) | >= 25% | 15%--24.9% | < 15% |
+| Repeat Purchase Rate (C01) | >= 25% | 15%--24.9% | < 15% |
 | AOV | >= $160 | $120--$159 | < $120 |
 | Discount rate (R08) | <= 20% | 20%--30% | > 30% |
 | Gross margin (R14) | >= 50% | 40%--49.9% | < 40% |
@@ -35,13 +35,13 @@ Fashion has structurally higher gross margins than electronics or grocery, suppo
 
 - Use **assortment discipline + lifecycle merchandising**: plan hero SKUs, chase winners early, and separate "core continuity" from "seasonal risk" so markdowns are targeted rather than blanket.
 - Replace always-on discounts with a **promo architecture**: fewer, clearer moments; tiered thresholds; and clearance segmentation, aligned to consumer expectations for deep-event periods without training constant waiting.
-- Increase F2 by designing a **second-order path**: post-purchase styling flows, "complete the look" bundles, and customer-specific recommendations to pull second purchase inside your attribution window.
+- Increase repeat purchase rate by designing a **second-order path**: post-purchase styling flows, "complete the look" bundles, and customer-specific recommendations to pull second purchase inside your attribution window.
 
 ### Benchmark Ranges
 
 | Metric | Typical range for Fashion & Apparel |
 |---|---:|
-| F2 rate (C01) | ~15%--30% |
+| Repeat Purchase Rate (C01) | ~15%--30% |
 | AOV | ~$150--$220 |
 | Discount rate (R08) | ~10%--25% (event peaks higher) |
 | Gross margin (R14) | ~45%--60% |
@@ -54,14 +54,14 @@ Fashion has structurally higher gross margins than electronics or grocery, suppo
 
 | KPI | Pass | Watch | Fail |
 |---|---:|---:|---:|
-| F2 rate (C01) | >= 30% | 20%--29.9% | < 20% |
+| Repeat Purchase Rate (C01) | >= 30% | 20%--29.9% | < 20% |
 | AOV | >= $120 | $80--$119 | < $80 |
 | Discount rate (R08) | <= 15% | 15%--25% | > 25% |
 | Gross margin (R14) | >= 65% | 55%--64.9% | < 55% |
 
 ### Rationale
 
-Beauty converts strongly and product margins are structurally high (often ~55%--80%), supporting an aggressive gross margin floor. Loyalty fragility in a crowded market makes personalization and CRM flows disproportionately important to lift F2.
+Beauty converts strongly and product margins are structurally high (often ~55%--80%), supporting an aggressive gross margin floor. Loyalty fragility in a crowded market makes personalization and CRM flows disproportionately important to lift repeat purchase rate.
 
 ### Seasonal Calendar
 
@@ -71,20 +71,20 @@ Beauty converts strongly and product margins are structurally high (often ~55%--
 
 ### Top Structural Challenges
 
-- Loyalty fragility in a crowded market (high switching), making personalization, routine-building, and CRM flows disproportionately important to lift F2.
+- Loyalty fragility in a crowded market (high switching), making personalization, routine-building, and CRM flows disproportionately important to lift repeat purchase rate.
 
 ### Recommended Strategy Playbook
 
 - Implement **guided selling** (shade finders, skin-type quizzes, regimen builders) and emphasize education on PDP/PLP to reduce mismatch and increase confidence.
 - Drive AOV via **routine bundles** (AM/PM kits), "complete the routine" cross-sells, and free-sample thresholds instead of deeper discounts.
-- Build for F2 with **replenishment timing** (reorder reminders calibrated to product lifespan) and subscription/auto-ship options where appropriate.
+- Build for repeat purchases with **replenishment timing** (reorder reminders calibrated to product lifespan) and subscription/auto-ship options where appropriate.
 - Protect margin by using promotions strategically during peak deal windows and shifting value to gifts-with-purchase, exclusives, or bundles when possible.
 
 ### Benchmark Ranges
 
 | Metric | Typical range for Beauty & Cosmetics |
 |---|---:|
-| F2 rate (C01) | ~20%--40% |
+| Repeat Purchase Rate (C01) | ~20%--40% |
 | AOV | ~$80--$170 |
 | Discount rate (R08) | ~10%--20% (event peaks higher) |
 | Gross margin (R14) | ~55%--75% |
@@ -97,7 +97,7 @@ Beauty converts strongly and product margins are structurally high (often ~55%--
 
 | KPI | Pass | Watch | Fail |
 |---|---:|---:|---:|
-| F2 rate (C01) | >= 40% | 25%--39.9% | < 25% |
+| Repeat Purchase Rate (C01) | >= 40% | 25%--39.9% | < 25% |
 | AOV | >= $75 | $55--$74 | < $55 |
 | Discount rate (R08) | <= 10% | 10%--15% | > 15% |
 | Gross margin (R14) | >= 25% | 18%--24.9% | < 18% |
@@ -127,7 +127,7 @@ Grocery/food retail margin is structurally low (mid-20s gross margin, large groc
 
 | Metric | Typical range for Food & Beverage |
 |---|---:|
-| F2 rate (C01) | ~25%--45% |
+| Repeat Purchase Rate (C01) | ~25%--45% |
 | AOV | ~$55--$90 |
 | Discount rate (R08) | ~5%--15% |
 | Gross margin (R14) | ~18%--35% |
@@ -140,7 +140,7 @@ Grocery/food retail margin is structurally low (mid-20s gross margin, large groc
 
 | KPI | Pass | Watch | Fail |
 |---|---:|---:|---:|
-| F2 rate (C01) | >= 15% | 8%--14.9% | < 8% |
+| Repeat Purchase Rate (C01) | >= 15% | 8%--14.9% | < 8% |
 | AOV | >= $180 | $120--$179 | < $120 |
 | Discount rate (R08) | <= 15% | 15%--25% | > 25% |
 | Gross margin (R14) | >= 25% | 15%--24.9% | < 15% |
@@ -169,7 +169,7 @@ Electronics is structurally margin-thin compared to beauty and apparel; large el
 
 | Metric | Typical range for Electronics & Gadgets |
 |---|---:|
-| F2 rate (C01) | ~8%--15% |
+| Repeat Purchase Rate (C01) | ~8%--15% |
 | AOV | ~$120--$250+ |
 | Discount rate (R08) | ~10%--25% (event peaks higher) |
 | Gross margin (R14) | ~15%--30% |
@@ -182,7 +182,7 @@ Electronics is structurally margin-thin compared to beauty and apparel; large el
 
 | KPI | Pass | Watch | Fail |
 |---|---:|---:|---:|
-| F2 rate (C01) | >= 15% | 10%--14.9% | < 10% |
+| Repeat Purchase Rate (C01) | >= 15% | 10%--14.9% | < 10% |
 | AOV | >= $250 | $150--$249 | < $150 |
 | Discount rate (R08) | <= 15% | 15%--25% | > 25% |
 | Gross margin (R14) | >= 35% | 25%--34.9% | < 25% |
@@ -212,7 +212,7 @@ Home & furniture categories have structurally high AOV (~$266 in one benchmark s
 
 | Metric | Typical range for Home & Living |
 |---|---:|
-| F2 rate (C01) | ~10%--20% |
+| Repeat Purchase Rate (C01) | ~10%--20% |
 | AOV | ~$200--$350+ |
 | Discount rate (R08) | ~10%--20% (event peaks higher) |
 | Gross margin (R14) | ~25%--35% |
@@ -225,7 +225,7 @@ Home & furniture categories have structurally high AOV (~$266 in one benchmark s
 
 | KPI | Pass | Watch | Fail |
 |---|---:|---:|---:|
-| F2 rate (C01) | >= 30% | 18%--29.9% | < 18% |
+| Repeat Purchase Rate (C01) | >= 30% | 18%--29.9% | < 18% |
 | AOV | >= $75 | $55--$74 | < $55 |
 | Discount rate (R08) | <= 15% | 15%--25% | > 25% |
 | Gross margin (R14) | >= 50% | 40%--49.9% | < 40% |
@@ -249,7 +249,7 @@ Health & wellness is a blended vertical: consumable products (supplements, routi
 ### Recommended Strategy Playbook
 
 - Build a **trust stack**: transparent ingredients, third-party testing and disclaimers where appropriate, and rigorous claim language review; treat this as a KPI precondition.
-- Prioritize **subscription + adherence UX** (skip/pause, reminders, reorder in 1--2 clicks) for consumables to lift F2 without discounting away margin.
+- Prioritize **subscription + adherence UX** (skip/pause, reminders, reorder in 1--2 clicks) for consumables to lift repeat purchase rate without discounting away margin.
 - Use education as conversion: condition-specific guides, dosage FAQs, and "what to expect" timelines reduce uncertainty and preventable returns.
 - Plan around **January**: preload landing pages and lifecycle flows for the resolution spike, similar to how retailers plan early for compressed peak seasons.
 
@@ -257,7 +257,7 @@ Health & wellness is a blended vertical: consumable products (supplements, routi
 
 | Metric | Typical range for Health & Wellness |
 |---|---:|
-| F2 rate (C01) | ~18%--40% (higher for consumables) |
+| Repeat Purchase Rate (C01) | ~18%--40% (higher for consumables) |
 | AOV | ~$55--$90 (routine products) |
 | Discount rate (R08) | ~5%--20% |
 | Gross margin (R14) | ~40%--60% |

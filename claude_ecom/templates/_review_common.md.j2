@@ -64,7 +64,7 @@ _Insufficient data for waterfall analysis._
 {%- endmacro %}
 
 {% macro render_customer_analysis(customer) -%}
-**F2 Rate:** {{ format_pct(customer.f2_rate) }} | **Avg Purchase Interval:** {{ "%.0f" | format(customer.avg_purchase_interval_days) }} days | **Total Customers:** {{ customer.total_customers }}
+**Repeat Purchase Rate:** {{ format_pct(customer.repeat_purchase_rate) }} | **Avg Purchase Interval:** {{ "%.0f" | format(customer.avg_purchase_interval_days) }} days | **Total Customers:** {{ customer.total_customers }}
 
 | Segment | Count |
 | --- | ---: |

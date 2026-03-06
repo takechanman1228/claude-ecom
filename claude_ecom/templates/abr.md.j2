@@ -38,7 +38,7 @@ Key finding: {{ findings[0].title }}.
 | Metric | Value |
 | --- | ---: |
 | Total Customers | {{ customer_analysis.total_customers }} |
-| F2 Rate | {{ format_pct(customer_analysis.f2_rate) }} |
+| Repeat Purchase Rate | {{ format_pct(customer_analysis.repeat_purchase_rate) }} |
 | Avg Purchase Interval | {{ "%.0f" | format(customer_analysis.avg_purchase_interval_days) }} days |
 | Returning Revenue Share | {{ format_pct(new_vs_returning.returning_share) }} |
 

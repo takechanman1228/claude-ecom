@@ -6,7 +6,7 @@
 
 | Check ID | Metric | Formula (per period) | Typical Improvement | Annualised Impact Example ($10M revenue) |
 |----------|--------|---------------------|---------------------|------------------------------------------|
-| C01 | Returning customer ratio (F2) | `New_Customers * F2_Improvement_pp/100 * LTV_Repeat` | +3-5 pp | $150K-$500K |
+| C01 | Repeat Purchase Rate | `New_Customers * RPR_Improvement_pp/100 * LTV_Repeat` | +3-5 pp | $150K-$500K |
 | R05 | Repeat revenue share | `Total_Revenue * Improvement_pp/100 * (1 - Churn_Volatility)` | +3-5 pp | $75K-$200K |
 | R08 | Avg discount rate | `Discounted_Revenue * Reduction_pp / 100` | -1-2 pp | $50K-$150K |
 | R14 | Gross margin | `Revenue * Improvement_pp / 100` | +1-3 pp | $100K-$300K |
@@ -15,35 +15,35 @@
 
 ---
 
-## C01 — Returning Customer Ratio (F2 Conversion)
+## C01 — Repeat Purchase Rate
 
 ### What it measures
-The share of customers who make a second purchase (F2 conversion), and the broader returning customer ratio. Repeat customers drive disproportionate revenue and have dramatically higher conversion rates (60-70%) compared to new prospects (5-20%).
+The share of customers who make a second purchase (repeat purchase rate), and the broader returning customer ratio. Repeat customers drive disproportionate revenue and have dramatically higher conversion rates (60-70%) compared to new prospects (5-20%).
 
 ### Calculation Formula
 
 ```
 Returning_Customer_Ratio = Repeat_Customers / Total_Customers * 100
 
-F2_Conversion_Rate = Customers_With_2+_Orders / Total_Customers * 100
+Repeat_Purchase_Rate = Customers_With_2+_Orders / Total_Customers * 100
 
-LTV_Uplift_Per_1pp_F2 = New_Customers * 0.01 * (LTV_Repeat - LTV_OneTime)
+LTV_Uplift_Per_1pp_RPR = New_Customers * 0.01 * (LTV_Repeat - LTV_OneTime)
 
-Revenue_Impact = LTV_Uplift_Per_1pp_F2 * (1 + Downstream_Acceleration)
+Revenue_Impact = LTV_Uplift_Per_1pp_RPR * (1 + Downstream_Acceleration)
 ```
 
-**Worked example (per 1 pp F2 improvement):**
+**Worked example (per 1 pp repeat purchase rate improvement):**
 - Annual new customers: 50,000
 - LTV of one-time buyer: $215
 - LTV of 2+ purchase buyer: $538 (2.5x multiplier)
 - Revenue uplift = 50,000 * 0.01 * ($538 - $215) = **$161,500/year**
-- With downstream acceleration (F2 buyers convert to F3 at 38.8%): effective uplift is higher
+- With downstream acceleration (repeat buyers convert to 3rd purchase at 38.8%): effective uplift is higher
 
 ### Key LTV Multipliers by Purchase Count
 
 | Purchase Count | Relative LTV | F(n) to F(n+1) Conversion |
 |---------------|-------------|--------------------------|
-| 1 (one-time) | 1.0x | ~18.8% convert to F2 |
+| 1 (one-time) | 1.0x | ~18.8% make a repeat purchase |
 | 2 | 2.5x | ~38.8% convert to F3 |
 | 3 | 3.8x | ~50%+ convert to F4 |
 | 5+ | 7.3x | High retention zone |
@@ -64,7 +64,7 @@ Revenue_Impact = LTV_Uplift_Per_1pp_F2 * (1 + Downstream_Acceleration)
 
 ### Typical Improvement Rates
 - Loyalty / VIP tier programme: +5-10 pp repeat rate, 15-25% annual revenue lift
-- Post-purchase email sequence (3-5 emails): +3-5 pp F2 conversion
+- Post-purchase email sequence (3-5 emails): +3-5 pp repeat purchase rate
 - Personalised product recommendations: +2-4 pp
 - Subscription / auto-replenish models: +10-15 pp for consumables
 - 5% increase in retention -> 25-95% increase in profits (Bain & Company)
@@ -261,7 +261,7 @@ Adjusted_Gross_Margin = Gross_Margin - (Return_Rate * Cost_Per_Return / AOV * 10
 Many of these metrics are interconnected. Improving one often creates cascading effects on others.
 
 ```
-F2 Conversion Improvement (C01)
+Repeat Purchase Rate Improvement (C01)
   --> Higher repeat revenue share (R05)
        --> Lower blended CAC
             --> Revenue stability + margin improvement (R14)
@@ -276,7 +276,7 @@ Discount Reduction (R08)
 
 | Priority | Check | Typical Effort | Typical Impact | Time to Realise |
 |----------|-------|---------------|----------------|-----------------|
-| 1 | C01 (F2 conversion) | Medium | Very High (LTV) | 4-12 weeks |
+| 1 | C01 (Repeat purchase rate) | Medium | Very High (LTV) | 4-12 weeks |
 | 2 | R08 (discounting) | Low | Medium-High | Immediate |
 | 3 | R14 (gross margin) | High | High | 8-24 weeks |
 | 4 | R05 (repeat revenue) | Medium | Medium | 8-24 weeks |
@@ -287,19 +287,19 @@ Discount Reduction (R08)
 
 Formal models using the $10M store baseline.
 
-### C01 — F2 Conversion (Formal)
+### C01 — Repeat Purchase Rate (Formal)
 
-\(\Delta LTV_{12} = (p_{F2} \cdot u)(O_{rep} - 1) \cdot AOV_{rep}\), \(\Delta R_{annual} = N_{new} \cdot \Delta LTV_{12}\)
+\(\Delta LTV_{12} = (p_{RPR} \cdot u)(O_{rep} - 1) \cdot AOV_{rep}\), \(\Delta R_{annual} = N_{new} \cdot \Delta LTV_{12}\)
 
 ```python
-def ltv_uplift_from_f2(p_f2, uplift_rel, o_rep, aov_repeat):
-    return p_f2 * uplift_rel * (o_rep - 1.0) * aov_repeat
+def ltv_uplift_from_rpr(p_rpr, uplift_rel, o_rep, aov_repeat):
+    return p_rpr * uplift_rel * (o_rep - 1.0) * aov_repeat
 
-def annual_revenue_uplift_from_f2(new_customers, p_f2, uplift_rel, o_rep, aov_repeat):
-    return new_customers * ltv_uplift_from_f2(p_f2, uplift_rel, o_rep, aov_repeat)
+def annual_revenue_uplift_from_rpr(new_customers, p_rpr, uplift_rel, o_rep, aov_repeat):
+    return new_customers * ltv_uplift_from_rpr(p_rpr, uplift_rel, o_rep, aov_repeat)
 ```
 
-**Example.** \(N_{new}=60K\), \(p_{F2}=25\%\), 5% relative lift, \(O_{rep}=3\), \(AOV_{rep}=\$110\): \(\Delta LTV_{12}=\$2.75\), annual = **$165K**. **Confidence: Medium-Low.** Caveat: +5pp absolute vs +5% relative yields ~4x difference.
+**Example.** \(N_{new}=60K\), \(p_{RPR}=25\%\), 5% relative lift, \(O_{rep}=3\), \(AOV_{rep}=\$110\): \(\Delta LTV_{12}=\$2.75\), annual = **$165K**. **Confidence: Medium-Low.** Caveat: +5pp absolute vs +5% relative yields ~4x difference.
 
 ### R05 — Repeat Revenue Share (Formal)
 

@@ -5,7 +5,7 @@ from __future__ import annotations
 import json as json_mod
 from pathlib import Path
 
-from .scoring import CheckResult
+from .checks import CheckResult
 
 # Severity ordering for cluster sorting
 _SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}

@@ -17,12 +17,10 @@ from .periods import (
     prior_trailing_window,
     trailing_window,
 )
-from .scoring import (
+from .checks import (
     CheckResult,
     build_action_candidates,
     build_top_issues,
-    score_category,
-    score_checks,
 )
 
 
@@ -142,18 +140,6 @@ def _compute_period_block(orders: pd.DataFrame, ref_date: date, days: int) -> di
         "customers_change": changes.get("customers", 0.0),
     }
 
-    # F2 rate for this period
-    from .metrics import compute_cohort_kpis
-    mask = (orders["order_date"].dt.date >= current_window.start) & (
-        orders["order_date"].dt.date <= current_window.end
-    )
-    period_orders = orders[mask]
-    try:
-        cohort = compute_cohort_kpis(period_orders)
-        f2_rate = cohort.get("f2_rate", 0.0)
-    except Exception:
-        f2_rate = 0.0
-
     rev = current_summary["revenue"]
     kpi_tree = {
         "new_customer_revenue": current_summary["new_customer_revenue"],
@@ -170,7 +156,6 @@ def _compute_period_block(orders: pd.DataFrame, ref_date: date, days: int) -> di
         "returning_customers": current_summary["returning_customers"],
         "returning_customers_change": changes.get("returning_customers", 0.0),
         "returning_customer_aov": current_summary["returning_customer_aov"],
-        "f2_rate": f2_rate,
     }
 
     drivers = _compute_drivers(current_summary, prior_summary)
@@ -214,32 +199,80 @@ def _compute_drivers(current: dict, prior: dict) -> dict:
 # ---------------------------------------------------------------------------
 
 
-def _compute_monthly_trend(orders: pd.DataFrame, year: int) -> list[dict]:
-    """Compute 12-month KPI series for a given year.
+def _compute_monthly_trend(orders: pd.DataFrame, ref: date, days: int = 365) -> list[dict]:
+    """Compute monthly KPI series for the trailing window.
+
+    Only includes months that actually contain data within
+    [ref - days + 1, ref]. Each entry includes ``partial`` and
+    ``days_with_data`` when the month has data for less than half its days.
 
     Returns list of dicts with keys: month, revenue, orders, aov,
-    customers, new_customers, returning_customers.
+    customers, new_customers, returning_customers, partial, days_with_data.
     """
     import calendar
+    from datetime import timedelta
+
+    window_start = ref - timedelta(days=days - 1)
+    window_end = ref
+
+    # Determine the range of months that overlap with the window
+    start_year, start_month = window_start.year, window_start.month
+    end_year, end_month = window_end.year, window_end.month
 
     trend = []
-    for month in range(1, 13):
-        last_day = calendar.monthrange(year, month)[1]
+    y, m = start_year, start_month
+    while (y, m) <= (end_year, end_month):
+        month_first = date(y, m, 1)
+        month_last_day = calendar.monthrange(y, m)[1]
+        month_last = date(y, m, month_last_day)
+
+        # Clip to window bounds
+        period_start = max(month_first, window_start)
+        period_end = min(month_last, window_end)
+
         period = PeriodRange(
-            label=f"{year}-{month:02d}",
-            start=date(year, month, 1),
-            end=date(year, month, last_day),
+            label=f"{y}-{m:02d}",
+            start=period_start,
+            end=period_end,
         )
         summary = compute_period_summary(orders, period)
-        trend.append({
-            "month": f"{year}-{month:02d}",
+
+        # Skip months with zero data
+        if summary["orders"] == 0 and summary["revenue"] == 0.0:
+            # Advance month
+            m += 1
+            if m > 12:
+                m = 1
+                y += 1
+            continue
+
+        # Count actual days with data
+        mask = (orders["order_date"].dt.date >= period_start) & (
+            orders["order_date"].dt.date <= period_end
+        )
+        days_with_data = int(orders.loc[mask, "order_date"].dt.date.nunique())
+        is_partial = days_with_data < month_last_day / 2
+
+        entry = {
+            "month": f"{y}-{m:02d}",
             "revenue": summary["revenue"],
             "orders": summary["orders"],
             "aov": summary["aov"],
             "customers": summary["customers"],
             "new_customers": summary["new_customers"],
             "returning_customers": summary["returning_customers"],
-        })
+            "days_with_data": days_with_data,
+        }
+        if is_partial:
+            entry["partial"] = True
+        trend.append(entry)
+
+        # Advance month
+        m += 1
+        if m > 12:
+            m = 1
+            y += 1
+
     return trend
 
 
@@ -281,6 +314,8 @@ def _build_checks(
     checks: list[CheckResult] = []
 
     # ===== Revenue checks (R01, R03, R04, R05, R07, R08, R13, R14) =====
+    partial_last = rev_kpis.get("partial_last_month", False)
+
     mom = rev_kpis.get("mom_growth_latest", float("nan"))
     try:
         mom = float(mom)
@@ -292,16 +327,24 @@ def _build_checks(
                          "Insufficient data for MoM growth (<2 months)", None, 0.0)
         )
     else:
+        suffix = " (partial month excluded)" if partial_last else ""
         checks.append(
             CheckResult("R01", "revenue", "high",
                          "pass" if mom > 0 else ("watch" if mom > -0.05 else "fail"),
-                         f"MoM revenue growth: {mom:.1%}", mom, 0.0)
+                         f"MoM revenue growth: {mom:.1%}{suffix}", mom, 0.0)
         )
 
-    # R03 — AOV Trend
+    # R03 — AOV Trend (skip partial last month)
     monthly_aov = rev_kpis.get("monthly_aov", {})
-    if len(monthly_aov) >= 2:
-        aov_vals = list(monthly_aov.values())
+    aov_vals = list(monthly_aov.values())
+    if partial_last and len(aov_vals) >= 3:
+        aov_change = (aov_vals[-2] - aov_vals[-3]) / aov_vals[-3] if aov_vals[-3] else 0
+        checks.append(
+            CheckResult("R03", "revenue", "high",
+                         "pass" if aov_change > -0.05 else ("watch" if aov_change > -0.1 else "fail"),
+                         f"AOV MoM change: {aov_change:.1%} (partial month excluded)", aov_change, -0.05)
+        )
+    elif not partial_last and len(aov_vals) >= 2:
         aov_change = (aov_vals[-1] - aov_vals[-2]) / aov_vals[-2] if aov_vals[-2] else 0
         checks.append(
             CheckResult("R03", "revenue", "high",
@@ -309,10 +352,17 @@ def _build_checks(
                          f"AOV MoM change: {aov_change:.1%}", aov_change, -0.05)
         )
 
-    # R04 — Order Count Trend
+    # R04 — Order Count Trend (skip partial last month)
     monthly_orders = rev_kpis.get("monthly_orders", {})
-    if len(monthly_orders) >= 2:
-        ord_vals = list(monthly_orders.values())
+    ord_vals = list(monthly_orders.values())
+    if partial_last and len(ord_vals) >= 3:
+        ord_change = (ord_vals[-2] - ord_vals[-3]) / ord_vals[-3] if ord_vals[-3] else 0
+        checks.append(
+            CheckResult("R04", "revenue", "high",
+                         "pass" if ord_change > -0.05 else ("watch" if ord_change > -0.1 else "fail"),
+                         f"MoM order count change: {ord_change:.1%} (partial month excluded)", ord_change, -0.05)
+        )
+    elif not partial_last and len(ord_vals) >= 2:
         ord_change = (ord_vals[-1] - ord_vals[-2]) / ord_vals[-2] if ord_vals[-2] else 0
         checks.append(
             CheckResult("R04", "revenue", "high",
@@ -322,11 +372,11 @@ def _build_checks(
 
     # R05 — Repeat Customer Revenue Share
     repeat_share = rev_kpis.get("repeat_revenue_share", 0)
-    f2_rate_for_cross_check = cohort_kpis.get("f2_rate", 0)
-    if repeat_share == 0 and f2_rate_for_cross_check > 0.3:
+    rpr_for_cross_check = cohort_kpis.get("repeat_purchase_rate", 0)
+    if repeat_share == 0 and rpr_for_cross_check > 0.3:
         checks.append(
             CheckResult("R05", "revenue", "critical", "watch",
-                         f"Repeat customer revenue share: {repeat_share:.1%} (data quality issue: F2={f2_rate_for_cross_check:.1%})",
+                         f"Repeat customer revenue share: {repeat_share:.1%} (data quality issue: repeat purchase rate={rpr_for_cross_check:.1%})",
                          repeat_share, 0.3)
         )
     else:
@@ -440,11 +490,11 @@ def _build_checks(
         )
 
     # ===== Customer checks (C01, C08, C09, C10, C11) =====
-    f2 = cohort_kpis.get("f2_rate", 0)
+    rpr = cohort_kpis.get("repeat_purchase_rate", 0)
     checks.append(
         CheckResult("C01", "customer", "critical",
-                     "pass" if f2 >= 0.25 else ("watch" if f2 >= 0.15 else "fail"),
-                     f"F2 conversion rate: {f2:.1%}", f2, 0.25)
+                     "pass" if rpr >= 0.25 else ("watch" if rpr >= 0.15 else "fail"),
+                     f"Repeat purchase rate: {rpr:.1%}", rpr, 0.25)
     )
 
     avg_interval = cohort_kpis.get("avg_purchase_interval_days", float("nan"))
@@ -627,20 +677,55 @@ def build_review_data(
         block = _compute_period_block(orders, ref, period_days[p])
         periods_data[p] = block
 
-    # 5. Monthly trend for 365d
+    # 5. Monthly trend + repeat purchase rate for 365d
     if "365d" in periods_data:
-        periods_data["365d"]["monthly_trend"] = _compute_monthly_trend(orders, ref.year)
+        periods_data["365d"]["monthly_trend"] = _compute_monthly_trend(orders, ref, days=365)
 
     # 6. Health checks on longest available period's data
     rev_kpis = compute_revenue_kpis(orders)
     cohort_kpis = compute_cohort_kpis(orders)
     checks = _build_checks(rev_kpis, cohort_kpis, orders)
 
-    # 7. Score
-    health = score_checks(checks)
+    # 6a. Add repeat_purchase_rate to 365d block (computed from all data)
+    if "365d" in periods_data:
+        periods_data["365d"]["repeat_purchase_rate"] = cohort_kpis.get("repeat_purchase_rate", 0.0)
+
+    # 6b. Data quality warnings
+    data_quality: list[dict] = []
+    data_span_days = (orders["order_date"].max() - orders["order_date"].min()).days
+
+    if rev_kpis.get("partial_last_month"):
+        data_quality.append({
+            "type": "partial_period",
+            "period": rev_kpis["partial_last_month_label"],
+            "days_with_data": rev_kpis["partial_last_month_days"],
+            "message": (
+                f"Latest month ({rev_kpis['partial_last_month_label']}) has only "
+                f"{rev_kpis['partial_last_month_days']} days of data. "
+                "MoM comparisons use prior complete months."
+            ),
+        })
+
+    if data_span_days < 90:
+        data_quality.append({
+            "type": "short_data_span",
+            "days": data_span_days,
+            "message": (
+                f"Data spans only {data_span_days} days. "
+                "90d and 365d analyses are unavailable; interpret results with caution."
+            ),
+        })
+    elif data_span_days < 365:
+        data_quality.append({
+            "type": "limited_data_span",
+            "days": data_span_days,
+            "message": (
+                f"Data spans {data_span_days} days (<1 year). "
+                "365d analysis may be unavailable; year-over-year comparisons are limited."
+            ),
+        })
 
     # Annualize revenue
-    data_span_days = (orders["order_date"].max() - orders["order_date"].min()).days
     total_revenue = rev_kpis["total_revenue"]
     if 0 < data_span_days < 365:
         annual_revenue = total_revenue * (365 / data_span_days)
@@ -659,13 +744,10 @@ def build_review_data(
     review_data = {
         "version": __version__,
         "metadata": metadata,
+        "data_quality": data_quality,
         "data_coverage": data_coverage,
         "periods": periods_data,
         "health": {
-            "category_scores": {
-                cat: {"score": cs.score, "level": cs.level}
-                for cat, cs in health.category_scores.items()
-            },
             "checks": [
                 {
                     "id": c.check_id,

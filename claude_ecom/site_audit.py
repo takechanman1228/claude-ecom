@@ -15,7 +15,7 @@ from dataclasses import dataclass, field
 from pathlib import Path
 from urllib.parse import urlparse
 
-from .scoring import CheckResult
+from .checks import CheckResult
 
 
 @dataclass

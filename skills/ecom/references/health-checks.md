@@ -73,10 +73,10 @@ Three categories: Revenue, Customer, Product.
 
 ## Customer Checks (5 implemented)
 
-### C01 -- F2 Conversion Rate
+### C01 -- Repeat Purchase Rate
 - **Severity:** Critical (5.0x)
 - **Thresholds:** PASS: > 25% of first-time buyers make a second purchase | WATCH: 15-25% | FAIL: < 15%
-- **Interpretation:** The single most important retention metric. F2 conversion is the foundation of all customer lifetime value -- customers who buy a second time have a 45% chance of buying a third.
+- **Interpretation:** The single most important retention metric. Repeat purchase conversion is the foundation of all customer lifetime value -- customers who buy a second time have a 45% chance of buying a third.
 
 ### C08 -- Champions + Loyal Segment Share
 - **Severity:** Medium (1.5x)
@@ -180,7 +180,7 @@ Each health check maps to one or more KPI tree nodes. The node's marker
 
 | Check | What it signals |
 |-------|----------------|
-| C01 | F2 conversion -- foundation of repeat revenue |
+| C01 | Repeat purchase rate -- foundation of repeat revenue |
 | C08 | High-value customer segment strength |
 | C09 | At-risk customer erosion |
 | C10 | Lost customer accumulation |

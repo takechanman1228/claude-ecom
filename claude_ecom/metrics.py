@@ -2,6 +2,7 @@
 
 from __future__ import annotations
 
+import calendar
 import math
 
 import pandas as pd
@@ -60,8 +61,30 @@ def compute_revenue_kpis(orders: pd.DataFrame) -> dict:
     else:
         daily_cv = float("nan")
 
-    # MoM growth — guard NaN/inf
-    if len(monthly) > 1:
+    # Partial last month detection
+    last_period = monthly.index[-1] if len(monthly) else None
+    partial_last_month = False
+    partial_last_month_days = 0
+    partial_last_month_label = ""
+    if last_period is not None:
+        lp_year = last_period.start_time.year
+        lp_month = last_period.start_time.month
+        days_in_month = calendar.monthrange(lp_year, lp_month)[1]
+        # Count actual days with data in the last month
+        last_month_dates = orders.loc[
+            orders["month"] == last_period, "order_date"
+        ].dt.date.nunique()
+        partial_last_month_days = int(last_month_dates)
+        partial_last_month_label = f"{lp_year}-{lp_month:02d}"
+        if last_month_dates < days_in_month / 2:
+            partial_last_month = True
+
+    # MoM growth — guard NaN/inf; skip partial last month
+    if partial_last_month and len(monthly) > 2:
+        # Use the two most recent complete months
+        raw_mom = monthly["mom_growth"].iloc[-2]
+        mom_growth_latest = _safe_float(raw_mom)
+    elif not partial_last_month and len(monthly) > 1:
         raw_mom = monthly["mom_growth"].iloc[-1]
         mom_growth_latest = _safe_float(raw_mom)
     else:
@@ -79,6 +102,9 @@ def compute_revenue_kpis(orders: pd.DataFrame) -> dict:
         "monthly_revenue": monthly["revenue"].to_dict(),
         "monthly_aov": monthly["aov"].to_dict(),
         "monthly_orders": monthly["order_count"].to_dict(),
+        "partial_last_month": partial_last_month,
+        "partial_last_month_days": partial_last_month_days,
+        "partial_last_month_label": partial_last_month_label,
     }
 
 
@@ -124,9 +150,9 @@ def compute_cohort_kpis(orders: pd.DataFrame) -> dict:
 
     total_customers = orders["customer_id"].nunique()
 
-    # F2 rate: customers who ordered at least twice
+    # Repeat purchase rate: customers who ordered at least twice
     order_counts = orders.groupby("customer_id")["order_id"].nunique()
-    f2_rate = (order_counts >= 2).mean() if len(order_counts) else 0
+    repeat_purchase_rate = (order_counts >= 2).mean() if len(order_counts) else 0
 
     # Average purchase interval
     cust_dates = orders.groupby("customer_id")["order_date"].apply(lambda s: s.sort_values().diff().dt.days.mean())
@@ -134,7 +160,7 @@ def compute_cohort_kpis(orders: pd.DataFrame) -> dict:
 
     return {
         "total_customers": int(total_customers),
-        "f2_rate": float(f2_rate),
+        "repeat_purchase_rate": float(repeat_purchase_rate),
         "avg_purchase_interval_days": avg_purchase_interval,
     }
 

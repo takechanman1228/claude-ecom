@@ -68,7 +68,7 @@ The check descriptions below use only **implemented checks** (those the Python b
 
 | Check ID | Brief description (what "non-pass" typically implies) |
 |---|---|
-| C01 | Repeat purchase rate (F2 conversion) is low for the business model/category. |
+| C01 | Repeat purchase rate is low for the business model/category. |
 | C08 | Champions + Loyal segment share is low (not enough high-value customers). |
 | C09 | At-Risk segment share is high (engaged customers drifting away). |
 | C10 | Lost segment share is high (chronic retention failure). |

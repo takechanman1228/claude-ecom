@@ -89,7 +89,7 @@ Revenue {value} (vs prior period: {change}%)
 |-- {marker} Existing Customer Revenue {value} ({share}% of total)
     |-- Returning Customers: {n} ({change}%)
     |-- Returning AOV: ${value} ({change}%)
-    |-- F2 Rate: {pct}% -- first-to-second purchase conversion
+    |-- Repeat Purchase Rate: {pct}% -- first-to-second purchase conversion (365d only)
 ```
 
 ### Worked Example (365d)
@@ -102,7 +102,7 @@ Revenue $1.38M (YoY +25.7%)
 |-- 🟢 Existing Customer Revenue $799K (57.7% of total)
     |-- Returning Customers: 953 (+10.3%)
     |-- Returning AOV: $838 (+18.2%)
-    |-- F2 Rate: 38%
+    |-- Repeat Purchase Rate: 38%
 ```
 
 ### Worked Example (30d)
@@ -117,7 +117,7 @@ Revenue $98K (MoM: = flat)
 |-- 🟢 Existing Customer Revenue $60K (61.2%)
     |-- Returning Customers: 192 (-3%)
     |-- Returning AOV: $312 (+1%)
-    |-- F2 Rate: 96%
+    |-- Repeat Purchase Rate: 96%
 ```
 
 ### Marker Decision Rules
@@ -145,19 +145,17 @@ Why it matters: However, despite a 25.4% reduction in discount rate, new custome
                revenue share remains at 42.3% -- growth depends entirely on
                existing customer AOV increases (+14.8%). If existing customer
                purchase frequency slows, growth stops.
-What to do:    Reallocate 20% of retention budget to acquisition channels. Start
-               channel test by end of this month. Target: CPA below $XX in 3 months.
+What to do:    Reallocate retention budget toward acquisition channels to diversify growth sources.
 ```
 
 ### Retention Cliff
 
 ```
-What is:       F2 rate (first-to-second purchase conversion) is 38%, near top quartile.
+What is:       Repeat purchase rate (first-to-second purchase conversion) is 38%, near top quartile.
 Why it matters: However, F3 rate drops to 18% -- a 53% falloff between second and
                third purchase. More than half of second-time buyers never come back,
                creating a ceiling on customer lifetime value.
-What to do:    Launch automated personalized recommendation email within 30 days of
-               second purchase. Target: F3 rate of 25% within 6 months.
+What to do:    Launch a post-second-purchase re-engagement sequence to close the F2-to-F3 gap.
 ```
 
 ### Seasonality Dependency
@@ -167,8 +165,7 @@ What is:       Q4 (Oct-Dec) accounts for 41% of annual revenue.
 Why it matters: Q4 dependency rose 5 percentage points from prior year (was 36%).
                Q1-Q3 quarterly average is $197K and flat -- any Q4 shortfall now
                threatens the full-year target with no buffer.
-What to do:    Launch a summer campaign in Q2 to lift non-Q4 revenue by 15%. Finalize
-               campaign plan by April, execute in June.
+What to do:    Build a non-Q4 revenue lever (e.g., summer campaign) to reduce seasonal dependency.
 ```
 
 ### Product Concentration
@@ -178,8 +175,7 @@ What is:       Top 5 SKUs account for 62% of total revenue.
 Why it matters: Two of these SKUs are 18+ months old with YoY growth declining 8%.
                No replacement SKUs are in the pipeline. If these two slow further,
                total revenue declines directly.
-What to do:    Launch 2 new SKUs next quarter to reduce top-5 dependency below 50%.
-               Kick off with product team next week.
+What to do:    Accelerate new SKU pipeline to reduce top-5 revenue concentration.
 ```
 
 ### Revenue Volatility
@@ -189,8 +185,7 @@ What is:       Daily revenue coefficient of variation is 0.77 over the last 90 d
 Why it matters: D2C benchmark is below 0.5. High volatility means revenue depends on
                spike days (promotions, viral moments) rather than consistent demand.
                This makes forecasting unreliable and inventory planning difficult.
-What to do:    Shift 30% of promotional budget from flash sales to always-on acquisition.
-               Implement by next month. Target: CV below 0.6 within 90 days.
+What to do:    Shift promotional budget from flash sales toward always-on acquisition to stabilize daily revenue.
 ```
 
 ### Discount Creep
@@ -200,8 +195,7 @@ What is:       Average discount rate is 6.6%, within healthy range.
 Why it matters: However, 55% of orders include a discount -- up from 42% last quarter.
                The rate per order is low, but the breadth of discounting is expanding.
                If unchecked, customers begin to expect discounts on every purchase.
-What to do:    Cap discounted order ratio at 40% by restricting promo code distribution
-               to targeted segments only. Implement this month. Monitor AOV as guardrail.
+What to do:    Restrict promo code distribution to targeted segments to cap discounted order ratio.
 ```
 
 ### Customer Acquisition Stall
@@ -211,8 +205,7 @@ What is:       New customer count grew 10.3% YoY.
 Why it matters: Despite this, new customer revenue share has not improved (42.3%,
                unchanged). New customer AOV is 2.6x lower than returning customer AOV,
                meaning acquisition growth isn't translating to revenue share gains.
-What to do:    Test upsell flow for first-time buyers (post-purchase bundle offer).
-               Launch A/B test within 2 weeks. Target: new customer AOV +15% in 90 days.
+What to do:    Test an upsell flow for first-time buyers to lift new customer AOV.
 ```
 
 ---
@@ -248,7 +241,7 @@ and whether recent initiatives are working. Compare to prior 90 days.
 
 **Headline examples:**
 - "90d Momentum: Growth is decelerating -- AOV gains slowing while volume is flat"
-- "90d Momentum: Retention improvements are paying off -- F2 rate up 4pp"
+- "90d Momentum: Retention improvements are paying off -- repeat purchase rate up 4pp"
 - "90d Momentum: Mixed signals -- orders up but AOV declining, net revenue flat"
 
 ### 365d Structure

@@ -44,7 +44,6 @@ class TestGenerateReviewJson:
         with open(path) as f:
             parsed = json.load(f)
         health = parsed["health"]
-        assert "category_scores" in health
         assert "checks" in health
         assert "top_issues" in health
 
