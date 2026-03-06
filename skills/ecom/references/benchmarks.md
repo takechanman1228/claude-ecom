@@ -1,6 +1,12 @@
 # Vertical-Specific Benchmarks
 
-This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calendars, structural challenges, and strategy playbooks for six ecommerce verticals. Use the KPI tables to contextualize review findings by swapping in vertical-appropriate expectations for four high-variance metrics: Repeat Purchase Rate (repeat_purchase_rate), AOV, Discount rate (avg_discount_rate_trend), and Gross margin. Thresholds assume a typical ecommerce operator in a competitive market; apply additional modifiers for subscription, marketplace, dropship, luxury, or B2B business models.
+This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calendars, structural challenges, and strategy playbooks for six ecommerce verticals. Use the KPI tables to contextualize review findings by swapping in vertical-appropriate expectations for four high-variance metrics: Repeat Purchase Rate (repeat_purchase_rate), AOV, Discount rate (avg_discount_rate_trend), and Gross margin. Thresholds assume a typical ecommerce operator in a competitive market; apply additional modifiers for subscription, marketplace, dropship, luxury, or B2B business models. Modifier values are not yet codified and should be calibrated per engagement.
+
+**Scope note:** This file covers four high-variance KPIs only. Customer acquisition cost (CAC) and LTV:CAC ratio are intentionally excluded; a store with low Repeat Purchase Rate but high per-order LTV (e.g., high-AOV electronics) may still be healthy when evaluated on a full-funnel basis. Do not use these thresholds as the sole basis for a pass/fail judgment without considering acquisition economics.
+
+**Margin assumption:** Gross margin ranges for Fashion & Apparel and Beauty & Cosmetics assume brand-owned DTC operations, where the brand captures manufacturing-to-consumer margin. Multi-brand retailers, resellers, and marketplace sellers typically operate 10--20 pp lower; adjust thresholds accordingly.
+
+**Discount rate methodology:** The discount rate KPI (avg_discount_rate_trend) measures the store's average realized discount rate across all orders in the review period -- not peak promotional markdown depth during events. Rationale sections reference peak event depths (e.g., holiday, BFCM) for context on consumer expectations, but these peaks are distinct from the year-round average that triggers pass/watch/fail.
 
 ---
 
@@ -12,12 +18,12 @@ This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calend
 |---|---:|---:|---:|
 | Repeat Purchase Rate (repeat_purchase_rate) | >= 25% | 15%--24.9% | < 15% |
 | AOV | >= $160 | $120--$159 | < $120 |
-| Discount rate (avg_discount_rate_trend) | <= 20% | 20%--30% | > 30% |
+| Discount rate (avg_discount_rate_trend) | <= 20% | 20.1%--30% | > 30% |
 | Gross margin | >= 50% | 40%--49.9% | < 40% |
 
 ### Rationale
 
-Fashion has structurally higher gross margins than electronics or grocery, supporting a higher fail threshold. Discount dependency is common, with peak seasonal discount depths in the mid-20% range and consumers trained to expect 30%+ during Black Friday.
+Fashion has structurally higher gross margins than electronics or grocery, supporting a higher fail threshold. The discount rate pass threshold (<=20%) targets the year-round average realized discount; peak seasonal markdown depths run higher (mid-20% range for apparel during major deal events, with consumers trained to expect 30%+ during Black Friday), but a store whose annual average exceeds 20% is likely running always-on promotions rather than event-led discounting.
 
 ### Seasonal Calendar
 
@@ -55,7 +61,7 @@ Fashion has structurally higher gross margins than electronics or grocery, suppo
 |---|---:|---:|---:|
 | Repeat Purchase Rate (repeat_purchase_rate) | >= 30% | 20%--29.9% | < 20% |
 | AOV | >= $120 | $80--$119 | < $80 |
-| Discount rate (avg_discount_rate_trend) | <= 15% | 15%--25% | > 25% |
+| Discount rate (avg_discount_rate_trend) | <= 15% | 15.1%--25% | > 25% |
 | Gross margin | >= 65% | 55%--64.9% | < 55% |
 
 ### Rationale
@@ -71,6 +77,7 @@ Beauty converts strongly and product margins are structurally high (often ~55%--
 ### Top Structural Challenges
 
 - Loyalty fragility in a crowded market (high switching), making personalization, routine-building, and CRM flows disproportionately important to lift repeat purchase rate.
+- Shade/formula mismatch risk: incorrect product selection (especially in color cosmetics and skincare) drives returns and erodes trust, making guided selling and education a conversion prerequisite.
 
 ### Recommended Strategy Playbook
 
@@ -97,13 +104,13 @@ Beauty converts strongly and product margins are structurally high (often ~55%--
 | KPI | Pass | Watch | Fail |
 |---|---:|---:|---:|
 | Repeat Purchase Rate (repeat_purchase_rate) | >= 40% | 25%--39.9% | < 25% |
-| AOV | >= $75 | $55--$74 | < $55 |
-| Discount rate (avg_discount_rate_trend) | <= 10% | 10%--15% | > 15% |
+| AOV | >= $65 | $50--$64 | < $50 |
+| Discount rate (avg_discount_rate_trend) | <= 10% | 10.1%--15% | > 15% |
 | Gross margin | >= 25% | 18%--24.9% | < 18% |
 
 ### Rationale
 
-Grocery/food retail margin is structurally low (mid-20s gross margin, large grocers often in the low-20s), which means discounting and shipping subsidies quickly become existential. Basket sizes are generally lower than categories like home goods, with industry snapshots showing ~$69 AOV in Q1.
+Grocery/food retail margin is structurally low (mid-20s gross margin, large grocers often in the low-20s), which means discounting and shipping subsidies quickly become existential. Basket sizes are generally lower than categories like home goods, with industry snapshots showing ~$69 AOV in Q1. The AOV pass threshold is set at $65 to avoid penalizing typical operators in a structurally low-basket category.
 
 ### Seasonal Calendar
 
@@ -139,14 +146,14 @@ Grocery/food retail margin is structurally low (mid-20s gross margin, large groc
 
 | KPI | Pass | Watch | Fail |
 |---|---:|---:|---:|
-| Repeat Purchase Rate (repeat_purchase_rate) | >= 15% | 8%--14.9% | < 8% |
+| Repeat Purchase Rate (repeat_purchase_rate) | >= 12% | 8%--11.9% | < 8% |
 | AOV | >= $180 | $120--$179 | < $120 |
-| Discount rate (avg_discount_rate_trend) | <= 15% | 15%--25% | > 25% |
+| Discount rate (avg_discount_rate_trend) | <= 15% | 15.1%--25% | > 25% |
 | Gross margin | >= 25% | 15%--24.9% | < 15% |
 
 ### Rationale
 
-Electronics is structurally margin-thin compared to beauty and apparel; large electronics retailers commonly operate with gross margins in the low-20% range, so gross margin should not be audited against beauty-like expectations. Discounting peaks aggressively during holiday periods (~30.9% peak discounts in one holiday season report), but persistent high discount depth outside deal events signals price-matching stress and weak differentiation.
+Electronics is structurally margin-thin compared to beauty and apparel; large electronics retailers commonly operate with gross margins in the low-20% range, so gross margin should not be audited against beauty-like expectations. Repeat purchase rates are structurally low due to long replacement cycles; the pass threshold is set at 12% (rather than the top of the typical range) to avoid flagging healthy stores whose customers simply don't need to buy again soon. The discount rate pass threshold (<=15%) targets the year-round average realized discount; peak event markdown depths for electronics are considerably higher (~30% during holiday deal events), but persistent high average discount depth outside deal windows signals price-matching stress and weak differentiation.
 
 ### Seasonal Calendar
 
@@ -157,6 +164,7 @@ Electronics is structurally margin-thin compared to beauty and apparel; large el
 ### Top Structural Challenges
 
 - Low gross margins + price transparency drive a "race to the bottom," so shipping leakage or heavy discounting quickly breaks contribution margin.
+- Long replacement cycles and low natural repeat: most electronics purchases are one-off or multi-year, making accessory attach and ecosystem lock-in critical to lifetime value.
 
 ### Recommended Strategy Playbook
 
@@ -183,7 +191,7 @@ Electronics is structurally margin-thin compared to beauty and apparel; large el
 |---|---:|---:|---:|
 | Repeat Purchase Rate (repeat_purchase_rate) | >= 15% | 10%--14.9% | < 10% |
 | AOV | >= $250 | $150--$249 | < $150 |
-| Discount rate (avg_discount_rate_trend) | <= 15% | 15%--25% | > 25% |
+| Discount rate (avg_discount_rate_trend) | <= 15% | 15.1%--25% | > 25% |
 | Gross margin | >= 35% | 25%--34.9% | < 25% |
 
 ### Rationale
@@ -199,6 +207,7 @@ Home & furniture categories have structurally high AOV (~$266 in one benchmark s
 ### Top Structural Challenges
 
 - "Ops is the product": delivery fees, lead times, damage risk, and poor post-purchase comms become conversion drivers.
+- Low purchase frequency and long consideration cycles: customers may buy furniture once every few years, making LTV-building through cross-category expansion (decor, textiles, accessories) and post-purchase nurture essential.
 
 ### Recommended Strategy Playbook
 
@@ -226,7 +235,7 @@ Home & furniture categories have structurally high AOV (~$266 in one benchmark s
 |---|---:|---:|---:|
 | Repeat Purchase Rate (repeat_purchase_rate) | >= 30% | 18%--29.9% | < 18% |
 | AOV | >= $75 | $55--$74 | < $55 |
-| Discount rate (avg_discount_rate_trend) | <= 15% | 15%--25% | > 25% |
+| Discount rate (avg_discount_rate_trend) | <= 15% | 15.1%--25% | > 25% |
 | Gross margin | >= 50% | 40%--49.9% | < 40% |
 
 ### Rationale
@@ -235,7 +244,7 @@ Health & wellness is a blended vertical: consumable products (supplements, routi
 
 ### Seasonal Calendar
 
-- **Peak months:** January (New Year behavior change) and Nov--Dec (holiday gifting and deal season).
+- **Peak months:** Jan (New Year behavior change / resolution spike), Sep (back-to-routine after summer), and Nov--Dec (holiday gifting and deal season).
 - **Pre-season prep timeline:** 6--10 weeks before Jan and holiday: validate claims/labeling, refresh educational content, and make subscription/refill mechanics prominent to capture routine-building intent.
 - **Markdown windows:** BFCM/Cyber Week plus New Year promotions; keep routine products focused on subscription/refill value rather than deep markdown dependence.
 
