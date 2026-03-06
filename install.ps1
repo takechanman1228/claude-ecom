@@ -19,7 +19,6 @@ $ErrorActionPreference = "Stop"
 
 # ── Configuration ──────────────────────────────────────────────
 $SkillDir   = Join-Path $env:USERPROFILE ".claude\skills\ecom"
-# TODO: Replace with actual repo URL once created
 $RepoUrl    = "https://github.com/takechanman1228/claude-ecom"
 
 # ── Banner ─────────────────────────────────────────────────────
@@ -88,15 +87,14 @@ Write-Host "[ok] claude-ecom installed successfully!" -ForegroundColor Green
 Write-Host ""
 Write-Host "  Installed:"
 Write-Host "    - 1 skill (ecom)"
-Write-Host "    - 16 reference files"
+Write-Host "    - 6 reference files"
 Write-Host ""
 Write-Host "  Usage:"
 Write-Host "    1. Start Claude Code:  claude"
-Write-Host "    2. Run commands:       /ecom audit"
-Write-Host "                           /ecom review"
+Write-Host "    2. Run command:        /ecom review"
 Write-Host ""
 if ($WithCLI) {
-    Write-Host "  CLI installed. Run: ecom audit orders.csv"
+    Write-Host "  CLI installed. Run: ecom review orders.csv"
 } else {
     Write-Host "  To also install the Python CLI: .\install.ps1 -WithCLI"
 }

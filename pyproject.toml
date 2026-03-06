@@ -26,9 +26,7 @@ classifiers = [
 dependencies = [
     "pandas>=2.0",
     "click>=8.0",
-    "jinja2>=3.0",
     "numpy>=1.24",
-    "scipy>=1.10",
 ]
 
 [project.optional-dependencies]
@@ -36,13 +34,7 @@ dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
 ]
-api = [
-    "httpx>=0.27",
-    "tomli>=2.0; python_version<'3.11'",
-]
 parquet = ["pyarrow>=14.0"]
-site = ["playwright>=1.40"]
-all = ["claude-ecom[api,parquet,site]"]
 
 [project.scripts]
 ecom = "claude_ecom.cli:cli"

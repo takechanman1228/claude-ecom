@@ -6,7 +6,6 @@ set -euo pipefail
 
 main() {
     SKILL_DIR="${HOME}/.claude/skills/ecom"
-    # TODO: Replace with actual repo URL once created
     REPO_URL="https://github.com/takechanman1228/claude-ecom"
     WITH_CLI=false
 

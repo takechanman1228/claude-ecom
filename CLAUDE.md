@@ -23,9 +23,6 @@ REVIEW.md                   <-- Human-readable: narrative insights, not just num
 ```
 
 **Key principle:** Python computes the numbers. Claude interprets them.
-The Jinja2 templates (templates/*.j2) are legacy and unused by the new flow.
-The primary report is written by Claude using SKILL.md instructions,
-which reads review.json and reference files to produce natural language insights.
 
 ## Structure
 
@@ -33,12 +30,11 @@ which reads review.json and reference files to produce natural language insights
 claude_ecom/          # Python package (pip install -e .)
   cli.py              # Click CLI: ecom review | validate
   loader.py           # CSV/Parquet data loading
-  metrics.py          # KPI computation
   checks.py           # Check result types, impact estimation, action builders
   report.py           # Report generation (generate_review_json)
   review_engine.py    # Unified period-based review builder (30d/90d/365d)
   periods.py          # Trailing window + data coverage utilities
-  ...                 # cohort, product, pricing, decomposition, normalize (+ unused: inventory, site_audit, shopify_api, sync, config)
+  scoring.py          # Health scoring, top issues, action candidates
 skills/ecom/          # Claude Code skill (SKILL.md + references/)
   SKILL.md            # LLM instructions for interpreting review.json
   references/         # 6 reference files loaded on-demand for interpretation

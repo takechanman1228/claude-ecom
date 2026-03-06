@@ -12,7 +12,7 @@ class CheckResult:
     check_id: str
     category: str
     severity: str  # critical, high, medium, low
-    result: str  # pass, watch, warning, fail, na
+    result: str  # pass, watch, fail, na
     message: str = ""
     current_value: float | str | None = None
     threshold: float | str | None = None

@@ -13,8 +13,6 @@ htmlcov/
 .venv/
 .env
 .claude-ecom/
-.ecom-analytics/
 .DS_Store
-miki-house-data/
 /review.json
 /REVIEW.md

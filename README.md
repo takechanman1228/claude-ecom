@@ -37,7 +37,7 @@ ecom review orders.csv --period 90d
 | Customer | 30% | C01, C08–C11 |
 | Product | 30% | P01, P05–P07, P10, P19 |
 
-Health levels: **strong** (75–100) · **needs_attention** (50–74) · **weak** (< 50)
+Health levels: **pass** · **watch** · **fail**
 
 ## Multi-Period Architecture
 
