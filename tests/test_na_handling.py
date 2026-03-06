@@ -3,7 +3,6 @@
 import math
 
 import pandas as pd
-import pytest
 
 from claude_ecom.checks import (
     CheckResult,
@@ -41,17 +40,21 @@ class TestNAMetrics:
         """Create minimal order DataFrame spanning given months."""
         dates = []
         for m in range(months):
-            dates.extend([
-                f"2024-{m+1:02d}-01",
-                f"2024-{m+1:02d}-15",
-            ])
+            dates.extend(
+                [
+                    f"2024-{m + 1:02d}-01",
+                    f"2024-{m + 1:02d}-15",
+                ]
+            )
         n = len(dates)
-        return pd.DataFrame({
-            "order_id": [f"ORD-{i}" for i in range(n)],
-            "order_date": pd.to_datetime(dates),
-            "amount": [100.0] * n,
-            "customer_id": [f"CUST-{i}" for i in range(n)],
-        })
+        return pd.DataFrame(
+            {
+                "order_id": [f"ORD-{i}" for i in range(n)],
+                "order_date": pd.to_datetime(dates),
+                "amount": [100.0] * n,
+                "customer_id": [f"CUST-{i}" for i in range(n)],
+            }
+        )
 
     def test_single_month_mom_is_nan(self):
         from claude_ecom.metrics import compute_revenue_kpis
@@ -77,16 +80,18 @@ class TestNAChecks:
     def _make_orders(self, months=1, with_discount=False):
         dates = []
         for m in range(months):
-            dates.extend([
-                f"2024-{m+1:02d}-01",
-                f"2024-{m+1:02d}-15",
-            ])
+            dates.extend(
+                [
+                    f"2024-{m + 1:02d}-01",
+                    f"2024-{m + 1:02d}-15",
+                ]
+            )
         n = len(dates)
         data = {
             "order_id": [f"ORD-{i}" for i in range(n)],
             "order_date": pd.to_datetime(dates),
             "amount": [100.0] * n,
-            "customer_id": [f"CUST-{i % max(1, n//2)}" for i in range(n)],
+            "customer_id": [f"CUST-{i % max(1, n // 2)}" for i in range(n)],
             "product_name": [f"PROD-{i % 3}" for i in range(n)],
         }
         if with_discount:
@@ -126,15 +131,17 @@ class TestNumpyNaNRegression:
     def test_numpy_nan_mom_gives_na_result(self):
         import numpy as np
 
-        from claude_ecom.review_engine import _build_checks
         from claude_ecom.metrics import compute_cohort_kpis, compute_revenue_kpis
+        from claude_ecom.review_engine import _build_checks
 
-        orders = pd.DataFrame({
-            "order_id": ["ORD-1", "ORD-2"],
-            "order_date": pd.to_datetime(["2024-01-01", "2024-01-15"]),
-            "amount": [100.0, 200.0],
-            "customer_id": ["C1", "C2"],
-        })
+        orders = pd.DataFrame(
+            {
+                "order_id": ["ORD-1", "ORD-2"],
+                "order_date": pd.to_datetime(["2024-01-01", "2024-01-15"]),
+                "amount": [100.0, 200.0],
+                "customer_id": ["C1", "C2"],
+            }
+        )
         rev_kpis = compute_revenue_kpis(orders)
         # Inject numpy NaN (the bug scenario)
         rev_kpis["mom_growth_latest"] = np.nan
@@ -156,12 +163,14 @@ class TestFuzzyColumnMapping:
     def test_fuzzy_map_finds_similar_columns(self):
         from claude_ecom.loader import _fuzzy_map_columns
 
-        df = pd.DataFrame({
-            "Order Number": ["1", "2"],
-            "Purchase Date": ["2024-01-01", "2024-01-02"],
-            "Total Amount": [100, 200],
-            "Buyer ID": ["A", "B"],
-        })
+        df = pd.DataFrame(
+            {
+                "Order Number": ["1", "2"],
+                "Purchase Date": ["2024-01-01", "2024-01-02"],
+                "Total Amount": [100, 200],
+                "Buyer ID": ["A", "B"],
+            }
+        )
         # First apply exact mapping (which should find some)
         from claude_ecom.loader import _auto_map_columns
 

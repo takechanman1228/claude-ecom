@@ -6,7 +6,6 @@ Verifies: CSV input -> KPI computation -> scoring -> review.json generation.
 import json
 import os
 
-import pytest
 from click.testing import CliRunner
 
 from claude_ecom.cli import cli

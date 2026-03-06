@@ -101,9 +101,7 @@ def estimate_revenue_impact(check_results: list[CheckResult], annual_revenue: fl
 _SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 
 
-def build_top_issues(
-    checks: list[CheckResult], annual_revenue: float, max_issues: int = 10
-) -> list[dict]:
+def build_top_issues(checks: list[CheckResult], annual_revenue: float, max_issues: int = 10) -> list[dict]:
     """Build pre-sorted top issues from non-pass checks.
 
     Sorted by severity * impact. Each entry contains id, category, severity,
@@ -115,14 +113,16 @@ def build_top_issues(
         if c.result.lower() in ("pass", "na"):
             continue
         imp = impacts.get(c.check_id, {})
-        issues.append({
-            "id": c.check_id,
-            "category": c.category,
-            "severity": c.severity,
-            "result": c.result,
-            "message": c.message,
-            "estimated_annual_impact": imp.get("annual_revenue_impact", 0),
-        })
+        issues.append(
+            {
+                "id": c.check_id,
+                "category": c.category,
+                "severity": c.severity,
+                "result": c.result,
+                "message": c.message,
+                "estimated_annual_impact": imp.get("annual_revenue_impact", 0),
+            }
+        )
     issues.sort(
         key=lambda x: (
             _SEVERITY_ORDER.get(x["severity"].lower(), 9),
@@ -168,9 +168,7 @@ _ACTION_TEMPLATES: dict[str, str] = {
 }
 
 
-def build_action_candidates(
-    top_issues: list[dict], max_actions: int = 10
-) -> list[dict]:
+def build_action_candidates(top_issues: list[dict], max_actions: int = 10) -> list[dict]:
     """Build action candidates from top issues with severity-based timelines.
 
     Each entry contains action, source_check, severity, estimated_annual_impact,
@@ -186,11 +184,13 @@ def build_action_candidates(
             continue
         seen_checks.add(cid)
         action_text = _ACTION_TEMPLATES.get(cid, f"Address {issue['message']}")
-        actions.append({
-            "action": action_text,
-            "source_check": cid,
-            "severity": issue["severity"],
-            "estimated_annual_impact": issue["estimated_annual_impact"],
-            "timeline": _SEVERITY_TIMELINE.get(issue["severity"].lower(), "this_quarter"),
-        })
+        actions.append(
+            {
+                "action": action_text,
+                "source_check": cid,
+                "severity": issue["severity"],
+                "estimated_annual_impact": issue["estimated_annual_impact"],
+                "timeline": _SEVERITY_TIMELINE.get(issue["severity"].lower(), "this_quarter"),
+            }
+        )
     return actions

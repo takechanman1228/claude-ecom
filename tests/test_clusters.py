@@ -7,10 +7,8 @@ don't activate correctly, the report misses key business insights.
 4 clusters: B (Discount), C (Assortment), F (Customer), G (Concentration).
 """
 
-import pytest
-
-from claude_ecom.report import _build_clusters
 from claude_ecom.checks import CheckResult
+from claude_ecom.report import _build_clusters
 
 
 def _make_check(check_id, category, severity, result):

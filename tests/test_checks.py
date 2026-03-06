@@ -1,12 +1,10 @@
 """Tests for claude_ecom.checks."""
 
-import pytest
-
 from claude_ecom.checks import (
     CheckResult,
-    estimate_revenue_impact,
-    build_top_issues,
     build_action_candidates,
+    build_top_issues,
+    estimate_revenue_impact,
 )
 
 
@@ -56,8 +54,14 @@ class TestBuildTopIssues:
 class TestBuildActionCandidates:
     def test_generates_actions(self):
         issues = [
-            {"id": "P06", "category": "product", "severity": "high",
-             "result": "fail", "message": "test", "estimated_annual_impact": 50000},
+            {
+                "id": "P06",
+                "category": "product",
+                "severity": "high",
+                "result": "fail",
+                "message": "test",
+                "estimated_annual_impact": 50000,
+            },
         ]
         actions = build_action_candidates(issues)
         assert len(actions) >= 1
@@ -66,8 +70,14 @@ class TestBuildActionCandidates:
 
     def test_max_actions(self):
         issues = [
-            {"id": f"R{i:02d}", "category": "revenue", "severity": "medium",
-             "result": "fail", "message": "test", "estimated_annual_impact": 1000}
+            {
+                "id": f"R{i:02d}",
+                "category": "revenue",
+                "severity": "medium",
+                "result": "fail",
+                "message": "test",
+                "estimated_annual_impact": 1000,
+            }
             for i in range(20)
         ]
         actions = build_action_candidates(issues, max_actions=5)
@@ -75,8 +85,14 @@ class TestBuildActionCandidates:
 
     def test_severity_timeline_mapping(self):
         issues = [
-            {"id": "R05", "category": "revenue", "severity": "critical",
-             "result": "fail", "message": "test", "estimated_annual_impact": 100000},
+            {
+                "id": "R05",
+                "category": "revenue",
+                "severity": "critical",
+                "result": "fail",
+                "message": "test",
+                "estimated_annual_impact": 100000,
+            },
         ]
         actions = build_action_candidates(issues)
         assert actions[0]["timeline"] == "this_week"

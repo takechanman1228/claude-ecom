@@ -7,14 +7,14 @@ import pandas as pd
 import pytest
 
 from claude_ecom.loader import load_orders
+from claude_ecom.periods import PeriodRange
 from claude_ecom.review_engine import (
+    _compute_drivers,
+    _compute_monthly_trend,
     build_review_data,
     compute_period_comparison,
     compute_period_summary,
-    _compute_drivers,
-    _compute_monthly_trend,
 )
-from claude_ecom.periods import PeriodRange
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 ORDERS_CSV = os.path.join(FIXTURES_DIR, "sample_orders.csv")
@@ -30,10 +30,16 @@ class TestComputePeriodSummary:
         period = PeriodRange("June 2025", date(2025, 6, 1), date(2025, 6, 30))
         result = compute_period_summary(orders, period)
         expected_keys = {
-            "revenue", "orders", "aov", "customers",
-            "new_customers", "returning_customers",
-            "new_customer_revenue", "returning_customer_revenue",
-            "new_customer_aov", "returning_customer_aov",
+            "revenue",
+            "orders",
+            "aov",
+            "customers",
+            "new_customers",
+            "returning_customers",
+            "new_customer_revenue",
+            "returning_customer_revenue",
+            "new_customer_aov",
+            "returning_customer_aov",
             "avg_discount_rate",
         }
         assert expected_keys == set(result.keys())
@@ -48,10 +54,7 @@ class TestComputePeriodSummary:
         period = PeriodRange("June 2025", date(2025, 6, 1), date(2025, 6, 30))
         result = compute_period_summary(orders, period)
         assert result["new_customers"] + result["returning_customers"] == result["customers"]
-        assert abs(
-            result["new_customer_revenue"] + result["returning_customer_revenue"]
-            - result["revenue"]
-        ) < 0.01
+        assert abs(result["new_customer_revenue"] + result["returning_customer_revenue"] - result["revenue"]) < 0.01
 
     def test_empty_period_returns_zeros(self, orders):
         period = PeriodRange("Jan 2020", date(2020, 1, 1), date(2020, 1, 31))
@@ -185,20 +188,20 @@ class TestMonthlyTrend:
         ref = orders["order_date"].max().date()
         trend = _compute_monthly_trend(orders, ref, days=365)
         for entry in trend:
-            assert entry["revenue"] > 0 or entry["orders"] > 0, (
-                f"Month {entry['month']} has zero data but was included"
-            )
+            assert entry["revenue"] > 0 or entry["orders"] > 0, f"Month {entry['month']} has zero data but was included"
 
     def test_trailing_window_bounds(self, orders):
         ref = orders["order_date"].max().date()
         trend = _compute_monthly_trend(orders, ref, days=365)
         from datetime import timedelta
+
         window_start = ref - timedelta(days=364)
         for entry in trend:
             year, month = map(int, entry["month"].split("-"))
             # Month must overlap with [window_start, ref]
             assert date(year, month, 1) <= ref
             import calendar
+
             last_day = calendar.monthrange(year, month)[1]
             assert date(year, month, last_day) >= window_start
 
@@ -220,17 +223,25 @@ class TestMonthlyTrend:
         dates = pd.date_range("2025-12-01", "2025-12-31", freq="D")
         rows = []
         for i, d in enumerate(dates):
-            rows.append({
-                "order_id": f"O-{i}", "order_date": d,
-                "customer_id": f"C-{i}", "amount": 100.0,
-            })
+            rows.append(
+                {
+                    "order_id": f"O-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-{i}",
+                    "amount": 100.0,
+                }
+            )
         # Add 3 days in Jan 2026
         for i in range(3):
             d = pd.Timestamp("2026-01-01") + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-jan-{i}", "order_date": d,
-                "customer_id": f"C-jan-{i}", "amount": 100.0,
-            })
+            rows.append(
+                {
+                    "order_id": f"O-jan-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-jan-{i}",
+                    "amount": 100.0,
+                }
+            )
         df = pd.DataFrame(rows)
         df["order_date"] = pd.to_datetime(df["order_date"])
 
@@ -250,27 +261,42 @@ class TestPartialMonth:
         # Full December
         for i in range(31):
             d = pd.Timestamp("2025-12-01") + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-dec-{i}", "order_date": d,
-                "customer_id": f"C-{i}", "amount": 1000.0,
-                "sku": "SKU-1", "product_name": "P1",
-            })
+            rows.append(
+                {
+                    "order_id": f"O-dec-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-{i}",
+                    "amount": 1000.0,
+                    "sku": "SKU-1",
+                    "product_name": "P1",
+                }
+            )
         # Full November
         for i in range(30):
             d = pd.Timestamp("2025-11-01") + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-nov-{i}", "order_date": d,
-                "customer_id": f"C-{i}", "amount": 1000.0,
-                "sku": "SKU-1", "product_name": "P1",
-            })
+            rows.append(
+                {
+                    "order_id": f"O-nov-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-{i}",
+                    "amount": 1000.0,
+                    "sku": "SKU-1",
+                    "product_name": "P1",
+                }
+            )
         # 3 days of January (partial)
         for i in range(3):
             d = pd.Timestamp("2026-01-01") + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-jan-{i}", "order_date": d,
-                "customer_id": f"C-jan-{i}", "amount": 100.0,
-                "sku": "SKU-1", "product_name": "P1",
-            })
+            rows.append(
+                {
+                    "order_id": f"O-jan-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-jan-{i}",
+                    "amount": 100.0,
+                    "sku": "SKU-1",
+                    "product_name": "P1",
+                }
+            )
         df = pd.DataFrame(rows)
         df["order_date"] = pd.to_datetime(df["order_date"])
         return df
@@ -278,6 +304,7 @@ class TestPartialMonth:
     def test_mom_not_false_negative(self):
         """MoM should not report -87.8% from 3 days vs full month."""
         from claude_ecom.metrics import compute_revenue_kpis
+
         orders = self._make_orders_with_partial_month()
         kpis = compute_revenue_kpis(orders)
         assert kpis["partial_last_month"] is True
@@ -288,11 +315,13 @@ class TestPartialMonth:
 
     def test_r01_check_has_partial_note(self):
         """R01 check message should note partial month exclusion."""
-        from claude_ecom.metrics import compute_revenue_kpis, compute_cohort_kpis
+        from claude_ecom.metrics import compute_cohort_kpis, compute_revenue_kpis
+
         orders = self._make_orders_with_partial_month()
         rev_kpis = compute_revenue_kpis(orders)
         cohort_kpis = compute_cohort_kpis(orders)
         from claude_ecom.review_engine import _build_checks
+
         checks = _build_checks(rev_kpis, cohort_kpis, orders)
         r01 = [c for c in checks if c.check_id == "R01"][0]
         assert "partial month excluded" in r01.message
@@ -309,11 +338,16 @@ class TestDataQuality:
         rows = []
         for i in range(30):
             d = pd.Timestamp("2025-12-01") + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-{i}", "order_date": d,
-                "customer_id": f"C-{i}", "amount": 100.0,
-                "sku": "SKU-1", "product_name": "P1",
-            })
+            rows.append(
+                {
+                    "order_id": f"O-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-{i}",
+                    "amount": 100.0,
+                    "sku": "SKU-1",
+                    "product_name": "P1",
+                }
+            )
         df = pd.DataFrame(rows)
         df["order_date"] = pd.to_datetime(df["order_date"])
         data = build_review_data(df)
@@ -326,19 +360,29 @@ class TestDataQuality:
         # Full November + December
         for i in range(61):
             d = pd.Timestamp("2025-11-01") + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-{i}", "order_date": d,
-                "customer_id": f"C-{i % 20}", "amount": 100.0,
-                "sku": "SKU-1", "product_name": "P1",
-            })
+            rows.append(
+                {
+                    "order_id": f"O-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-{i % 20}",
+                    "amount": 100.0,
+                    "sku": "SKU-1",
+                    "product_name": "P1",
+                }
+            )
         # 3 days of January (partial)
         for i in range(3):
             d = pd.Timestamp("2026-01-01") + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-jan-{i}", "order_date": d,
-                "customer_id": f"C-jan-{i}", "amount": 100.0,
-                "sku": "SKU-1", "product_name": "P1",
-            })
+            rows.append(
+                {
+                    "order_id": f"O-jan-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-jan-{i}",
+                    "amount": 100.0,
+                    "sku": "SKU-1",
+                    "product_name": "P1",
+                }
+            )
         df = pd.DataFrame(rows)
         df["order_date"] = pd.to_datetime(df["order_date"])
         data = build_review_data(df)

@@ -10,8 +10,8 @@ import os
 
 import pytest
 
-from claude_ecom.review_engine import build_review_data
 from claude_ecom.loader import load_orders
+from claude_ecom.review_engine import build_review_data
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
 ORDERS_CSV = os.path.join(FIXTURES_DIR, "sample_orders.csv")
@@ -50,6 +50,7 @@ class TestReviewJsonHealth:
         for check in review_data["health"]["checks"]:
             assert check["result"] in valid_results, f"{check['id']} invalid result: {check['result']}"
 
+
 class TestReviewJsonNoNaN:
     """Ensure review data never contains NaN -- breaks JSON parsing."""
 
@@ -66,11 +67,13 @@ class TestReviewJsonNoNaN:
 
     def test_no_nan_or_infinity(self, review_data):
         from claude_ecom.report import _sanitize_for_json
+
         sanitized = _sanitize_for_json(review_data)
         self._check_no_nan(sanitized)
 
     def test_json_serializable(self, review_data):
         from claude_ecom.report import _sanitize_for_json
+
         sanitized = _sanitize_for_json(review_data)
         content = json.dumps(sanitized, default=str)
         assert "NaN" not in content

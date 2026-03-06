@@ -29,8 +29,12 @@ def cli():
 
 @cli.command()
 @click.argument("orders_path")
-@click.option("--period", type=click.Choice(["30d", "90d", "365d"]), default=None,
-              help="Focus on a specific period (default: auto-select all)")
+@click.option(
+    "--period",
+    type=click.Choice(["30d", "90d", "365d"]),
+    default=None,
+    help="Focus on a specific period (default: auto-select all)",
+)
 @click.option("--output", default="./", help="Output directory for reports")
 @click.option("--format", "fmt", default="auto", help="CSV format (shopify|generic|auto)")
 @click.option("--nrows", default=None, type=int, help="Limit rows to read (for large files)")
@@ -87,7 +91,7 @@ def validate(orders_path, fmt):
             for orig, canonical in tier2_map.items():
                 click.echo(f"  {orig} -> {canonical}")
         else:
-            click.echo(f"\nTier 2: no fuzzy matches found")
+            click.echo("\nTier 2: no fuzzy matches found")
         still_missing = GENERIC_ORDER_REQUIRED - set(df2.columns)
     else:
         still_missing = set()

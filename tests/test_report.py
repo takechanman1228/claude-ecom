@@ -2,12 +2,11 @@
 
 import json
 import os
-from datetime import date
 
 import pytest
 
 from claude_ecom.loader import load_orders
-from claude_ecom.report import generate_review_json, _sanitize_for_json
+from claude_ecom.report import _sanitize_for_json, generate_review_json
 from claude_ecom.review_engine import build_review_data
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")

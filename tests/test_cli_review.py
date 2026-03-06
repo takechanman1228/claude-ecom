@@ -31,16 +31,12 @@ class TestReviewCommand:
 
     def test_period_filter(self, tmp_path):
         runner = CliRunner()
-        result = runner.invoke(
-            cli, ["review", ORDERS_CSV, "--period", "30d", "--output", str(tmp_path)]
-        )
+        result = runner.invoke(cli, ["review", ORDERS_CSV, "--period", "30d", "--output", str(tmp_path)])
         assert result.exit_code == 0
 
     def test_nrows_option(self, tmp_path):
         runner = CliRunner()
-        result = runner.invoke(
-            cli, ["review", ORDERS_CSV, "--nrows", "50", "--output", str(tmp_path)]
-        )
+        result = runner.invoke(cli, ["review", ORDERS_CSV, "--nrows", "50", "--output", str(tmp_path)])
         assert result.exit_code == 0
 
     def test_shows_coverage(self, tmp_path):

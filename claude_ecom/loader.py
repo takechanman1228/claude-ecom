@@ -46,48 +46,99 @@ GENERIC_INVENTORY_REQUIRED = {"sku", "quantity_on_hand"}
 
 _ORDER_COLUMN_ALIASES: dict[str, list[str]] = {
     "order_id": [
-        "order_id", "order id", "order_number", "order number",
-        "invoice", "invoice number", "invoice/item number",
-        "transaction_id", "transaction id",
+        "order_id",
+        "order id",
+        "order_number",
+        "order number",
+        "invoice",
+        "invoice number",
+        "invoice/item number",
+        "transaction_id",
+        "transaction id",
     ],
     "order_date": [
-        "order_date", "order date", "date", "created_at", "created at",
-        "purchase_date", "purchase date", "transaction_date", "transaction date",
+        "order_date",
+        "order date",
+        "date",
+        "created_at",
+        "created at",
+        "purchase_date",
+        "purchase date",
+        "transaction_date",
+        "transaction date",
         "day",
     ],
     "amount": [
-        "amount", "total", "sale (dollars)", "sale_amount", "sale amount",
-        "total_amount", "total amount", "revenue", "grand_total", "grand total",
-        "total sales", "net sales",
+        "amount",
+        "total",
+        "sale (dollars)",
+        "sale_amount",
+        "sale amount",
+        "total_amount",
+        "total amount",
+        "revenue",
+        "grand_total",
+        "grand total",
+        "total sales",
+        "net sales",
     ],
     "customer_id": [
-        "customer_id", "customer id", "email", "customer_email",
-        "buyer_id", "store number", "store_number", "store name",
-        "user_id", "client_id",
+        "customer_id",
+        "customer id",
+        "email",
+        "customer_email",
+        "buyer_id",
+        "store number",
+        "store_number",
+        "store name",
+        "user_id",
+        "client_id",
     ],
 }
 
 _ORDER_COLUMN_OPTIONAL_ALIASES: dict[str, list[str]] = {
     "product_name": [
-        "product_name", "product name", "item description", "item_description",
-        "product", "item", "lineitem name", "product title",
+        "product_name",
+        "product name",
+        "item description",
+        "item_description",
+        "product",
+        "item",
+        "lineitem name",
+        "product title",
     ],
     "quantity": [
-        "quantity", "bottles sold", "qty", "units", "items",
+        "quantity",
+        "bottles sold",
+        "qty",
+        "units",
+        "items",
         "lineitem quantity",
     ],
     "sku": [
-        "sku", "item number", "item_number", "variant_id", "lineitem sku",
+        "sku",
+        "item number",
+        "item_number",
+        "variant_id",
+        "lineitem sku",
     ],
     "discount": [
-        "discount", "discount_amount", "discount amount", "discounts",
+        "discount",
+        "discount_amount",
+        "discount amount",
+        "discounts",
     ],
     "category": [
-        "category", "category name", "category_name", "product_type",
+        "category",
+        "category name",
+        "category_name",
+        "product_type",
         "product type",
     ],
     "city": [
-        "city", "billing city", "shipping city",
+        "city",
+        "billing city",
+        "shipping city",
     ],
 }
 
@@ -137,9 +188,11 @@ def _infer_column_type(series: pd.Series) -> str:
         pass
     # Currency-like (numeric with possible $ , .)
     str_vals = sample.astype(str)
-    numeric_count = str_vals.str.replace(r"[$,\s]", "", regex=True).apply(
-        lambda v: v.replace(".", "", 1).replace("-", "", 1).isdigit()
-    ).sum()
+    numeric_count = (
+        str_vals.str.replace(r"[$,\s]", "", regex=True)
+        .apply(lambda v: v.replace(".", "", 1).replace("-", "", 1).isdigit())
+        .sum()
+    )
     if numeric_count / len(sample) > 0.8:
         return "currency"
     # ID-like (mostly unique values)
@@ -291,9 +344,7 @@ def _normalise_generic_orders(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def load_orders(
-    path: str, fmt: str = "auto", nrows: int | None = None
-) -> pd.DataFrame:
+def load_orders(path: str, fmt: str = "auto", nrows: int | None = None) -> pd.DataFrame:
     """Load and normalise an orders CSV.
 
     Parameters
@@ -312,9 +363,7 @@ def load_orders(
         df = _normalise_generic_orders(df)
     validation = validate_schema(df, "orders")
     if not validation.valid:
-        raise ValueError(
-            f"Orders CSV missing required columns: {validation.missing_columns}"
-        )
+        raise ValueError(f"Orders CSV missing required columns: {validation.missing_columns}")
     return df
 
 

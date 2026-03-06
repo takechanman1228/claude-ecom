@@ -5,11 +5,9 @@ from datetime import date
 import pandas as pd
 
 from claude_ecom.periods import (
-    PeriodRange,
     compute_data_coverage,
     prior_trailing_window,
     trailing_window,
-    COVERAGE_THRESHOLDS,
 )
 
 
@@ -29,36 +27,44 @@ class TestTrailingWindow:
 
 class TestComputeDataCoverage:
     def test_short_data_only_30d(self):
-        df = pd.DataFrame({
-            "order_date": pd.to_datetime(["2025-06-01", "2025-08-01"]),
-        })
+        df = pd.DataFrame(
+            {
+                "order_date": pd.to_datetime(["2025-06-01", "2025-08-01"]),
+            }
+        )
         cov = compute_data_coverage(df)
-        assert cov["30d"] is True   # 61 days >= 45
+        assert cov["30d"] is True  # 61 days >= 45
         assert cov["90d"] is False  # 61 days < 120
         assert cov["365d"] is False
 
     def test_medium_data_30d_90d(self):
-        df = pd.DataFrame({
-            "order_date": pd.to_datetime(["2025-01-01", "2025-06-01"]),
-        })
+        df = pd.DataFrame(
+            {
+                "order_date": pd.to_datetime(["2025-01-01", "2025-06-01"]),
+            }
+        )
         cov = compute_data_coverage(df)
         assert cov["30d"] is True
-        assert cov["90d"] is True   # 151 days >= 120
+        assert cov["90d"] is True  # 151 days >= 120
         assert cov["365d"] is False
 
     def test_long_data_all_periods(self):
-        df = pd.DataFrame({
-            "order_date": pd.to_datetime(["2024-01-01", "2025-06-01"]),
-        })
+        df = pd.DataFrame(
+            {
+                "order_date": pd.to_datetime(["2024-01-01", "2025-06-01"]),
+            }
+        )
         cov = compute_data_coverage(df)
         assert cov["30d"] is True
         assert cov["90d"] is True
         assert cov["365d"] is True  # 517 days >= 400
 
     def test_very_short_data_none(self):
-        df = pd.DataFrame({
-            "order_date": pd.to_datetime(["2025-06-01", "2025-06-30"]),
-        })
+        df = pd.DataFrame(
+            {
+                "order_date": pd.to_datetime(["2025-06-01", "2025-06-30"]),
+            }
+        )
         cov = compute_data_coverage(df)
         assert cov["30d"] is False  # 29 days < 45
         assert cov["90d"] is False

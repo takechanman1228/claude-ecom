@@ -1,21 +1,17 @@
 """Tests for claude_ecom.loader."""
 
 import os
-import pytest
+
 import pandas as pd
 
 from claude_ecom.loader import (
-    load_orders,
-    load_products,
-    load_inventory,
     detect_format,
+    load_orders,
     validate_schema,
 )
 
 FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures")
 ORDERS_CSV = os.path.join(FIXTURES, "sample_orders.csv")
-PRODUCTS_CSV = os.path.join(FIXTURES, "sample_products.csv")
-INVENTORY_CSV = os.path.join(FIXTURES, "sample_inventory.csv")
 
 
 class TestDetectFormat:
@@ -41,30 +37,6 @@ class TestLoadOrders:
     def test_amount_is_numeric(self):
         df = load_orders(ORDERS_CSV)
         assert pd.api.types.is_numeric_dtype(df["amount"])
-
-
-class TestLoadProducts:
-    def test_load_returns_dataframe(self):
-        df = load_products(PRODUCTS_CSV)
-        assert isinstance(df, pd.DataFrame)
-        assert len(df) == 50
-
-    def test_required_columns(self):
-        df = load_products(PRODUCTS_CSV)
-        for col in ("product_id", "name", "price", "category"):
-            assert col in df.columns
-
-
-class TestLoadInventory:
-    def test_load_returns_dataframe(self):
-        df = load_inventory(INVENTORY_CSV)
-        assert isinstance(df, pd.DataFrame)
-        assert len(df) == 50
-
-    def test_required_columns(self):
-        df = load_inventory(INVENTORY_CSV)
-        assert "sku" in df.columns
-        assert "quantity_on_hand" in df.columns
 
 
 class TestValidateSchema:

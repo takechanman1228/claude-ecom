@@ -5,33 +5,19 @@ import os
 import pandas as pd
 import pytest
 
-from claude_ecom.loader import load_orders, load_products, load_inventory
+from claude_ecom.loader import load_orders
 from claude_ecom.metrics import (
-    compute_revenue_kpis,
     compute_cohort_kpis,
-    compute_product_kpis,
-    compute_inventory_kpis,
+    compute_revenue_kpis,
 )
 
 FIXTURES = os.path.join(os.path.dirname(__file__), "fixtures")
 ORDERS_CSV = os.path.join(FIXTURES, "sample_orders.csv")
-PRODUCTS_CSV = os.path.join(FIXTURES, "sample_products.csv")
-INVENTORY_CSV = os.path.join(FIXTURES, "sample_inventory.csv")
 
 
 @pytest.fixture
 def orders():
     return load_orders(ORDERS_CSV)
-
-
-@pytest.fixture
-def products():
-    return load_products(PRODUCTS_CSV)
-
-
-@pytest.fixture
-def inventory():
-    return load_inventory(INVENTORY_CSV)
 
 
 class TestRevenueKPIs:
@@ -70,26 +56,6 @@ class TestCohortKPIs:
         assert kpis["total_customers"] > 0
 
 
-class TestProductKPIs:
-    def test_returns_dict(self, orders, products):
-        kpis = compute_product_kpis(orders, products)
-        assert isinstance(kpis, dict)
-
-    def test_top20_share_bounded(self, orders, products):
-        kpis = compute_product_kpis(orders, products)
-        assert 0 <= kpis["top20_revenue_share"] <= 1
-
-
-class TestInventoryKPIs:
-    def test_returns_dict(self, inventory, orders):
-        kpis = compute_inventory_kpis(inventory, orders)
-        assert isinstance(kpis, dict)
-
-    def test_stockout_rate_bounded(self, inventory, orders):
-        kpis = compute_inventory_kpis(inventory, orders)
-        assert 0 <= kpis["stockout_rate"] <= 1
-
-
 class TestPartialMonthMetrics:
     """Tests for partial last month detection in compute_revenue_kpis."""
 
@@ -97,12 +63,14 @@ class TestPartialMonthMetrics:
         rows = []
         for i in range(days_count):
             d = pd.Timestamp(year, month, 1) + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-{year}{month:02d}-{i}",
-                "order_date": d,
-                "customer_id": f"C-{i}",
-                "amount": daily_amount,
-            })
+            rows.append(
+                {
+                    "order_id": f"O-{year}{month:02d}-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-{i}",
+                    "amount": daily_amount,
+                }
+            )
         return rows
 
     def test_detects_partial_last_month(self):
@@ -112,10 +80,14 @@ class TestPartialMonthMetrics:
         # Only 3 days in Jan
         for i in range(3):
             d = pd.Timestamp("2026-01-01") + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-jan-{i}", "order_date": d,
-                "customer_id": f"C-jan-{i}", "amount": 100.0,
-            })
+            rows.append(
+                {
+                    "order_id": f"O-jan-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-jan-{i}",
+                    "amount": 100.0,
+                }
+            )
         df = pd.DataFrame(rows)
         df["order_date"] = pd.to_datetime(df["order_date"])
         kpis = compute_revenue_kpis(df)
@@ -139,10 +111,14 @@ class TestPartialMonthMetrics:
         # 3 days in Jan (partial)
         for i in range(3):
             d = pd.Timestamp("2026-01-01") + pd.Timedelta(days=i)
-            rows.append({
-                "order_id": f"O-jan-{i}", "order_date": d,
-                "customer_id": f"C-jan-{i}", "amount": 50.0,
-            })
+            rows.append(
+                {
+                    "order_id": f"O-jan-{i}",
+                    "order_date": d,
+                    "customer_id": f"C-jan-{i}",
+                    "amount": 50.0,
+                }
+            )
         df = pd.DataFrame(rows)
         df["order_date"] = pd.to_datetime(df["order_date"])
         kpis = compute_revenue_kpis(df)

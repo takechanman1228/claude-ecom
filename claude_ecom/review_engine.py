@@ -11,18 +11,17 @@ from datetime import date, datetime
 
 import pandas as pd
 
+from .checks import (
+    CheckResult,
+    build_action_candidates,
+    build_top_issues,
+)
 from .periods import (
     PeriodRange,
     compute_data_coverage,
     prior_trailing_window,
     trailing_window,
 )
-from .checks import (
-    CheckResult,
-    build_action_candidates,
-    build_top_issues,
-)
-
 
 # ---------------------------------------------------------------------------
 # Period summary (kept from original, extended)
@@ -143,16 +142,12 @@ def _compute_period_block(orders: pd.DataFrame, ref_date: date, days: int) -> di
     rev = current_summary["revenue"]
     kpi_tree = {
         "new_customer_revenue": current_summary["new_customer_revenue"],
-        "new_customer_revenue_share": (
-            current_summary["new_customer_revenue"] / rev if rev else 0.0
-        ),
+        "new_customer_revenue_share": (current_summary["new_customer_revenue"] / rev if rev else 0.0),
         "new_customers": current_summary["new_customers"],
         "new_customers_change": changes.get("new_customers", 0.0),
         "new_customer_aov": current_summary["new_customer_aov"],
         "returning_customer_revenue": current_summary["returning_customer_revenue"],
-        "returning_customer_revenue_share": (
-            current_summary["returning_customer_revenue"] / rev if rev else 0.0
-        ),
+        "returning_customer_revenue_share": (current_summary["returning_customer_revenue"] / rev if rev else 0.0),
         "returning_customers": current_summary["returning_customers"],
         "returning_customers_change": changes.get("returning_customers", 0.0),
         "returning_customer_aov": current_summary["returning_customer_aov"],
@@ -247,9 +242,7 @@ def _compute_monthly_trend(orders: pd.DataFrame, ref: date, days: int = 365) -> 
             continue
 
         # Count actual days with data
-        mask = (orders["order_date"].dt.date >= period_start) & (
-            orders["order_date"].dt.date <= period_end
-        )
+        mask = (orders["order_date"].dt.date >= period_start) & (orders["order_date"].dt.date <= period_end)
         days_with_data = int(orders.loc[mask, "order_date"].dt.date.nunique())
         is_partial = days_with_data < month_last_day / 2
 
@@ -323,15 +316,20 @@ def _build_checks(
         mom = float("nan")
     if math.isnan(mom):
         checks.append(
-            CheckResult("R01", "revenue", "high", "na",
-                         "Insufficient data for MoM growth (<2 months)", None, 0.0)
+            CheckResult("R01", "revenue", "high", "na", "Insufficient data for MoM growth (<2 months)", None, 0.0)
         )
     else:
         suffix = " (partial month excluded)" if partial_last else ""
         checks.append(
-            CheckResult("R01", "revenue", "high",
-                         "pass" if mom > 0 else ("watch" if mom > -0.05 else "fail"),
-                         f"MoM revenue growth: {mom:.1%}{suffix}", mom, 0.0)
+            CheckResult(
+                "R01",
+                "revenue",
+                "high",
+                "pass" if mom > 0 else ("watch" if mom > -0.05 else "fail"),
+                f"MoM revenue growth: {mom:.1%}{suffix}",
+                mom,
+                0.0,
+            )
         )
 
     # R03 — AOV Trend (skip partial last month)
@@ -340,16 +338,28 @@ def _build_checks(
     if partial_last and len(aov_vals) >= 3:
         aov_change = (aov_vals[-2] - aov_vals[-3]) / aov_vals[-3] if aov_vals[-3] else 0
         checks.append(
-            CheckResult("R03", "revenue", "high",
-                         "pass" if aov_change > -0.05 else ("watch" if aov_change > -0.1 else "fail"),
-                         f"AOV MoM change: {aov_change:.1%} (partial month excluded)", aov_change, -0.05)
+            CheckResult(
+                "R03",
+                "revenue",
+                "high",
+                "pass" if aov_change > -0.05 else ("watch" if aov_change > -0.1 else "fail"),
+                f"AOV MoM change: {aov_change:.1%} (partial month excluded)",
+                aov_change,
+                -0.05,
+            )
         )
     elif not partial_last and len(aov_vals) >= 2:
         aov_change = (aov_vals[-1] - aov_vals[-2]) / aov_vals[-2] if aov_vals[-2] else 0
         checks.append(
-            CheckResult("R03", "revenue", "high",
-                         "pass" if aov_change > -0.05 else ("watch" if aov_change > -0.1 else "fail"),
-                         f"AOV MoM change: {aov_change:.1%}", aov_change, -0.05)
+            CheckResult(
+                "R03",
+                "revenue",
+                "high",
+                "pass" if aov_change > -0.05 else ("watch" if aov_change > -0.1 else "fail"),
+                f"AOV MoM change: {aov_change:.1%}",
+                aov_change,
+                -0.05,
+            )
         )
 
     # R04 — Order Count Trend (skip partial last month)
@@ -358,16 +368,28 @@ def _build_checks(
     if partial_last and len(ord_vals) >= 3:
         ord_change = (ord_vals[-2] - ord_vals[-3]) / ord_vals[-3] if ord_vals[-3] else 0
         checks.append(
-            CheckResult("R04", "revenue", "high",
-                         "pass" if ord_change > -0.05 else ("watch" if ord_change > -0.1 else "fail"),
-                         f"MoM order count change: {ord_change:.1%} (partial month excluded)", ord_change, -0.05)
+            CheckResult(
+                "R04",
+                "revenue",
+                "high",
+                "pass" if ord_change > -0.05 else ("watch" if ord_change > -0.1 else "fail"),
+                f"MoM order count change: {ord_change:.1%} (partial month excluded)",
+                ord_change,
+                -0.05,
+            )
         )
     elif not partial_last and len(ord_vals) >= 2:
         ord_change = (ord_vals[-1] - ord_vals[-2]) / ord_vals[-2] if ord_vals[-2] else 0
         checks.append(
-            CheckResult("R04", "revenue", "high",
-                         "pass" if ord_change > -0.05 else ("watch" if ord_change > -0.1 else "fail"),
-                         f"MoM order count change: {ord_change:.1%}", ord_change, -0.05)
+            CheckResult(
+                "R04",
+                "revenue",
+                "high",
+                "pass" if ord_change > -0.05 else ("watch" if ord_change > -0.1 else "fail"),
+                f"MoM order count change: {ord_change:.1%}",
+                ord_change,
+                -0.05,
+            )
         )
 
     # R05 — Repeat Customer Revenue Share
@@ -375,62 +397,85 @@ def _build_checks(
     rpr_for_cross_check = cohort_kpis.get("repeat_purchase_rate", 0)
     if repeat_share == 0 and rpr_for_cross_check > 0.3:
         checks.append(
-            CheckResult("R05", "revenue", "critical", "watch",
-                         f"Repeat customer revenue share: {repeat_share:.1%} (data quality issue: repeat purchase rate={rpr_for_cross_check:.1%})",
-                         repeat_share, 0.3)
+            CheckResult(
+                "R05",
+                "revenue",
+                "critical",
+                "watch",
+                f"Repeat customer revenue share: {repeat_share:.1%} "
+                f"(data quality issue: repeat purchase rate={rpr_for_cross_check:.1%})",
+                repeat_share,
+                0.3,
+            )
         )
     else:
         checks.append(
-            CheckResult("R05", "revenue", "critical",
-                         "pass" if repeat_share >= 0.3 else ("watch" if repeat_share >= 0.2 else "fail"),
-                         f"Repeat customer revenue share: {repeat_share:.1%}", repeat_share, 0.3)
+            CheckResult(
+                "R05",
+                "revenue",
+                "critical",
+                "pass" if repeat_share >= 0.3 else ("watch" if repeat_share >= 0.2 else "fail"),
+                f"Repeat customer revenue share: {repeat_share:.1%}",
+                repeat_share,
+                0.3,
+            )
         )
 
     # R07 — Revenue Concentration (Top 10% Customers)
     top10 = rev_kpis.get("top10_customer_share", 0)
     if rev_kpis.get("total_revenue", 0) == 0:
         checks.append(
-            CheckResult("R07", "revenue", "medium", "na",
-                         "No revenue data for concentration analysis", None, 0.6)
+            CheckResult("R07", "revenue", "medium", "na", "No revenue data for concentration analysis", None, 0.6)
         )
     else:
         checks.append(
-            CheckResult("R07", "revenue", "medium",
-                         "pass" if top10 < 0.6 else ("watch" if top10 < 0.8 else "fail"),
-                         f"Top 10% customer revenue share: {top10:.1%}", top10, 0.6)
+            CheckResult(
+                "R07",
+                "revenue",
+                "medium",
+                "pass" if top10 < 0.6 else ("watch" if top10 < 0.8 else "fail"),
+                f"Top 10% customer revenue share: {top10:.1%}",
+                top10,
+                0.6,
+            )
         )
 
     # R08 — Average Discount Rate (subsumes old PR01)
     discount_rate = rev_kpis.get("avg_discount_rate", 0)
     if "discount" not in orders.columns and discount_rate == 0:
-        checks.append(
-            CheckResult("R08", "revenue", "high", "na",
-                         "No discount data available", None, 0.15)
-        )
+        checks.append(CheckResult("R08", "revenue", "high", "na", "No discount data available", None, 0.15))
     else:
         checks.append(
-            CheckResult("R08", "revenue", "high",
-                         "pass" if discount_rate < 0.15 else ("watch" if discount_rate < 0.25 else "fail"),
-                         f"Average discount rate: {discount_rate:.1%}", discount_rate, 0.15)
+            CheckResult(
+                "R08",
+                "revenue",
+                "high",
+                "pass" if discount_rate < 0.15 else ("watch" if discount_rate < 0.25 else "fail"),
+                f"Average discount rate: {discount_rate:.1%}",
+                discount_rate,
+                0.15,
+            )
         )
 
     # R13 — Daily Revenue Volatility (CV)
     daily_cv = rev_kpis.get("daily_revenue_cv", 0)
     if isinstance(daily_cv, float) and math.isnan(daily_cv):
         checks.append(
-            CheckResult("R13", "revenue", "medium", "na",
-                         "Insufficient daily data for CV calculation", None, 0.5)
+            CheckResult("R13", "revenue", "medium", "na", "Insufficient daily data for CV calculation", None, 0.5)
         )
     elif rev_kpis.get("total_revenue", 0) == 0:
-        checks.append(
-            CheckResult("R13", "revenue", "medium", "na",
-                         "No revenue data for CV calculation", None, 0.5)
-        )
+        checks.append(CheckResult("R13", "revenue", "medium", "na", "No revenue data for CV calculation", None, 0.5))
     else:
         checks.append(
-            CheckResult("R13", "revenue", "medium",
-                         "pass" if daily_cv < 0.5 else ("watch" if daily_cv < 0.8 else "fail"),
-                         f"Daily revenue coefficient of variation: {daily_cv:.2f}", daily_cv, 0.5)
+            CheckResult(
+                "R13",
+                "revenue",
+                "medium",
+                "pass" if daily_cv < 0.5 else ("watch" if daily_cv < 0.8 else "fail"),
+                f"Daily revenue coefficient of variation: {daily_cv:.2f}",
+                daily_cv,
+                0.5,
+            )
         )
 
     # R14 — Large Order Dependency
@@ -438,76 +483,126 @@ def _build_checks(
         order_amounts = orders.groupby("order_id")["amount"].sum()
         largest_share = order_amounts.max() / rev_kpis["total_revenue"]
         checks.append(
-            CheckResult("R14", "revenue", "medium",
-                         "pass" if largest_share < 0.05 else ("watch" if largest_share < 0.1 else "fail"),
-                         f"Largest order share of revenue: {largest_share:.1%}", largest_share, 0.05)
+            CheckResult(
+                "R14",
+                "revenue",
+                "medium",
+                "pass" if largest_share < 0.05 else ("watch" if largest_share < 0.1 else "fail"),
+                f"Largest order share of revenue: {largest_share:.1%}",
+                largest_share,
+                0.05,
+            )
         )
 
     # ===== Pricing checks (now under revenue: PR02, PR03, PR07, PR08) =====
     if "discount" in orders.columns:
         from .pricing import discount_dependency as dd_fn
+
         dd = dd_fn(orders)
         checks.append(
-            CheckResult("PR02", "revenue", "high",
-                         "pass" if dd.discounted_order_ratio < 0.4
-                         else ("watch" if dd.discounted_order_ratio < 0.6 else "fail"),
-                         f"Discounted order ratio: {dd.discounted_order_ratio:.1%}",
-                         dd.discounted_order_ratio, 0.4)
+            CheckResult(
+                "PR02",
+                "revenue",
+                "high",
+                "pass" if dd.discounted_order_ratio < 0.4 else ("watch" if dd.discounted_order_ratio < 0.6 else "fail"),
+                f"Discounted order ratio: {dd.discounted_order_ratio:.1%}",
+                dd.discounted_order_ratio,
+                0.4,
+            )
         )
         trend = dd.discount_rate_trend
         checks.append(
-            CheckResult("PR03", "revenue", "critical",
-                         "pass" if trend in ("stable", "decreasing") else "watch",
-                         f"Discount depth trend: {trend}", trend, "stable")
+            CheckResult(
+                "PR03",
+                "revenue",
+                "critical",
+                "pass" if trend in ("stable", "decreasing") else "watch",
+                f"Discount depth trend: {trend}",
+                trend,
+                "stable",
+            )
         )
 
     # PR07 — Category Margin Variance (if cost data available)
     if "cost" in orders.columns:
         from .pricing import margin_analysis
+
         ma = margin_analysis(orders)
         neg_cats = len(ma.negative_margin_categories)
         checks.append(
-            CheckResult("PR07", "revenue", "medium",
-                         "pass" if neg_cats == 0 else ("watch" if neg_cats == 1 else "fail"),
-                         f"Categories with negative margin: {neg_cats}", neg_cats, 0)
+            CheckResult(
+                "PR07",
+                "revenue",
+                "medium",
+                "pass" if neg_cats == 0 else ("watch" if neg_cats == 1 else "fail"),
+                f"Categories with negative margin: {neg_cats}",
+                neg_cats,
+                0,
+            )
         )
 
     # PR08 — Free-Shipping Threshold
     from .pricing import free_shipping_threshold
+
     fst = free_shipping_threshold(orders)
     if fst.suggested_threshold == 0 or fst.current_aov == 0:
         checks.append(
-            CheckResult("PR08", "revenue", "high", "na",
-                         "Insufficient order data for free-shipping threshold analysis", None, 0.1)
+            CheckResult(
+                "PR08",
+                "revenue",
+                "high",
+                "na",
+                "Insufficient order data for free-shipping threshold analysis",
+                None,
+                0.1,
+            )
         )
     else:
         checks.append(
-            CheckResult("PR08", "revenue", "high",
-                         "pass" if fst.potential_aov_lift >= 0.1
-                         else ("watch" if fst.potential_aov_lift >= 0.05 else "fail"),
-                         f"Free-shipping threshold AOV lift potential: {fst.potential_aov_lift:.1%} (suggested: {fst.suggested_threshold:,.0f})",
-                         fst.potential_aov_lift, 0.1)
+            CheckResult(
+                "PR08",
+                "revenue",
+                "high",
+                "pass" if fst.potential_aov_lift >= 0.1 else ("watch" if fst.potential_aov_lift >= 0.05 else "fail"),
+                f"Free-shipping threshold AOV lift potential: {fst.potential_aov_lift:.1%} "
+                f"(suggested: {fst.suggested_threshold:,.0f})",
+                fst.potential_aov_lift,
+                0.1,
+            )
         )
 
     # ===== Customer checks (C01, C08, C09, C10, C11) =====
     rpr = cohort_kpis.get("repeat_purchase_rate", 0)
     checks.append(
-        CheckResult("C01", "customer", "critical",
-                     "pass" if rpr >= 0.25 else ("watch" if rpr >= 0.15 else "fail"),
-                     f"Repeat purchase rate: {rpr:.1%}", rpr, 0.25)
+        CheckResult(
+            "C01",
+            "customer",
+            "critical",
+            "pass" if rpr >= 0.25 else ("watch" if rpr >= 0.15 else "fail"),
+            f"Repeat purchase rate: {rpr:.1%}",
+            rpr,
+            0.25,
+        )
     )
 
     avg_interval = cohort_kpis.get("avg_purchase_interval_days", float("nan"))
     if isinstance(avg_interval, float) and math.isnan(avg_interval):
         checks.append(
-            CheckResult("C11", "customer", "high", "na",
-                         "Insufficient data for purchase interval calculation", None, 60)
+            CheckResult(
+                "C11", "customer", "high", "na", "Insufficient data for purchase interval calculation", None, 60
+            )
         )
     else:
         checks.append(
-            CheckResult("C11", "customer", "high",
-                         "pass" if avg_interval < 60 else ("watch" if avg_interval < 90 else "fail"),
-                         f"Avg days to 2nd purchase: {avg_interval:.0f}", avg_interval, 60)
+            CheckResult(
+                "C11",
+                "customer",
+                "high",
+                "pass" if avg_interval < 60 else ("watch" if avg_interval < 90 else "fail"),
+                f"Avg days to 2nd purchase: {avg_interval:.0f}",
+                avg_interval,
+                60,
+            )
         )
 
     # C08/C09/C10 — RFM Segment Distribution
@@ -515,30 +610,48 @@ def _build_checks(
     total_cust = len(order_counts)
     if total_cust > 0:
         from .cohort import rfm_segmentation
+
         try:
             rfm = rfm_segmentation(orders)
             seg_dist = rfm["segment"].value_counts(normalize=True)
 
             champions_loyal = seg_dist.get("Champions", 0) + seg_dist.get("Loyal", 0)
             checks.append(
-                CheckResult("C08", "customer", "medium",
-                             "pass" if champions_loyal >= 0.2 else ("watch" if champions_loyal >= 0.1 else "fail"),
-                             f"Champions + Loyal segment share: {champions_loyal:.1%}",
-                             champions_loyal, 0.2)
+                CheckResult(
+                    "C08",
+                    "customer",
+                    "medium",
+                    "pass" if champions_loyal >= 0.2 else ("watch" if champions_loyal >= 0.1 else "fail"),
+                    f"Champions + Loyal segment share: {champions_loyal:.1%}",
+                    champions_loyal,
+                    0.2,
+                )
             )
 
             at_risk = seg_dist.get("At Risk", 0)
             checks.append(
-                CheckResult("C09", "customer", "high",
-                             "pass" if at_risk < 0.25 else ("watch" if at_risk < 0.35 else "fail"),
-                             f"At-Risk segment share: {at_risk:.1%}", at_risk, 0.25)
+                CheckResult(
+                    "C09",
+                    "customer",
+                    "high",
+                    "pass" if at_risk < 0.25 else ("watch" if at_risk < 0.35 else "fail"),
+                    f"At-Risk segment share: {at_risk:.1%}",
+                    at_risk,
+                    0.25,
+                )
             )
 
             lost = seg_dist.get("Lost", 0)
             checks.append(
-                CheckResult("C10", "customer", "medium",
-                             "pass" if lost < 0.3 else ("watch" if lost < 0.45 else "fail"),
-                             f"Lost segment share: {lost:.1%}", lost, 0.3)
+                CheckResult(
+                    "C10",
+                    "customer",
+                    "medium",
+                    "pass" if lost < 0.3 else ("watch" if lost < 0.45 else "fail"),
+                    f"Lost segment share: {lost:.1%}",
+                    lost,
+                    0.3,
+                )
             )
         except Exception:
             pass
@@ -554,9 +667,15 @@ def _build_checks(
             top20_count = max(1, int(len(product_rev) * 0.2))
             top20_share = product_rev.head(top20_count).sum() / total_rev
             checks.append(
-                CheckResult("P01", "product", "medium",
-                             "pass" if 0.5 <= top20_share <= 0.8 else ("watch" if top20_share <= 0.9 else "fail"),
-                             f"Top 20% SKU revenue concentration: {top20_share:.1%}", top20_share, 0.8)
+                CheckResult(
+                    "P01",
+                    "product",
+                    "medium",
+                    "pass" if 0.5 <= top20_share <= 0.8 else ("watch" if top20_share <= 0.9 else "fail"),
+                    f"Top 20% SKU revenue concentration: {top20_share:.1%}",
+                    top20_share,
+                    0.8,
+                )
             )
 
     # P05 — Converting SKU Rate
@@ -567,15 +686,21 @@ def _build_checks(
         convert_rate = converting / total_active if total_active else 0
         if total_active == 0:
             checks.append(
-                CheckResult("P05", "product", "high", "na",
-                             "No SKU/product data available for conversion analysis", None, 0.7)
+                CheckResult(
+                    "P05", "product", "high", "na", "No SKU/product data available for conversion analysis", None, 0.7
+                )
             )
         else:
             checks.append(
-                CheckResult("P05", "product", "high",
-                             "pass" if convert_rate >= 0.7 else ("watch" if convert_rate >= 0.5 else "fail"),
-                             f"Converting SKU rate: {convert_rate:.1%} ({converting}/{total_active})",
-                             convert_rate, 0.7)
+                CheckResult(
+                    "P05",
+                    "product",
+                    "high",
+                    "pass" if convert_rate >= 0.7 else ("watch" if convert_rate >= 0.5 else "fail"),
+                    f"Converting SKU rate: {convert_rate:.1%} ({converting}/{total_active})",
+                    convert_rate,
+                    0.7,
+                )
             )
 
     # P06 — Multi-Item Order Rate
@@ -583,32 +708,52 @@ def _build_checks(
         items_per_order = orders.groupby("order_id")[key].nunique()
         multi_item = (items_per_order > 1).mean() if len(items_per_order) else 0
         checks.append(
-            CheckResult("P06", "product", "medium",
-                         "pass" if multi_item >= 0.25 else ("watch" if multi_item >= 0.15 else "fail"),
-                         f"Multi-item order rate: {multi_item:.1%}", multi_item, 0.25)
+            CheckResult(
+                "P06",
+                "product",
+                "medium",
+                "pass" if multi_item >= 0.25 else ("watch" if multi_item >= 0.15 else "fail"),
+                f"Multi-item order rate: {multi_item:.1%}",
+                multi_item,
+                0.25,
+            )
         )
 
     # P07 — Cross-Sell Pair Lift
     if key:
         from .product import cross_sell_matrix
+
         xs = cross_sell_matrix(orders)
         high_lift = len(xs[xs["lift"] > 2.0]) if len(xs) else 0
         checks.append(
-            CheckResult("P07", "product", "medium",
-                         "pass" if high_lift >= 3 else ("watch" if high_lift >= 1 else "fail"),
-                         f"Cross-sell pairs with lift > 2.0: {high_lift}", high_lift, 3)
+            CheckResult(
+                "P07",
+                "product",
+                "medium",
+                "pass" if high_lift >= 3 else ("watch" if high_lift >= 1 else "fail"),
+                f"Cross-sell pairs with lift > 2.0: {high_lift}",
+                high_lift,
+                3,
+            )
         )
 
     # P10 — Lifecycle Stage Distribution
     if key:
         from .product import product_lifecycle
+
         lifecycle = product_lifecycle(orders)
         if len(lifecycle):
             decline_pct = (lifecycle["lifecycle_stage"] == "Decline").mean()
             checks.append(
-                CheckResult("P10", "product", "medium",
-                             "pass" if decline_pct < 0.3 else ("watch" if decline_pct < 0.5 else "fail"),
-                             f"Decline-stage products: {decline_pct:.1%}", decline_pct, 0.3)
+                CheckResult(
+                    "P10",
+                    "product",
+                    "medium",
+                    "pass" if decline_pct < 0.3 else ("watch" if decline_pct < 0.5 else "fail"),
+                    f"Decline-stage products: {decline_pct:.1%}",
+                    decline_pct,
+                    0.3,
+                )
             )
 
     # P19 — Price Tier Distribution
@@ -616,8 +761,7 @@ def _build_checks(
         prices = orders.groupby(key)["amount"].mean()
         if len(prices) == 0:
             checks.append(
-                CheckResult("P19", "product", "medium", "na",
-                             "No price data available for tier analysis", None, 3)
+                CheckResult("P19", "product", "medium", "na", "No price data available for tier analysis", None, 3)
             )
         else:
             try:
@@ -625,9 +769,15 @@ def _build_checks(
             except (ValueError, TypeError):
                 n_tiers = 1
             checks.append(
-                CheckResult("P19", "product", "medium",
-                             "pass" if n_tiers >= 3 else ("watch" if n_tiers >= 2 else "fail"),
-                             f"Distinct price tiers: {n_tiers}", n_tiers, 3)
+                CheckResult(
+                    "P19",
+                    "product",
+                    "medium",
+                    "pass" if n_tiers >= 3 else ("watch" if n_tiers >= 2 else "fail"),
+                    f"Distinct price tiers: {n_tiers}",
+                    n_tiers,
+                    3,
+                )
             )
 
     return checks
@@ -695,35 +845,41 @@ def build_review_data(
     data_span_days = (orders["order_date"].max() - orders["order_date"].min()).days
 
     if rev_kpis.get("partial_last_month"):
-        data_quality.append({
-            "type": "partial_period",
-            "period": rev_kpis["partial_last_month_label"],
-            "days_with_data": rev_kpis["partial_last_month_days"],
-            "message": (
-                f"Latest month ({rev_kpis['partial_last_month_label']}) has only "
-                f"{rev_kpis['partial_last_month_days']} days of data. "
-                "MoM comparisons use prior complete months."
-            ),
-        })
+        data_quality.append(
+            {
+                "type": "partial_period",
+                "period": rev_kpis["partial_last_month_label"],
+                "days_with_data": rev_kpis["partial_last_month_days"],
+                "message": (
+                    f"Latest month ({rev_kpis['partial_last_month_label']}) has only "
+                    f"{rev_kpis['partial_last_month_days']} days of data. "
+                    "MoM comparisons use prior complete months."
+                ),
+            }
+        )
 
     if data_span_days < 90:
-        data_quality.append({
-            "type": "short_data_span",
-            "days": data_span_days,
-            "message": (
-                f"Data spans only {data_span_days} days. "
-                "90d and 365d analyses are unavailable; interpret results with caution."
-            ),
-        })
+        data_quality.append(
+            {
+                "type": "short_data_span",
+                "days": data_span_days,
+                "message": (
+                    f"Data spans only {data_span_days} days. "
+                    "90d and 365d analyses are unavailable; interpret results with caution."
+                ),
+            }
+        )
     elif data_span_days < 365:
-        data_quality.append({
-            "type": "limited_data_span",
-            "days": data_span_days,
-            "message": (
-                f"Data spans {data_span_days} days (<1 year). "
-                "365d analysis may be unavailable; year-over-year comparisons are limited."
-            ),
-        })
+        data_quality.append(
+            {
+                "type": "limited_data_span",
+                "days": data_span_days,
+                "message": (
+                    f"Data spans {data_span_days} days (<1 year). "
+                    "365d analysis may be unavailable; year-over-year comparisons are limited."
+                ),
+            }
+        )
 
     # Annualize revenue
     total_revenue = rev_kpis["total_revenue"]

@@ -71,9 +71,7 @@ def compute_revenue_kpis(orders: pd.DataFrame) -> dict:
         lp_month = last_period.start_time.month
         days_in_month = calendar.monthrange(lp_year, lp_month)[1]
         # Count actual days with data in the last month
-        last_month_dates = orders.loc[
-            orders["month"] == last_period, "order_date"
-        ].dt.date.nunique()
+        last_month_dates = orders.loc[orders["month"] == last_period, "order_date"].dt.date.nunique()
         partial_last_month_days = int(last_month_dates)
         partial_last_month_label = f"{lp_year}-{lp_month:02d}"
         if last_month_dates < days_in_month / 2:
