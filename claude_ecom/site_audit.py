@@ -7,6 +7,7 @@ check results compatible with the claude-ecom scoring system.
 Playwright is an optional dependency — install with:
     pip install claude-ecom[site]
 """
+# NOTE: Not used by the current review flow. Kept for future integration.
 
 from __future__ import annotations
 

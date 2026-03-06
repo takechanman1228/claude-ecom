@@ -1,12 +1,13 @@
 """Tests for report generation."""
 
+import json
 import os
 from datetime import date
 
 import pytest
 
 from claude_ecom.loader import load_orders
-from claude_ecom.report import generate_business_review, generate_review
+from claude_ecom.report import generate_review_json, _sanitize_for_json
 from claude_ecom.review_engine import build_review_data
 
 FIXTURES_DIR = os.path.join(os.path.dirname(__file__), "fixtures")
@@ -18,57 +19,58 @@ def orders():
     return load_orders(ORDERS_CSV)
 
 
-class TestGenerateBusinessReview:
+class TestGenerateReviewJson:
     def test_creates_file(self, orders, tmp_path):
-        data = build_review_data(orders, "general", ref_date=date(2025, 7, 15))
-        path = generate_business_review(data, output_dir=str(tmp_path))
+        data = build_review_data(orders)
+        path = generate_review_json(data, output_dir=str(tmp_path))
         assert os.path.exists(path)
-        assert path.endswith("BUSINESS-REVIEW-REPORT.md")
+        assert path.endswith("review.json")
 
-    def test_contains_sections(self, orders, tmp_path):
-        data = build_review_data(orders, "general", ref_date=date(2025, 7, 15))
-        path = generate_business_review(data, output_dir=str(tmp_path))
+    def test_valid_json(self, orders, tmp_path):
+        data = build_review_data(orders)
+        path = generate_review_json(data, output_dir=str(tmp_path))
+        with open(path) as f:
+            parsed = json.load(f)
+        assert "version" in parsed
+        assert "metadata" in parsed
+        assert "data_coverage" in parsed
+        assert "periods" in parsed
+        assert "health" in parsed
+        assert "action_candidates" in parsed
+
+    def test_health_structure(self, orders, tmp_path):
+        data = build_review_data(orders)
+        path = generate_review_json(data, output_dir=str(tmp_path))
+        with open(path) as f:
+            parsed = json.load(f)
+        health = parsed["health"]
+        assert "category_scores" in health
+        assert "checks" in health
+        assert "top_issues" in health
+
+    def test_no_nan_in_output(self, orders, tmp_path):
+        data = build_review_data(orders)
+        path = generate_review_json(data, output_dir=str(tmp_path))
         content = open(path).read()
-        assert "## 1. Executive Summary" in content
-        assert "## 2. KPI Dashboard" in content
-        assert "## 7. Risk Assessment" in content
-        assert "## 8. Recommendations" in content
-        assert "## 9. Trailing Temperature Check" in content
+        assert "NaN" not in content
+        assert "Infinity" not in content
 
 
-class TestGenerateReviewNewFilenames:
-    def test_mbr_filename(self, orders, tmp_path):
-        data = build_review_data(orders, "mbr", ref_date=date(2025, 7, 15))
-        path = generate_review(data, "mbr", output_dir=str(tmp_path))
-        assert path.endswith("BUSINESS-REVIEW-MBR.md")
+class TestSanitizeForJson:
+    def test_replaces_nan(self):
+        result = _sanitize_for_json({"a": float("nan")})
+        assert result["a"] is None
 
-    def test_qbr_filename(self, orders, tmp_path):
-        data = build_review_data(orders, "qbr", ref_date=date(2025, 7, 15))
-        path = generate_review(data, "qbr", output_dir=str(tmp_path))
-        assert path.endswith("BUSINESS-REVIEW-QBR.md")
+    def test_replaces_infinity(self):
+        result = _sanitize_for_json({"a": float("inf")})
+        assert result["a"] is None
 
-    def test_abr_filename(self, orders, tmp_path):
-        data = build_review_data(orders, "abr", ref_date=date(2026, 1, 15))
-        path = generate_review(data, "abr", output_dir=str(tmp_path))
-        assert path.endswith("BUSINESS-REVIEW-ABR.md")
+    def test_preserves_normal_values(self):
+        result = _sanitize_for_json({"a": 42, "b": "hello", "c": 3.14})
+        assert result == {"a": 42, "b": "hello", "c": 3.14}
 
-    def test_mbr_has_next_month_actions(self, orders, tmp_path):
-        data = build_review_data(orders, "mbr", ref_date=date(2025, 7, 15))
-        path = generate_review(data, "mbr", output_dir=str(tmp_path))
-        content = open(path).read()
-        assert "## 7. Next Month Actions" in content
-
-    def test_qbr_has_risk_and_recommendations(self, orders, tmp_path):
-        data = build_review_data(orders, "qbr", ref_date=date(2025, 7, 15))
-        path = generate_review(data, "qbr", output_dir=str(tmp_path))
-        content = open(path).read()
-        assert "## 7. Risk Assessment" in content
-        assert "## 8. Recommendations" in content
-
-    def test_abr_has_growth_drivers(self, orders, tmp_path):
-        data = build_review_data(orders, "abr", ref_date=date(2026, 1, 15))
-        path = generate_review(data, "abr", output_dir=str(tmp_path))
-        content = open(path).read()
-        assert "Annual Growth Drivers" in content or "12-Month KPI Trend" in content
-        assert "## 8. Risk Assessment" in content
-        assert "## 9. Annual Strategy Recommendations" in content
+    def test_handles_nested(self):
+        result = _sanitize_for_json({"a": {"b": float("nan")}, "c": [float("inf"), 1]})
+        assert result["a"]["b"] is None
+        assert result["c"][0] is None
+        assert result["c"][1] == 1

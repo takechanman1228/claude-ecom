@@ -1,4 +1,5 @@
 """ETL orchestration for Shopify Admin API data sync."""
+# NOTE: Not used by the current review flow. Kept for future integration.
 
 from __future__ import annotations
 

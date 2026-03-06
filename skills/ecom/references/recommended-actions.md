@@ -117,45 +117,6 @@ trains customers to wait for sales, and devalues the brand.
 
 ---
 
-## R10: Return Rate (High)
-
-A high return rate (above 15% for most categories, above 25% for fashion) directly
-erodes profit and increases operational costs. Each return costs $10-30 in processing.
-
-### Actions
-
-1. **Enhance product pages with detailed sizing, dimensions, and comparison tools**
-   - Time: 1-2 weeks
-   - Impact: 25-35% reduction in size-related returns
-   - Details: Add comprehensive size charts with body measurements, model height/size
-     references, and product dimension callouts. Retailers implementing detailed sizing
-     information see a 35% reduction in size-related returns and an 18% improvement in
-     conversion. For fashion, consider AI-powered sizing tools (25-50% return reduction).
-
-2. **Upgrade product photography and add video content**
-   - Time: 1-3 weeks
-   - Impact: 10-20% reduction in "not as expected" returns
-   - Details: Provide minimum 6-8 photos per product (multiple angles, lifestyle context,
-     detail shots, scale references). Add 360-degree views or short video clips. Ensure
-     color accuracy with consistent lighting. Include user-generated photos from reviews.
-
-3. **Implement structured return-reason data collection and act on top drivers**
-   - Time: 2-3 days for data collection; ongoing for action
-   - Impact: 10-15% return reduction within 3-6 months through targeted fixes
-   - Details: Require return reason codes at return initiation. Analyze weekly to
-     identify product-level and category-level patterns. Flag SKUs with >2x average
-     return rate for product page review or discontinuation. Common fixable reasons:
-     sizing (add guides), color mismatch (improve photography), quality (supplier review).
-
-### Sources
-- Rocket Returns, "The Complete Guide to Reducing eCommerce Return Rates"
-- Lifesight, "The Ultimate Guide to Reducing Ecommerce Returns"
-- parcelLab, "11 Proven Strategies to Reduce E-Commerce Return Rates"
-- FitEz, "Reduce Returns Due to Sizing Issues in Fashion Ecommerce"
-- Nogin, "6 Strategies to Reduce Your E-commerce Customer Return Rate"
-
----
-
 ## R14: Gross Margin (Low)
 
 Low gross margin (below industry benchmarks, typically 40-60% for ecommerce) indicates
@@ -191,162 +152,6 @@ pricing issues, excessive discounting, high COGS, or a suboptimal product mix.
 - Upcounting, "eCommerce Gross Margin Paradox"
 - Sana Commerce, "E-Commerce Profit Margins: 6 Proven Strategies"
 - Onramp Funds, "9 Ways to Improve eCommerce Profit Margins"
-
----
-
-## CV01: Overall CVR (Low, e.g., 1.09%)
-
-An overall conversion rate below 1.5% (industry average is 2-3%) indicates friction
-across the entire funnel -- from landing page to checkout.
-
-### Actions
-
-1. **Improve page load speed to under 3 seconds**
-   - Time: 1-2 weeks
-   - Impact: 10-20% conversion rate improvement
-   - Details: Each additional second of load time reduces conversions by 7% (Akamai).
-     Optimize images (WebP format, lazy loading), minimize JavaScript, use a CDN,
-     and implement critical CSS. Target Core Web Vitals: LCP < 2.5s, FID < 100ms,
-     CLS < 0.1. Mobile optimization is critical since 63% of traffic is mobile.
-
-2. **Add trust signals and social proof throughout the purchase journey**
-   - Time: 2-5 days
-   - Impact: 5-15% conversion rate improvement
-   - Details: Display security badges, customer reviews (with photos), trust seals,
-     money-back guarantees, and real-time purchase notifications. 19% of cart
-     abandonment is due to not trusting the site with credit card information.
-     Place trust signals near CTAs and payment forms.
-
-3. **Optimize product pages with clear CTAs, urgency elements, and benefit-driven copy**
-   - Time: 1-2 weeks
-   - Impact: 8-15% conversion rate improvement on product pages
-   - Details: Ensure a single prominent "Add to Cart" button above the fold. Add
-     low-stock indicators, delivery date estimates, and benefit-oriented bullet points.
-     Use A/B testing to iterate. Optimized niche stores achieve 3-5% CVR; highly
-     optimized repeat-purchase brands reach 5%+.
-
-### Sources
-- Commercengine, "E-commerce Conversion Best Practices to Increase Sales in 2026"
-- BigCommerce, "Ecommerce Conversion Rate Optimization"
-- Amazon Buy with Prime, "10 Best Practices for Conversion Rate Optimization"
-- Baymard Institute, "Checkout Usability" research
-
----
-
-## CV03: Cart Addition Rate (Low, e.g., 3.0%)
-
-A low add-to-cart rate (below 5-8% benchmark) indicates that visitors are not finding
-relevant products or are not persuaded enough to add them to their cart.
-
-### Actions
-
-1. **Improve on-site search and product discovery**
-   - Time: 1-2 weeks
-   - Impact: 15-30% increase in add-to-cart rate for search users
-   - Details: Implement autocomplete search with product thumbnails, typo tolerance,
-     and synonym matching. Add smart filtering and sorting. Search users convert at
-     1.8x the rate of browse users. Baymard Institute recommends optimizing for three
-     shopper archetypes: browsers, searchers, and navigators.
-
-2. **Add personalized product recommendations on key pages**
-   - Time: 3-7 days (using tools like Nosto, Dynamic Yield, or Shopify native)
-   - Impact: 10-25% increase in add-to-cart rate
-   - Details: Display "Customers also bought," "Recently viewed," and "Trending now"
-     widgets on homepage, category pages, and product pages. Personalized
-     recommendations drive 31% of ecommerce revenues (Twilio Segment). Customers
-     receiving personalized experiences are 60% more likely to become repeat buyers.
-
-3. **Enhance product imagery and add quick-view functionality**
-   - Time: 3-7 days
-   - Impact: 5-15% increase in add-to-cart rate
-   - Details: Enable quick-view modals on category pages so users can see product
-     details, select variants, and add to cart without navigating away. Include
-     zoomable images, variant swatches, and price visibility. Reducing clicks to
-     cart reduces friction significantly.
-
-### Sources
-- Baymard Institute, "Product Page UX" and "Search UX" research
-- Twilio Segment, "Personalization in eCommerce"
-- Amazon Buy with Prime, "Conversion Rate Optimization Best Practices"
-
----
-
-## CV05: Cart Abandonment Rate (High, e.g., 63.7%)
-
-The global average cart abandonment rate is 70.22% (Baymard Institute, 2026, based on
-50 studies). While some abandonment is natural (comparison shopping), rates above 65%
-for your segment suggest recoverable losses.
-
-### Actions
-
-1. **Implement a multi-touch cart abandonment email/SMS sequence**
-   - Time: 2-3 days
-   - Impact: 5-15% reduction in abandonment; abandoned cart flows deliver 3.33% placed-order rate
-   - Details: Send email #1 at 1 hour (reminder with product images), email #2 at 24 hours
-     (social proof or urgency), email #3 at 48-72 hours (small incentive if needed).
-     Abandoned cart emails generate $3.65 revenue per recipient -- the highest of all
-     automated flows. SMS recovery can reclaim up to 16.4 orders per 100 messages sent.
-
-2. **Enable guest checkout and reduce form fields**
-   - Time: 1-3 days
-   - Impact: 3-8% reduction in abandonment
-   - Details: 37% of shoppers abandon because they were asked to create an account
-     (Amazon Pay study). Allow guest checkout as default, with optional account creation
-     post-purchase. Minimize required fields to: email, shipping address, payment.
-     Baymard estimates the average checkout has 23 form elements, but only 12 are needed.
-
-3. **Display total cost (including shipping and tax) early in the funnel**
-   - Time: 1 day
-   - Impact: 5-10% reduction in abandonment
-   - Details: 39% of consumers abandon due to unexpected extra costs (shipping, taxes, fees).
-     Show estimated shipping costs on product pages or in the cart. Offer a free-shipping
-     threshold that is 15-20% above your current AOV to also increase order value.
-
-### Sources
-- Baymard Institute, "50 Cart Abandonment Rate Statistics 2026" (70.22% average)
-- Email Vendor Selection, "38+ Cart Abandonment Rate Statistics 2026"
-- Growth Suite, "Cart Abandonment Rate 2026 Statistics"
-- Statista, "Global Digital Shopping Cart Abandonment Rate 2026"
-
----
-
-## CV06: Checkout Abandonment Rate (High, e.g., 46.2%)
-
-Checkout abandonment specifically targets users who began the checkout process but did
-not complete it. This is more actionable than cart abandonment because these users had
-high purchase intent.
-
-### Actions
-
-1. **Add express checkout options (Apple Pay, Google Pay, Shop Pay, PayPal)**
-   - Time: 1-3 days
-   - Impact: 10-15% improvement in checkout conversion; mobile gains even higher
-   - Details: Digital wallet integration eliminates typing payment and shipping info.
-     Shop Pay users see 10-15% lower abandonment than guest checkout users.
-     Checkout processes exceeding 90 seconds reduce conversions by up to 47%.
-     Express checkout reduces the process to under 30 seconds.
-
-2. **Simplify checkout to a single-page or accordion flow with progress indicators**
-   - Time: 3-7 days
-   - Impact: 10-20% reduction in checkout abandonment
-   - Details: 21% of customers abandon because the process is too long or complicated.
-     Consolidate to 3 clear steps max (Shipping, Payment, Review). Add a progress
-     bar. Baymard Institute estimates better checkout design can increase conversion
-     by 35.26%. Remove distractions: hide the main navigation during checkout.
-
-3. **Offer multiple payment methods including BNPL (Buy Now, Pay Later)**
-   - Time: 1-3 days
-   - Impact: 5-10% reduction in checkout abandonment
-   - Details: 13-28% of shoppers abandon if their preferred payment method is
-     unavailable. Add credit/debit cards, PayPal, Apple Pay, Google Pay, and at
-     least one BNPL option (Klarna, Afterpay, Affirm). BNPL is especially impactful
-     for AOV above $50.
-
-### Sources
-- Baymard Institute, "Checkout Usability" research (35.26% recoverable conversion lift)
-- Open Door Digital, "E-Commerce Checkout Optimization: Reduce Cart Abandonment by 35%"
-- Mason, "Proven Strategies for Minimizing Checkout Abandonment"
-- Ranosys, "How OneClick Express Revolutionizes Checkout Experiences"
 
 ---
 
@@ -472,103 +277,16 @@ buyers, indicating weak post-purchase engagement and retention.
 
 ---
 
-## C05: Returning vs. New Customer Spend Ratio (Low)
-
-When returning customers spend at a similar or lower rate than new customers, the
-business is not capturing increasing wallet share from its loyal base. Healthy
-ecommerce stores see returning customers spend 67-100% more per order than new customers.
-
-### Actions
-
-1. **Implement personalized product recommendations based on purchase history**
-   - Time: 3-7 days
-   - Impact: 10-15% increase in AOV for returning customers
-   - Details: Use purchase history and browsing behavior to show relevant upsell
-     and cross-sell suggestions. Personalized recommendations drive 31% of ecommerce
-     revenue (Twilio Segment). Returning customers who see "based on your past
-     purchases" recommendations spend 2.1x more (McKinsey). Display recommendations
-     on homepage, product pages, cart, and post-purchase emails.
-
-2. **Create exclusive bundles and upsell paths for returning customers**
-   - Time: 3-5 days
-   - Impact: 15-25% increase in returning customer AOV
-   - Details: Offer returning customers exclusive multi-buy deals, premium bundles,
-     or early access to new products at a bundled price. Use purchase frequency data
-     to time offers (e.g., if average repurchase cycle is 45 days, send a bundle
-     offer at day 35). Customers receiving personalized offers spend 38% more on
-     average (Twilio Segment).
-
-3. **Introduce tier-based free shipping thresholds that increase with loyalty status**
-   - Time: 1-2 days
-   - Impact: 8-12% AOV increase for returning customers
-   - Details: Offer progressively lower free-shipping thresholds for repeat buyers
-     (e.g., new customers: free shipping at $75, returning: $50, VIP: always free).
-     This rewards loyalty while still incentivizing higher basket sizes. Pair with
-     a progress bar showing "You're $X away from free shipping."
-
-### Sources
-- McKinsey, "The Value of Personalization" research
-- Twilio Segment, "State of Personalization Report"
-- Envive AI, "36 Customer Retention Statistics in eCommerce 2026"
-
----
-
-## PR01: Average Discount Rate (High)
-
-This check overlaps with R08 but focuses specifically on pricing analysis. A high
-average discount rate (above 15-20%) across the catalog signals structural
-over-discounting that erodes brand value and trains price sensitivity.
-
-### Actions
-
-1. **Audit and segment discounts by purpose: acquisition vs. retention vs. clearance**
-   - Time: 2-3 days
-   - Impact: 5-10 percentage point reduction in blended discount rate
-   - Details: Categorize every active discount: is it for acquiring new customers,
-     retaining existing ones, or clearing dead stock? Often discounts accumulate without
-     strategic purpose. Set maximum discount depths per category: acquisition (10-15%),
-     retention (5-10% or value-added), clearance (up to 40% for end-of-life only).
-     Track CLV of customers acquired through different discount levels -- customers
-     acquired via 20%+ discounts often have 50% lower CLV.
-
-2. **Replace site-wide sales with targeted, personalized offers**
-   - Time: 3-7 days
-   - Impact: 15-30% reduction in discount costs while maintaining conversion volume
-   - Details: Instead of "20% off everything," use behavioral triggers: first-purchase
-     welcome discount (one-time), browse-abandonment nudge (free shipping, not %),
-     loyalty reward (points, not discounts), and win-back offer (modest % for lapsed
-     customers only). Personalized pricing means discounting only when necessary to
-     convert, not universally.
-
-3. **Test price anchoring and value framing as alternatives to discounts**
-   - Time: 1-2 weeks for testing
-   - Impact: 5-15% improvement in full-price conversion rate
-   - Details: Use "compare at" pricing, product comparisons showing value, cost-per-use
-     calculations ("$2/day for premium quality"), and bundle pricing that delivers
-     perceived savings without margin erosion. Highlight non-price value: free returns,
-     warranty, quality guarantees. A/B test discount vs. non-discount versions of
-     promotions to measure true incrementality.
-
-### Sources
-- ReferralCandy, "The Complete Ecommerce Discount Strategy Guide for 2026"
-- Pitney Bowes, "6 Ideas for Improving eCommerce Profit Margins"
-- Upcounting, "eCommerce Gross Margin Paradox"
-
----
-
 ## Cross-Cutting Recommendations
 
 Several actions reinforce multiple metrics simultaneously:
 
 | Action | Checks Improved |
 |--------|----------------|
-| Loyalty/rewards program | R05, C01, C05, R01 |
-| Post-purchase email automation | R05, C01, C05, R01 |
-| Product page optimization (images, descriptions, sizing) | R10, CV01, CV03 |
-| Checkout simplification + express pay | CV05, CV06, CV01 |
+| Loyalty/rewards program | R05, C01, R01 |
+| Post-purchase email automation | R05, C01, R01 |
 | SKU rationalization | P01, P10, R14 |
-| Shift from % discounts to value-added incentives | R08, PR01, R14 |
-| Personalized recommendations | CV03, C05, R05, R01 |
+| Shift from % discounts to value-added incentives | R08, R14 |
 
 ---
 
@@ -576,30 +294,30 @@ Several actions reinforce multiple metrics simultaneously:
 
 When multiple checks are flagged, prioritize actions by:
 
-1. **Quick wins** (< 3 days, high impact): Cart abandonment emails, guest checkout,
-   express payment options, free-shipping threshold adjustment
-2. **Medium effort** (1-2 weeks, high impact): Checkout redesign, product page optimization,
-   loyalty program launch, post-purchase email sequences
-3. **Strategic initiatives** (2-8 weeks, transformational): SKU rationalization, private-label
-   development, supplier renegotiation, comprehensive personalization engine
+1. **Quick wins** (< 3 days, high impact): Post-purchase email sequences,
+   free-shipping threshold adjustment, discount cap rules
+2. **Medium effort** (1-2 weeks, high impact): Loyalty program launch,
+   SKU rationalization, product page optimization
+3. **Strategic initiatives** (2-8 weeks, transformational): Private-label
+   development, supplier renegotiation, subscription model
 
-Focus on the highest-impact items first, typically checkout/conversion fixes (CV05, CV06)
-and retention automation (R05, C01), as these have the fastest payback period.
+Focus on the highest-impact items first, typically retention automation (R05, C01)
+and discount governance (R08), as these have the fastest payback period.
 
 ---
 
 ## Vertical-Specific Strategy Playbooks
 
 When the business vertical is identified, apply the corresponding strategy playbook
-from [`vertical-benchmarks.md`](vertical-benchmarks.md) to prioritize actions.
+from [`benchmarks.md`](benchmarks.md) to prioritize actions.
 
 | Vertical | Top Priority Action | Reference |
 |----------|--------------------|-----------|
-| Fashion & Apparel | Build fit-confidence layer to reduce preventable returns | `vertical-benchmarks.md` → Fashion |
-| Beauty & Cosmetics | Implement guided selling (shade finders, quizzes) | `vertical-benchmarks.md` → Beauty |
-| Food & Beverage | Make subscription-first for consumable staples | `vertical-benchmarks.md` → Food |
-| Electronics & Gadgets | Make PDPs decision-complete (specs, compatibility) | `vertical-benchmarks.md` → Electronics |
-| Home & Living | Upgrade confidence merchandising (dimensions, UGC) | `vertical-benchmarks.md` → Home |
-| Health & Wellness | Build trust stack (certifications, claim review) | `vertical-benchmarks.md` → Health |
+| Fashion & Apparel | Build fit-confidence layer to reduce preventable returns | `benchmarks.md` |
+| Beauty & Cosmetics | Implement guided selling (shade finders, quizzes) | `benchmarks.md` |
+| Food & Beverage | Make subscription-first for consumable staples | `benchmarks.md` |
+| Electronics & Gadgets | Make PDPs decision-complete (specs, compatibility) | `benchmarks.md` |
+| Home & Living | Upgrade confidence merchandising (dimensions, UGC) | `benchmarks.md` |
+| Health & Wellness | Build trust stack (certifications, claim review) | `benchmarks.md` |
 
 See also: [`finding-clusters.md`](finding-clusters.md) for how clusters inform action prioritization.

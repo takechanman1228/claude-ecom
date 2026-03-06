@@ -59,15 +59,14 @@ main() {
     echo ""
     echo "  Installed:"
     echo "    - 1 skill (ecom)"
-    echo "    - 16 reference files"
+    echo "    - 6 reference files"
     echo ""
     echo "  Usage:"
     echo "    1. Start Claude Code:  claude"
-    echo "    2. Run commands:       /ecom audit"
-    echo "                           /ecom review"
+    echo "    2. Run command:        /ecom review"
     echo ""
     if [ "${WITH_CLI}" = true ]; then
-        echo "  CLI installed. Run: ecom audit orders.csv"
+        echo "  CLI installed. Run: ecom review orders.csv"
     else
         echo "  To also install the Python CLI: bash install.sh --with-cli"
     fi

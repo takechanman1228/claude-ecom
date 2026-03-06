@@ -407,12 +407,12 @@ class TestScoringIntegration:
         site_checks = build_site_checks_single(_healthy_page())
         other_checks = [
             CheckResult("R01", "revenue", "high", "pass"),
-            CheckResult("C01", "retention", "critical", "pass"),
+            CheckResult("C01", "customer", "critical", "pass"),
         ]
         health = score_checks(site_checks + other_checks)
         assert "site" in health.category_scores
         assert "revenue" in health.category_scores
-        assert "retention" in health.category_scores
+        assert "customer" in health.category_scores
         assert health.overall_score == 100.0
 
     def test_site_failures_reduce_score(self):

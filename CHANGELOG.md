@@ -4,6 +4,36 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/).
 
+## [0.1.0] — 2026-03-06
+
+### Changed
+- **Unified review model**: single `ecom review` command replaces `audit`, `review mbr/qbr/abr`, and `shopify` commands
+- Categories simplified: 7 → 3 (Revenue 40%, Customer 30%, Product 30%)
+- Input simplified: orders-only (no separate products/inventory files required)
+- Output: `review.json` replaces `scores.json` + `AUDIT-REPORT.md`
+- Health levels: strong/needs_attention/weak replaces A-F grading
+- Multi-period architecture: 30d/90d/365d trailing windows with data coverage detection
+- Check vocabulary: "watch" added alongside "warning" and "fail"
+- PR01 merged into R08 (discount rate check)
+- "retention" category renamed to "customer"
+- "pricing" checks moved under "revenue" category
+- Finding clusters reduced: 6 → 4 (removed Inventory Distortion, Returns/Trust)
+- Reference files: 8 → 6 (health-checks.md, review-narratives.md, benchmarks.md replace old files)
+
+### Added
+- `review_engine.py`: period-based review builder with KPI trees, growth drivers, monthly trends
+- `compute_data_coverage()` and `prior_trailing_window()` in periods.py
+- `build_top_issues()` and `build_action_candidates()` in scoring.py
+- `generate_review_json()` and `_sanitize_for_json()` in report.py
+- `assign_level()` for health level mapping
+
+### Removed (from main flow, code kept)
+- `audit` CLI command
+- `review mbr|qbr|abr` subcommands
+- `shopify` CLI group
+- O* (inventory), CV* (conversion), SA* (site) checks
+- `_build_checks` from cli.py (moved to review_engine.py)
+
 ## [1.0.0] — 2026-03-04
 
 ### Changed

@@ -1,155 +1,263 @@
-# EC Industry Benchmarks
+# Vertical-Specific Benchmarks
+<!-- Updated: 2026-03-06 | Source: DR1 -->
 
-<!-- Updated: 2026-03-04 | v0.4 -->
-<!-- Sources: Shopify, BigCommerce, Statista, internal analysis, DR1 vertical research -->
+This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calendars, structural challenges, and strategy playbooks for six ecommerce verticals. Use the KPI tables to contextualize review findings by swapping in vertical-appropriate expectations for four high-variance metrics: F2 rate (C01), AOV, Discount rate (R08), and Gross margin (R14). Thresholds assume a typical ecommerce operator in a competitive market; apply additional modifiers for subscription, marketplace, dropship, luxury, or B2B business models.
 
-## Overall EC Benchmarks
+---
 
-| Metric | Median | Top Quartile | Bottom Quartile |
-|--------|--------|-------------|----------------|
-| CVR (all traffic) | 2.5% | 4.5% | 1.0% |
-| AOV (general) | $85 | $150 | $45 |
-| Cart abandonment rate | 70% | 60% | 80% |
-| Return rate | 8% | 3% | 15% |
-| F2 conversion rate | 27% | 40% | 15% |
-| 12-month retention | 12% | 25% | 5% |
-| Gross margin | 45% | 65% | 25% |
-| Avg discount rate | 12% | 5% | 25% |
+## Fashion & Apparel
 
-## By Industry Vertical
+### KPI Pass / Watch / Fail Thresholds
 
-> **Detailed vertical benchmarks:** For Pass/Warn/Fail thresholds, seasonal calendars,
-> structural challenges, and strategy playbooks per vertical, see
-> [`vertical-benchmarks.md`](vertical-benchmarks.md). The tables below provide quick
-> reference ranges; `vertical-benchmarks.md` provides the full audit-grade thresholds.
+| KPI | Pass | Watch | Fail |
+|---|---:|---:|---:|
+| F2 rate (C01) | >= 25% | 15%--24.9% | < 15% |
+| AOV | >= $160 | $120--$159 | < $120 |
+| Discount rate (R08) | <= 20% | 20%--30% | > 30% |
+| Gross margin (R14) | >= 50% | 40%--49.9% | < 40% |
 
-### Fashion & Apparel
+### Rationale
 
-| Metric | Benchmark |
-|--------|-----------|
-| CVR | 1.5-2.5% |
-| AOV | $80-120 |
-| Return rate | 15-25% |
-| F2 rate | 20-30% |
-| Seasonal peak | Q4 (holiday), Spring |
-| Avg discount rate | 15-20% |
-| Inventory turnover | 4-6x/year |
+Fashion has structurally higher gross margins than electronics or grocery, supporting a higher fail threshold. Discount dependency is common, with peak seasonal discount depths in the mid-20% range and consumers trained to expect 30%+ during Black Friday.
 
-### Beauty & Cosmetics
+### Seasonal Calendar
 
-| Metric | Benchmark |
-|--------|-----------|
-| CVR | 3.0-5.0% |
-| AOV | $50-80 |
-| Return rate | 3-5% |
-| F2 rate | 30-40% |
-| Repurchase cycle | 45-60 days |
-| Subscription rate | 10-25% |
-| Inventory turnover | 6-10x/year |
+- **Peak months:** Aug--Sep (back-to-school), Nov--Dec (holiday), plus smaller spikes around mid-summer mega-sale events.
+- **Pre-season prep timeline:** Begin merchandising, inventory positioning, and creative production 8--12 weeks ahead of peak, as consumers start shopping earlier and the peak holiday window is short.
+- **Markdown windows:** Late Nov--early Dec (BFCM/Cyber Week), late Dec--Jan (post-holiday clearance), and mid-summer eventing (July) used to reset seasonal inventory and drive cash conversion.
 
-### Food & Beverage
+### Top Structural Challenges
 
-| Metric | Benchmark |
-|--------|-----------|
-| CVR | 2.0-4.0% |
-| AOV | $40-70 |
-| Return rate | 1-3% |
-| F2 rate | 35-50% |
-| Repurchase cycle | 14-30 days |
-| Subscription rate | 15-30% |
-| Inventory turnover | 12-24x/year |
+- Seasonal inventory risk: wrong depth/size curves show up as stockouts in winners and long-tail overstock in losers, forcing deeper markdowns in clearance windows.
+- Discount dependency and "promo-trained" customers: heavy reliance on sitewide promotions compresses gross margin and can still fail to move aged units if merchandising is weak.
 
-### Electronics & Gadgets
+### Recommended Strategy Playbook
 
-| Metric | Benchmark |
-|--------|-----------|
-| CVR | 1.0-2.0% |
-| AOV | $150-300 |
-| Return rate | 8-12% |
-| F2 rate | 10-20% |
-| Research cycle | Long consideration |
-| Avg discount rate | 5-10% |
-| Inventory turnover | 4-8x/year |
+- Use **assortment discipline + lifecycle merchandising**: plan hero SKUs, chase winners early, and separate "core continuity" from "seasonal risk" so markdowns are targeted rather than blanket.
+- Replace always-on discounts with a **promo architecture**: fewer, clearer moments; tiered thresholds; and clearance segmentation, aligned to consumer expectations for deep-event periods without training constant waiting.
+- Increase F2 by designing a **second-order path**: post-purchase styling flows, "complete the look" bundles, and customer-specific recommendations to pull second purchase inside your attribution window.
 
-### Home & Living
+### Benchmark Ranges
 
-| Metric | Benchmark |
-|--------|-----------|
-| CVR | 1.5-3.0% |
-| AOV | $100-200 |
-| Return rate | 8-12% |
-| F2 rate | 15-25% |
-| Seasonal peak | Spring, Q4 |
-| Avg discount rate | 10-15% |
-| Inventory turnover | 3-6x/year |
+| Metric | Typical range for Fashion & Apparel |
+|---|---:|
+| F2 rate (C01) | ~15%--30% |
+| AOV | ~$150--$220 |
+| Discount rate (R08) | ~10%--25% (event peaks higher) |
+| Gross margin (R14) | ~45%--60% |
 
-### Health & Wellness
+---
 
-| Metric | Benchmark |
-|--------|-----------|
-| CVR | 2.5-4.5% |
-| AOV | $45-75 |
-| Return rate | 3-5% |
-| F2 rate | 30-45% |
-| Repurchase cycle | 30-45 days |
-| Subscription rate | 20-35% |
-| Inventory turnover | 8-12x/year |
+## Beauty & Cosmetics
 
-## Scale-Based Benchmarks
+### KPI Pass / Watch / Fail Thresholds
 
-### Small EC (< $1M annual revenue)
+| KPI | Pass | Watch | Fail |
+|---|---:|---:|---:|
+| F2 rate (C01) | >= 30% | 20%--29.9% | < 20% |
+| AOV | >= $120 | $80--$119 | < $80 |
+| Discount rate (R08) | <= 15% | 15%--25% | > 25% |
+| Gross margin (R14) | >= 65% | 55%--64.9% | < 55% |
 
-| Metric | Typical Range |
-|--------|--------------|
-| Monthly orders | 50-500 |
-| SKU count | 20-200 |
-| Marketing spend ratio | 15-25% of revenue |
-| Staff per $100K revenue | 1-2 |
+### Rationale
 
-### Medium EC ($1-10M)
+Beauty converts strongly and product margins are structurally high (often ~55%--80%), supporting an aggressive gross margin floor. Loyalty fragility in a crowded market makes personalization and CRM flows disproportionately important to lift F2.
 
-| Metric | Typical Range |
-|--------|--------------|
-| Monthly orders | 500-5,000 |
-| SKU count | 100-2,000 |
-| Marketing spend ratio | 10-20% |
-| Inventory turns | 4-8x/year |
+### Seasonal Calendar
 
-### Large EC ($10-100M)
+- **Peak months:** Nov--Dec (holiday gifting) and Jul (major marketplace promo events that pull forward demand); replenishment categories remain steadier year-round than fashion.
+- **Pre-season prep timeline:** 6--10 weeks before peak, ensure giftability (bundles, sets, minis), sampling strategy, and landing pages are ready because shoppers start earlier and concentrate purchases into a short holiday window.
+- **Markdown windows:** BFCM/Cyber Week, then targeted post-holiday offers for self-care/routine resets, plus mid-summer deal events that increasingly resemble "Black Friday in summer."
 
-| Metric | Typical Range |
-|--------|--------------|
-| Monthly orders | 5,000-50,000 |
-| SKU count | 500-20,000 |
-| Marketing spend ratio | 8-15% |
-| Inventory turns | 6-12x/year |
+### Top Structural Challenges
 
-## Funnel Benchmarks
+- Loyalty fragility in a crowded market (high switching), making personalization, routine-building, and CRM flows disproportionately important to lift F2.
 
-| Funnel Step | Typical Rate |
-|-------------|-------------|
-| Visit → Product View | 40-60% |
-| Product View → Add to Cart | 8-15% |
-| Add to Cart → Begin Checkout | 50-70% |
-| Begin Checkout → Purchase | 45-65% |
-| Overall Visit → Purchase | 1.5-3.5% |
+### Recommended Strategy Playbook
 
-## Device Benchmarks
+- Implement **guided selling** (shade finders, skin-type quizzes, regimen builders) and emphasize education on PDP/PLP to reduce mismatch and increase confidence.
+- Drive AOV via **routine bundles** (AM/PM kits), "complete the routine" cross-sells, and free-sample thresholds instead of deeper discounts.
+- Build for F2 with **replenishment timing** (reorder reminders calibrated to product lifespan) and subscription/auto-ship options where appropriate.
+- Protect margin by using promotions strategically during peak deal windows and shifting value to gifts-with-purchase, exclusives, or bundles when possible.
 
-| Device | CVR | AOV | Traffic Share |
-|--------|-----|-----|---------------|
-| Desktop | 3.5% | $110 | 35% |
-| Mobile | 1.8% | $75 | 55% |
-| Tablet | 2.8% | $95 | 10% |
+### Benchmark Ranges
 
-## Channel Benchmarks
+| Metric | Typical range for Beauty & Cosmetics |
+|---|---:|
+| F2 rate (C01) | ~20%--40% |
+| AOV | ~$80--$170 |
+| Discount rate (R08) | ~10%--20% (event peaks higher) |
+| Gross margin (R14) | ~55%--75% |
 
-| Channel | CVR | Typical Share |
-|---------|-----|--------------|
-| Organic Search | 2.5% | 25-35% |
-| Paid Search | 3.5% | 15-25% |
-| Email | 4.5% | 10-20% |
-| Social (organic) | 1.0% | 5-15% |
-| Social (paid) | 1.5% | 10-20% |
-| Direct | 3.0% | 15-25% |
-| Referral | 2.0% | 5-10% |
+---
+
+## Food & Beverage
+
+### KPI Pass / Watch / Fail Thresholds
+
+| KPI | Pass | Watch | Fail |
+|---|---:|---:|---:|
+| F2 rate (C01) | >= 40% | 25%--39.9% | < 25% |
+| AOV | >= $75 | $55--$74 | < $55 |
+| Discount rate (R08) | <= 10% | 10%--15% | > 15% |
+| Gross margin (R14) | >= 25% | 18%--24.9% | < 18% |
+
+### Rationale
+
+Grocery/food retail margin is structurally low (mid-20s gross margin, large grocers often in the low-20s), which means discounting and shipping subsidies quickly become existential. Basket sizes are generally lower than categories like home goods, with industry snapshots showing ~$69 AOV in Q1.
+
+### Seasonal Calendar
+
+- **Peak months:** Nov (holiday food events), Dec (gifting/entertaining), and early Feb (Super Bowl snacks/party food).
+- **Pre-season prep timeline:** 4--8 weeks before each peak, lock supply, packaging materials, and fulfillment capacity; short peak windows plus higher shipping sensitivity makes operational readiness a conversion lever.
+- **Markdown windows:** Concentrate promo depth around BFCM/Cyber Week and major event weeks; otherwise bias toward bundles/thresholds rather than deep percent-off, because margins are thin.
+
+### Top Structural Challenges
+
+- Shipping economics vs. low AOV: free shipping thresholds that are too low (or hidden fees) produce margin leakage.
+- Underutilized retention mechanics (reorder/subscription): many stores perform fine on acquisition but fail to capture the natural repeat cycle inherent to consumables.
+
+### Recommended Strategy Playbook
+
+- Make **subscription-first** where appropriate (staples, coffee/tea, supplements-adjacent consumables) with low-friction skip/pause; pair with reorder reminders for non-subscription buyers.
+- Push AOV through **bundles and thresholds** (variety packs, "build-a-box," subscribe-and-save) to reduce shipping as % of revenue instead of relying on discounts.
+- Treat event weeks as mini-seasons (holiday, Super Bowl): pre-build landing pages and email/SMS flows, and coordinate inventory + promo so you don't discount items you can't fulfill.
+
+### Benchmark Ranges
+
+| Metric | Typical range for Food & Beverage |
+|---|---:|
+| F2 rate (C01) | ~25%--45% |
+| AOV | ~$55--$90 |
+| Discount rate (R08) | ~5%--15% |
+| Gross margin (R14) | ~18%--35% |
+
+---
+
+## Electronics & Gadgets
+
+### KPI Pass / Watch / Fail Thresholds
+
+| KPI | Pass | Watch | Fail |
+|---|---:|---:|---:|
+| F2 rate (C01) | >= 15% | 8%--14.9% | < 8% |
+| AOV | >= $180 | $120--$179 | < $120 |
+| Discount rate (R08) | <= 15% | 15%--25% | > 25% |
+| Gross margin (R14) | >= 25% | 15%--24.9% | < 15% |
+
+### Rationale
+
+Electronics is structurally margin-thin compared to beauty and apparel; large electronics retailers commonly operate with gross margins in the low-20% range, so gross margin should not be audited against beauty-like expectations. Discounting peaks aggressively during holiday periods (~30.9% peak discounts in one holiday season report), but persistent high discount depth outside deal events signals price-matching stress and weak differentiation.
+
+### Seasonal Calendar
+
+- **Peak months:** Jul (major deal events often tied to back-to-school shopping) and Nov--Dec (holiday).
+- **Pre-season prep timeline:** 6--10 weeks ahead -- ensure pricing strategy, supplier availability, and fulfillment SLAs are locked because consumers compare prices heavily and the peak window is short.
+- **Markdown windows:** Highest discount depths cluster around Prime-like summer events and BFCM/Cyber Week, with category peak discounts reported around ~30% for electronics during holiday.
+
+### Top Structural Challenges
+
+- Low gross margins + price transparency drive a "race to the bottom," so shipping leakage or heavy discounting quickly breaks contribution margin.
+
+### Recommended Strategy Playbook
+
+- Make PDPs "decision-complete": rich specs, compatibility matrices, side-by-side comparisons, and transparent warranty/return terms to reduce uncertainty-driven abandonment.
+- Shift value from discounts to **bundles and services** (warranty extensions, setup, accessories kits) to lift AOV while protecting gross margin.
+- Treat promo as event-led (summer deal weeks + BFCM) and avoid constant markdowns; persistent deep discounts are often unsustainable in low-margin categories.
+
+### Benchmark Ranges
+
+| Metric | Typical range for Electronics & Gadgets |
+|---|---:|
+| F2 rate (C01) | ~8%--15% |
+| AOV | ~$120--$250+ |
+| Discount rate (R08) | ~10%--25% (event peaks higher) |
+| Gross margin (R14) | ~15%--30% |
+
+---
+
+## Home & Living
+
+### KPI Pass / Watch / Fail Thresholds
+
+| KPI | Pass | Watch | Fail |
+|---|---:|---:|---:|
+| F2 rate (C01) | >= 15% | 10%--14.9% | < 10% |
+| AOV | >= $250 | $150--$249 | < $150 |
+| Discount rate (R08) | <= 15% | 15%--25% | > 25% |
+| Gross margin (R14) | >= 35% | 25%--34.9% | < 25% |
+
+### Rationale
+
+Home & furniture categories have structurally high AOV (~$266 in one benchmark snapshot), making merchandising clarity more valuable than chasing visits. Gross margins for large home-focused ecommerce retailers are commonly around ~30%, supporting a mid-30s pass goal but a lower fail floor than beauty/apparel.
+
+### Seasonal Calendar
+
+- **Peak months:** Jul--Sep (move-in / dorm / home refresh) and Nov--Dec (holiday). Back-to-school shopping starts early for many consumers (early July), which matters for dorm basics and small home goods.
+- **Pre-season prep timeline:** 8--12 weeks ahead -- ensure catalog hygiene, delivery promises, and inventory visibility are correct because purchases are high-consideration and shoppers start earlier.
+- **Markdown windows:** BFCM/Cyber Week (giftable home goods + decor), plus targeted clearance on seasonal decor and end-of-line SKUs; avoid blanket promos that destroy margin with bulky-ship items.
+
+### Top Structural Challenges
+
+- "Ops is the product": delivery fees, lead times, damage risk, and poor post-purchase comms become conversion drivers.
+
+### Recommended Strategy Playbook
+
+- Upgrade "confidence merchandising": dimension clarity, material details, room photography, and UGC; treat PDP completeness as a conversion lever.
+- Show **transparent delivery economics** early (shipping costs, thresholds, white-glove options) to prevent late-stage abandonment from unexpected fees.
+- Lift AOV without margin collapse via **bundled rooms/collections**, accessories attach, and financing where relevant, rather than deeper discounts.
+- Segment promos: use event promotions for giftable items but protect bulky/low-margin SKUs with targeted markdowns and controlled clearance.
+
+### Benchmark Ranges
+
+| Metric | Typical range for Home & Living |
+|---|---:|
+| F2 rate (C01) | ~10%--20% |
+| AOV | ~$200--$350+ |
+| Discount rate (R08) | ~10%--20% (event peaks higher) |
+| Gross margin (R14) | ~25%--35% |
+
+---
+
+## Health & Wellness
+
+### KPI Pass / Watch / Fail Thresholds
+
+| KPI | Pass | Watch | Fail |
+|---|---:|---:|---:|
+| F2 rate (C01) | >= 30% | 18%--29.9% | < 18% |
+| AOV | >= $75 | $55--$74 | < $55 |
+| Discount rate (R08) | <= 15% | 15%--25% | > 25% |
+| Gross margin (R14) | >= 50% | 40%--49.9% | < 40% |
+
+### Rationale
+
+Health & wellness is a blended vertical: consumable products (supplements, routine items) behave like high-repeat DTC, while durable goods (equipment) behave more like electronics/home. Regulatory/compliance and trust are unusually material -- misleading health claims can trigger enforcement actions and reputational damage, making claims hygiene a structural concern. Seasonality is pronounced around behavior-change moments, with a meaningful share of annual new gym memberships occurring in January (~12%), correlating with demand spikes for fitness/wellness products.
+
+### Seasonal Calendar
+
+- **Peak months:** January (New Year behavior change) and Nov--Dec (holiday gifting and deal season).
+- **Pre-season prep timeline:** 6--10 weeks before Jan and holiday: validate claims/labeling, refresh educational content, and make subscription/refill mechanics prominent to capture routine-building intent.
+- **Markdown windows:** BFCM/Cyber Week plus New Year promotions; keep routine products focused on subscription/refill value rather than deep markdown dependence.
+
+### Top Structural Challenges
+
+- Claims and compliance risk: supplement and health-related stores often overreach on marketing claims, creating failures that matter beyond performance.
+- Trust deficit and anxiety purchasing: consumers want proof (testing, certifications, clear ingredients), so weak credibility signals depress purchase rates.
+- Retention is available but not captured: routine products can generate strong repeat, yet many stores lack reorder/subscription UX and lifecycle communications to convert first-time buyers into ongoing customers.
+
+### Recommended Strategy Playbook
+
+- Build a **trust stack**: transparent ingredients, third-party testing and disclaimers where appropriate, and rigorous claim language review; treat this as a KPI precondition.
+- Prioritize **subscription + adherence UX** (skip/pause, reminders, reorder in 1--2 clicks) for consumables to lift F2 without discounting away margin.
+- Use education as conversion: condition-specific guides, dosage FAQs, and "what to expect" timelines reduce uncertainty and preventable returns.
+- Plan around **January**: preload landing pages and lifecycle flows for the resolution spike, similar to how retailers plan early for compressed peak seasons.
+
+### Benchmark Ranges
+
+| Metric | Typical range for Health & Wellness |
+|---|---:|
+| F2 rate (C01) | ~18%--40% (higher for consumables) |
+| AOV | ~$55--$90 (routine products) |
+| Discount rate (R08) | ~5%--20% |
+| Gross margin (R14) | ~40%--60% |

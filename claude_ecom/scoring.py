@@ -1,12 +1,11 @@
 """Health score calculation and grading.
 
 Scoring system:
-- 7 categories weighted to 100%: Revenue 25%, Conversion 20%, Product 20%,
-  Inventory 10%, Retention 15%, Pricing 10%, Site 10%.
+- 3 categories weighted to 100%: Revenue 40%, Customer 30%, Product 30%.
 - Only categories present are included; weights are renormalised automatically.
 - Severity multipliers: Critical 5.0, High 3.0, Medium 1.5, Low 0.5.
-- Check results: PASS (1.0), WARNING (0.5), FAIL (0.0).
-- Grades: A (90-100), B (75-89), C (60-74), D (40-59), F (<40).
+- Check results: PASS (1.0), WATCH (0.5), WARNING (0.5), FAIL (0.0).
+- Health levels: strong (75-100), needs_attention (50-74), weak (<50).
 """
 
 from __future__ import annotations
@@ -14,13 +13,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 
 CATEGORY_WEIGHTS = {
-    "revenue": 0.25,
-    "conversion": 0.20,
-    "product": 0.20,
-    "inventory": 0.10,
-    "retention": 0.15,
-    "pricing": 0.10,
-    "site": 0.10,
+    "revenue": 0.40,
+    "customer": 0.30,
+    "product": 0.30,
 }
 
 SEVERITY_MULTIPLIERS = {
@@ -32,17 +27,16 @@ SEVERITY_MULTIPLIERS = {
 
 RESULT_SCORES = {
     "pass": 1.0,
+    "watch": 0.5,
     "warning": 0.5,
     "fail": 0.0,
     "na": None,
 }
 
-GRADE_THRESHOLDS = [
-    (90, "A"),
-    (75, "B"),
-    (60, "C"),
-    (40, "D"),
-    (0, "F"),
+HEALTH_LEVELS = [
+    (75, "strong"),
+    (50, "needs_attention"),
+    (0, "weak"),
 ]
 
 
@@ -53,7 +47,7 @@ class CheckResult:
     check_id: str
     category: str
     severity: str  # critical, high, medium, low
-    result: str  # pass, warning, fail
+    result: str  # pass, watch, warning, fail, na
     message: str = ""
     current_value: float | str | None = None
     threshold: float | str | None = None
@@ -66,7 +60,7 @@ class CategoryScore:
 
     category: str
     score: float  # 0-100
-    grade: str
+    level: str  # strong, needs_attention, weak
     total_checks: int
     passed: int
     warnings: int
@@ -80,7 +74,6 @@ class HealthScore:
     """Overall health score."""
 
     overall_score: float
-    overall_grade: str
     category_scores: dict[str, CategoryScore]
     check_results: list[CheckResult]
     total_checks: int
@@ -90,12 +83,12 @@ class HealthScore:
     total_na: int = 0
 
 
-def assign_grade(score: float) -> str:
-    """Map a 0-100 score to a letter grade."""
-    for threshold, grade in GRADE_THRESHOLDS:
+def assign_level(score: float) -> str:
+    """Map a 0-100 score to a health level (strong/needs_attention/weak)."""
+    for threshold, level in HEALTH_LEVELS:
         if score >= threshold:
-            return grade
-    return "F"
+            return level
+    return "weak"
 
 
 def score_category(checks: list[CheckResult]) -> CategoryScore:
@@ -107,7 +100,7 @@ def score_category(checks: list[CheckResult]) -> CategoryScore:
         return CategoryScore(
             category="",
             score=100.0,
-            grade="A",
+            level="strong",
             total_checks=0,
             passed=0,
             warnings=0,
@@ -130,7 +123,7 @@ def score_category(checks: list[CheckResult]) -> CategoryScore:
         weight_total += mult
         if c.result.lower() == "pass":
             passed += 1
-        elif c.result.lower() == "warning":
+        elif c.result.lower() in ("warning", "watch"):
             warnings += 1
         else:
             failed += 1
@@ -142,7 +135,7 @@ def score_category(checks: list[CheckResult]) -> CategoryScore:
     return CategoryScore(
         category=category,
         score=round(score, 1),
-        grade=assign_grade(score),
+        level=assign_level(score),
         total_checks=len(checks),
         passed=passed,
         warnings=warnings,
@@ -156,7 +149,7 @@ def score_checks(check_results: list[CheckResult]) -> HealthScore:
     """Compute the overall health score from all check results.
 
     Aggregates by category, applies category weights, and produces an
-    overall 0-100 score with grade.
+    overall 0-100 score.
     """
     # Group by category
     by_category: dict[str, list[CheckResult]] = {}
@@ -180,7 +173,6 @@ def score_checks(check_results: list[CheckResult]) -> HealthScore:
 
     return HealthScore(
         overall_score=round(overall, 1),
-        overall_grade=assign_grade(overall),
         category_scores=category_scores,
         check_results=check_results,
         total_checks=len(check_results),
@@ -218,17 +210,8 @@ def _check_specific_impact(c: CheckResult, annual_revenue: float) -> float | Non
         return None
 
     formulas: dict[str, tuple[float, object]] = {
-        # CVR gap vs median 2.5%: lost revenue from lower conversion
-        "CV01": (0.025, lambda v, rev: rev * (0.025 - v) / v if v > 0 else None),
-        # Cart abandonment: each 1% improvement ≈ proportional revenue gain
-        "CV05": (0.60, lambda v, rev: rev * 0.01 * max(0, v - 0.60) / 0.60),
-        # Checkout abandonment: similar
-        "CV06": (0.30, lambda v, rev: rev * 0.01 * max(0, v - 0.30) / 0.30),
-        # Return rate: cost savings from reducing returns
-        "R10": (0.08, lambda v, rev: rev * max(0, v - 0.08)),
         # Discount rate: margin recovery from reducing discounts
         "R08": (0.12, lambda v, rev: rev * max(0, v - 0.12) * 0.5),
-        "PR01": (0.12, lambda v, rev: rev * max(0, v - 0.12) * 0.5),
         # Gross margin gap
         "R14": (0.45, lambda v, rev: rev * max(0, 0.45 - v) if v < 0.45 else None),
     }
@@ -287,3 +270,105 @@ def estimate_revenue_impact(check_results: list[CheckResult], annual_revenue: fl
         }
 
     return impacts
+
+
+# ---------------------------------------------------------------------------
+# Builders for unified review model
+# ---------------------------------------------------------------------------
+
+_SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
+
+
+def build_top_issues(
+    checks: list[CheckResult], annual_revenue: float, max_issues: int = 10
+) -> list[dict]:
+    """Build pre-sorted top issues from non-pass checks.
+
+    Sorted by severity * impact. Each entry contains id, category, severity,
+    result, message, and estimated_annual_impact.
+    """
+    impacts = estimate_revenue_impact(checks, annual_revenue)
+    issues = []
+    for c in checks:
+        if c.result.lower() in ("pass", "na"):
+            continue
+        imp = impacts.get(c.check_id, {})
+        issues.append({
+            "id": c.check_id,
+            "category": c.category,
+            "severity": c.severity,
+            "result": c.result,
+            "message": c.message,
+            "estimated_annual_impact": imp.get("annual_revenue_impact", 0),
+        })
+    issues.sort(
+        key=lambda x: (
+            _SEVERITY_ORDER.get(x["severity"].lower(), 9),
+            x["result"].lower() != "fail",
+            -x["estimated_annual_impact"],
+        )
+    )
+    return issues[:max_issues]
+
+
+_SEVERITY_TIMELINE = {
+    "critical": "this_week",
+    "high": "this_month",
+    "medium": "this_quarter",
+    "low": "this_quarter",
+}
+
+# Action suggestion templates keyed by check_id
+_ACTION_TEMPLATES: dict[str, str] = {
+    "R01": "Audit acquisition channels for spend or efficiency changes",
+    "R03": "Analyze category mix shift and review promotional calendar",
+    "R04": "Review traffic sources and conversion funnel for volume drops",
+    "R05": "Launch tiered loyalty program and post-purchase email automation",
+    "R07": "Diversify customer acquisition channels to reduce concentration",
+    "R08": "Cap discount depth and shift to value-added incentives",
+    "R13": "Shift promotional budget from flash sales to always-on acquisition",
+    "R14": "Analyze large-order dependency and diversify revenue sources",
+    "PR02": "Restrict promo code distribution to targeted segments",
+    "PR03": "Freeze discount escalation and introduce non-discount incentives",
+    "PR07": "Review pricing for negative-margin categories",
+    "PR08": "Adjust free-shipping threshold to 1.2x median AOV",
+    "C01": "Deploy post-purchase engagement sequence to improve F2 conversion",
+    "C08": "Build VIP program for top customers to grow Champions segment",
+    "C09": "Launch win-back campaigns for At-Risk customer segment",
+    "C10": "Implement automated reactivation flows for Lost customers",
+    "C11": "Shorten second-purchase window with replenishment reminders",
+    "P01": "Create discovery merchandising for mid-tier products",
+    "P05": "Conduct SKU rationalization for non-converting products",
+    "P06": "Introduce product bundles to increase multi-item orders",
+    "P07": "Build cross-sell recommendations from high-lift product pairs",
+    "P10": "Accelerate new product launches to replace declining SKUs",
+    "P19": "Expand price tier coverage with entry-level or premium options",
+}
+
+
+def build_action_candidates(
+    top_issues: list[dict], max_actions: int = 10
+) -> list[dict]:
+    """Build action candidates from top issues with severity-based timelines.
+
+    Each entry contains action, source_check, severity, estimated_annual_impact,
+    and timeline.
+    """
+    actions = []
+    seen_checks: set[str] = set()
+    for issue in top_issues:
+        if len(actions) >= max_actions:
+            break
+        cid = issue["id"]
+        if cid in seen_checks:
+            continue
+        seen_checks.add(cid)
+        action_text = _ACTION_TEMPLATES.get(cid, f"Address {issue['message']}")
+        actions.append({
+            "action": action_text,
+            "source_check": cid,
+            "severity": issue["severity"],
+            "estimated_annual_impact": issue["estimated_annual_impact"],
+            "timeline": _SEVERITY_TIMELINE.get(issue["severity"].lower(), "this_quarter"),
+        })
+    return actions

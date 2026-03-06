@@ -1,4 +1,5 @@
 """Shopify Admin API client using Bulk Operations."""
+# NOTE: Not used by the current review flow. Kept for future integration.
 
 from __future__ import annotations
 

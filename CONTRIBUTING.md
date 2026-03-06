@@ -17,13 +17,13 @@ Each check produces a `CheckResult` with these fields:
 
 ```python
 CheckResult(
-    check_id="R16",           # Category prefix + number
-    name="New Revenue Check",
+    check_id="R16",
+    category="revenue",       # revenue | customer | product
     severity="high",          # critical | high | medium | low
-    passed=True,              # Whether the check passed
-    score=0.85,               # 0.0–1.0
-    detail="Explanation of the finding",
-    recommendation="What to do about it",
+    result="fail",            # pass | watch | warning | fail | na
+    message="MoM revenue growth: -10.0%",
+    current_value=-0.10,
+    threshold=0.0,
 )
 ```
 
@@ -40,7 +40,7 @@ CheckResult(
 
 1. Add the check function in the appropriate module (`claude_ecom/metrics.py`, `decomposition.py`, etc.)
 2. Add the check definition to the matching reference file in `skills/ecom/references/`
-3. Register the check in `claude_ecom/scoring.py`
+3. Add the check to `_build_checks()` in `claude_ecom/review_engine.py`
 4. Add a test in `tests/`
 5. Run `pytest tests/ -v` to verify
 

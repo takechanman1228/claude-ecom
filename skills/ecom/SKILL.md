@@ -1,16 +1,15 @@
 ---
 name: ecom
-version: 2.0.0
+version: 0.1.0
 description: >
-  Claude-powered ecommerce audit toolkit. Runs full store health audits covering
-  revenue, conversion, product, inventory, retention, pricing, and site quality.
-  Generates business reviews (MBR/QBR/ABR). Detects business model (D2C,
-  marketplace, subscription) and provides industry benchmarks. Produces health
-  score (0-100) with A-F grading, natural language insights, and prioritized action plans.
-  Triggers on: "ecommerce audit", "store audit", "store health", "revenue analysis",
-  "cohort analysis", "product analysis", "inventory analysis", "pricing analysis",
-  "site audit", "business review", "MBR", "QBR".
-argument-hint: "audit | review"
+  Claude-powered ecommerce analytics toolkit for D2C stores.
+  Single command: review. Analyzes order transaction data across multiple
+  time periods (30d/90d/365d), produces KPI trees with health signals,
+  structured findings, and concrete action plans.
+  Triggers on: "ecommerce review", "store review", "store health",
+  "revenue analysis", "customer analysis", "product analysis",
+  "business review".
+argument-hint: "review [30d|90d|365d]"
 allowed-tools:
   - Read
   - Grep
@@ -19,304 +18,427 @@ allowed-tools:
   - Write
 ---
 
-# ecom -- EC Data Analytics Toolkit
+# ecom -- Ecommerce Analytics Toolkit
 
-Comprehensive ecommerce data analysis and audit system. The Python backend
-computes KPIs and scores; **you** (Claude) interpret the numbers and write
-the human-readable report.
+D2C ecommerce analytics system. The Python backend computes KPIs, runs
+health checks, and scores performance from order transaction data;
+**you** (Claude) interpret the numbers and write the human-readable report.
+
+**Input:** Order transaction data only (CSV).
 
 ## Quick Reference
 
 | Command | What it does | Output |
 |---------|-------------|--------|
-| /ecom audit | Full 7-category audit with natural language report | AUDIT-REPORT.md |
-| /ecom review | Generic business review (auto-detected cadence) | BUSINESS-REVIEW-REPORT.md |
-| /ecom review mbr | Monthly Business Review (tactical/operational) | BUSINESS-REVIEW-MBR.md |
-| /ecom review qbr | Quarterly Business Review (strategic + tactical) | BUSINESS-REVIEW-QBR.md |
-| /ecom review abr | Annual Business Review (strategic/high-level) | BUSINESS-REVIEW-ABR.md |
+| /ecom review | Full business review (auto-selects periods from data) | REVIEW.md |
+| /ecom review 30d | Focused on the last 30 days | REVIEW.md |
+| /ecom review 90d | Focused on the last 90 days | REVIEW.md |
+| /ecom review 365d | Focused on the last 365 days | REVIEW.md |
+
+One command. One report.
 
 ---
 
-## Audit Workflow
+## Data Input
+
+Order transaction data (CSV). Each row = one order or line item.
+
+Required columns:
+- Order ID, Order date, Customer ID (or email)
+- Revenue (after discounts, before tax/shipping)
+- Quantity, SKU/Product ID
+- Discount amount (if available)
+
+```bash
+ecom review orders.csv --output <output-dir>
+ecom review orders.csv --period 90d --output <output-dir>
+```
+
+---
+
+## Workflow
 
 ### Phase 1: Compute (Python)
 
-Run the CLI to generate machine-readable results:
-
 ```bash
-cd <project-root>  # where pyproject.toml lives
-ecom audit <orders.csv> --products <products.csv> --inventory <inventory.csv> --output <output-dir>
-# Or from Shopify:
-ecom audit --source shopify --since 2024-01-01 --output <output-dir>
+ecom review orders.csv --output <output-dir>
 ```
 
-This produces `scores.json` in the output directory -- the structured data you will interpret.
+The engine internally:
+
+1. **Period analysis** -- computes KPIs for each time period (30d, 90d, 365d)
+   with prior-period comparisons, decompositions, and trend detection.
+2. **Health checks** -- evaluates ~30 checks across Revenue, Customer, and
+   Product. Each check produces a pass/watch/fail signal with severity
+   weighting. These power the 🟢/🟡/🔴 markers in the KPI tree.
+
+Output: `review.json` (see Schema section below).
 
 ### Phase 2: Interpret (You -- Claude)
 
-This is where your value is. Raw numbers are meaningless without context.
-
-1. **Read `scores.json`** from the output directory
+1. **Read `review.json`**
 2. **Load reference files on demand** (see Reference Files below)
-3. **Write the report** following the Output Format below
+3. **Write REVIEW.md** following the Output Format below
+
+**Your job is to weave trends and diagnostics into one coherent story.**
+Period analysis tells you *where things are heading*. Health checks tell you
+*what's broken right now*. The report combines both.
+
+---
+
+## review.json Schema
+
+This is the data contract between Python and Claude. Every field below is
+guaranteed to exist in the output. Claude reads this structure; Claude does
+NOT invent data that isn't here.
+
+```jsonc
+{
+  "version": "0.1.0",
+
+  // --- Metadata ---
+  "metadata": {
+    "generated_at": "2026-03-05T18:00:00Z",
+    "data_start": "2025-01-01",
+    "data_end": "2025-12-31",
+    "total_orders": 5784,
+    "total_customers": 2765,
+    "total_revenue": 1383651,
+    "currency": "USD",
+    "revenue_definition": "Net sales after discounts, before tax and shipping"
+  },
+
+  // --- Data coverage: which periods are available ---
+  "data_coverage": {
+    "30d": true,       // true if >=45 days of data exist
+    "90d": true,       // true if >=120 days of data exist
+    "365d": true       // true if >=400 days of data exist
+  },
+
+  // --- Period metrics (one block per available period) ---
+  "periods": {
+    "30d": {
+      "summary": {
+        "revenue": 98000,
+        "revenue_change": -0.003,       // vs prior 30d
+        "orders": 412,
+        "orders_change": -0.03,
+        "aov": 238,
+        "aov_change": -0.001,
+        "customers": 287,
+        "customers_change": -0.05
+      },
+      "kpi_tree": {
+        "new_customer_revenue": 38000,
+        "new_customer_revenue_share": 0.388,
+        "new_customers": 95,
+        "new_customers_change": -0.08,
+        "new_customer_aov": 400,
+        "returning_customer_revenue": 60000,
+        "returning_customer_revenue_share": 0.612,
+        "returning_customers": 192,
+        "returning_customers_change": -0.03,
+        "returning_customer_aov": 312,
+        "f2_rate": 0.96                // first-to-second purchase conversion
+      },
+      "drivers": {
+        "aov_effect": 1200,            // revenue change attributable to AOV
+        "volume_effect": -1500,         // revenue change attributable to order count
+        "mix_effect": 0                 // revenue change attributable to new/returning mix shift
+      }
+    },
+    "90d": { /* same structure */ },
+    "365d": {
+      /* same structure as 30d (summary, kpi_tree, drivers) plus: */
+      "monthly_trend": [
+        { "month": "2025-01", "revenue": 95000, "orders": 420, "aov": 226, "customers": 310, "new_customers": 180, "returning_customers": 130 }
+        // ... 12 months
+      ]
+    }
+  },
+
+  // --- Health checks (internal scoring, powers 🟢/🟡/🔴 markers) ---
+  "health": {
+    "category_scores": {
+      "revenue": { "score": 82.6, "level": "strong" },
+      "customer": { "score": 89.3, "level": "strong" },
+      "product": { "score": 57.1, "level": "needs_attention" }
+    },
+    "checks": [
+      {
+        "id": "R01",                    // internal only, never expose
+        "category": "revenue",
+        "severity": "high",
+        "result": "watch",              // pass | watch | fail
+        "message": "MoM revenue growth: -3.8%",
+        "value": -0.038,
+        "threshold": 0.0
+      }
+      // ... more checks
+    ],
+    "top_issues": [
+      // Pre-sorted by severity * impact. Max 10.
+      {
+        "id": "P06",
+        "category": "product",
+        "severity": "high",
+        "result": "fail",
+        "message": "Multi-item order rate: 0.0%",
+        "estimated_annual_impact": 77573
+      }
+      // ...
+    ]
+  },
+
+  // --- Pre-computed action candidates ---
+  "action_candidates": [
+    {
+      "action": "Introduce product bundles to increase multi-item orders",
+      "source_check": "P06",            // internal reference
+      "severity": "high",
+      "estimated_annual_impact": 77573,
+      "timeline": "this_month"
+    }
+    // ... max 10 candidates, sorted by impact
+  ]
+}
+```
+
+### Schema Rules
+
+- `periods` only contains keys for periods where `data_coverage` is `true`
+- All `_change` fields are proportional change vs prior period (e.g., 0.08 = +8%)
+- `health.checks` contains every check result; `health.top_issues` is a
+  filtered/sorted subset (fail and watch only, max 10, sorted by severity × impact)
+- `action_candidates` are suggestions from Python; Claude refines, merges, and
+  rewrites them in business language for the report
+- `category_scores.level` is one of: `strong` (75-100), `needs_attention` (50-74), `weak` (<50)
 
 ---
 
 ## Reference Files
 
-Load these on-demand as needed -- do NOT load all at startup.
+Load on-demand -- do NOT load all at startup.
 
-> **Path:** `ecom/references/` (installed at `~/.claude/skills/ecom/references/`)
+> **Path:** `ecom/references/`
 
-### For interpretation and narrative:
-- `executive-narratives.md` -- Grade-specific narrative templates (A-F) with tone guidance and worked examples. **Always load this for the executive summary.**
-- `finding-clusters.md` -- 7-cluster model (Purchase Funnel, Discount Dependency, Assortment Misfit, Inventory Distortion, Returns/Trust, Retention/LTV, Revenue Concentration). Activation rules, hypothesis templates, and example scenarios. **Load this to identify systemic themes.**
-- `recommended-actions.md` -- Specific, actionable recommendations per check with implementation time, expected impact range, and sources. **Load for every FAIL/WARNING check to provide concrete advice.**
-- `impact-formulas.md` -- Revenue impact calculation formulas with worked examples and cross-metric cascade model. **Load when estimating financial impact.**
-- `business-review-narratives.md` -- Performance narrative templates by growth trajectory, SCQA finding templates, risk assessment rubric, and cadence-specific recommendation templates. **Load this for business review interpretation.**
-
-### For scoring and benchmarks:
-- `scoring-system.md` -- Weighted scoring algorithm, severity multipliers, grading
-- `benchmarks.md` -- Industry benchmarks by EC vertical
-- `vertical-benchmarks.md` -- Vertical-specific KPI thresholds, seasonal calendars
-
-### For check details:
-- `revenue-decomposition.md` -- R01-R15 revenue checks
-- `conversion-funnel.md` -- CV01-CV12 conversion checks
-- `product-analysis.md` -- P01-P20 product checks
-- `inventory-analysis.md` -- O01-O10 inventory checks
-- `cohort-analysis.md` -- C01-C15 cohort/retention checks
-- `pricing-analysis.md` -- PR01-PR12 pricing checks
-- `site-audit-checks.md` -- SA01-SA15 site quality checks
-
-### For data handling:
-- `data-formats.md` -- Supported CSV formats, column mappings
+- `review-narratives.md` -- Narrative templates by health level and growth trajectory, finding templates, period-specific guidance. **Always load.**
+- `finding-clusters.md` -- Cluster model for grouping related issues into themes. **Load to identify themes.**
+- `recommended-actions.md` -- Actionable recommendations per check with timeline and impact range. **Load for watch/fail checks.**
+- `impact-formulas.md` -- Revenue impact formulas with worked examples. **Load when estimating impact.**
+- `health-checks.md` -- Check definitions (R/C/P) with thresholds and interpretation.
+- `benchmarks.md` -- D2C ecommerce KPI benchmarks.
 
 ---
 
-## Output Format: AUDIT-REPORT.md
+## Output Format: REVIEW.md
 
-Write the report in this structure. Every section should contain **natural language
-interpretation**, not just tables and numbers.
+One report. Three parts. **Target: ~150 lines.** Tighter is better.
 
-### 1. Executive Summary (narrative paragraph)
+---
 
-Read `references/executive-narratives.md` and use the grade-appropriate template.
+### Part 1: Executive Summary
 
-Write a **2-3 sentence narrative paragraph** that:
-- States the health score, grade, and business model
-- Names the strongest and weakest categories
-- Frames the key issue in business terms (not check IDs)
-- Quantifies the estimated annual revenue impact
-- Ends with a clear recommended first action
+#### Narrative (4-6 lines, blockquote)
 
-**Example (Grade B, 76/100):**
-> With a 76/100 health score (B), this D2C store has a solid retention engine
-> (Retention: 100/100) but is being held back by severe inventory problems
-> (Inventory: 16/100). Nearly half of all SKUs are stocked out, and 83% of
-> inventory has been sitting for over 180 days -- together these are costing
-> an estimated $350K/year in lost revenue and tied-up capital. The fastest
-> path to impact is to run a deadstock clearance campaign and implement
-> demand-based restocking for the top 50 SKUs.
-
-### 2. Category Scores (visual + interpretation)
-
-Show the ASCII bar chart, then add **one sentence per category** explaining
-what the score means in business terms:
+Synthesize across all available periods. Structure:
 
 ```
-   Revenue ████████████████████ 69
-   Product █████████████████████████ 86
- Retention ██████████████████████████████ 100
- Inventory ████ 16
-   Pricing ██████████████████████████████ 100
+[North Star result + trend across periods]
+[What's driving it -- connect long to short]
+[Most important action, with timeline]
 ```
-
-- **Revenue (69/100, C):** Revenue dropped 88% month-over-month, suggesting either seasonality or a traffic/acquisition problem that needs immediate investigation.
-- **Product (86/100, B):** Strong product catalog with 99.9% of SKUs converting, though cross-sell opportunities are being missed.
-- **Retention (100/100, A):** Exceptional -- 33.6% F2 rate and 43-day average repurchase interval indicate a loyal customer base.
-- **Inventory (16/100, F):** Crisis-level -- 47.5% stockout rate and 83.2% deadstock rate signal a fundamental demand planning failure.
-- **Pricing (100/100, A):** Healthy discount discipline at 1.6% average rate with stable trends.
-
-### 3. Benchmark Comparison (with context)
-
-Show the benchmark table, then **interpret each row**:
-
-| Metric | Your Value | Industry Median | Top Quartile | Status |
-|--------|-----------|----------------|-------------|--------|
-| Repeat Revenue Share | 58.9% | 30.0% | 40.0% | Above Top Quartile |
-
-> Your repeat revenue share of 58.9% is nearly double the industry median,
-> indicating a strong returning customer base. This is a competitive advantage
-> -- protect it by maintaining post-purchase engagement quality.
-
-### 4. Key Themes (cluster analysis)
-
-Read `references/finding-clusters.md`. For each activated cluster:
-
-- **Name the theme** in plain language
-- **Explain what the pattern means** (not just which checks failed)
-- **Connect checks to each other** (show the systemic relationship)
-- **Provide the recommended approach** in concrete terms
 
 **Example:**
-> **Inventory Distortion and Availability Drag** -- Three inventory checks are
-> in critical/fail status, revealing a systemic problem: nearly half of SKUs
-> are stocked out (O03: 47.5%), inventory turns only 0.5x per year (O01),
-> and 83% of inventory is deadstock (O06). This creates a vicious cycle:
-> popular items are unavailable while slow-movers accumulate, tying up cash
-> and warehouse space. The stockout rate alone is estimated to cost 4.4% of
-> monthly revenue in lost sales (O04). Prioritize: (1) identify and restock
-> the top 20% of SKUs by velocity, (2) run aggressive markdown on 180+ day
-> deadstock, (3) implement weekly demand-based reorder triggers.
+> Revenue reached $1.38M for the year (+25.7% YoY), but growth is decelerating --
+> the last 90 days grew only 8% vs prior 90 days, and last month was flat (+0.3%).
+> Growth depends on existing customer AOV increases (+14.8%), while new customer
+> acquisition has stalled (share: 42.3%, unchanged). Reallocate 20% of retention
+> budget to acquisition channels by end of this month, targeting CPA below $XX.
 
-### 5. Detailed Findings (per category)
+#### Scoreboard
 
-For each category, show the checks table, then write **natural language
-interpretation for every FAIL and WARNING**:
-
-| Check | Severity | Result | Details |
-|-------|----------|--------|---------|
-| R01 | High | FAIL | MoM revenue growth: -87.6% |
-
-> **R01: Revenue dropped 87.6% month-over-month.** This is an extreme decline
-> that goes far beyond normal seasonality. Investigate: (1) Was there a major
-> traffic source that stopped? (2) Did a key campaign end? (3) Is this a data
-> artifact from an incomplete month? If the decline is real, a win-back
-> campaign targeting the last 90 days of customers could recover 5-15% of
-> the lost revenue within 2-4 weeks.
-
-For PASS checks, a brief positive note is sufficient:
-> **R05: Repeat revenue share is 58.9% (PASS).** Well above the 30% threshold
-> and industry top quartile -- a clear strength.
-
-Read `references/recommended-actions.md` to provide specific, sourced
-recommendations for FAIL/WARNING checks.
-
-### 6. Action Plan (prioritized with context)
-
-For each priority level (Critical > High > Medium > Low):
-- State the check and current value
-- Explain **why** this matters in business terms
-- Provide **specific actions** (from recommended-actions.md) with:
-  - Implementation time estimate
-  - Expected improvement range
-  - Concrete first step
-
-**Example:**
-> **Critical: O03 -- Stockout SKU rate at 47.5% (threshold: 5%)**
->
-> Nearly half your catalog is unavailable for purchase, directly suppressing
-> revenue and damaging customer trust. Customers who encounter stockouts are
-> 2-3x more likely to churn.
->
-> **Actions:**
-> 1. **Immediate (1-2 days):** Run a report of the top 50 SKUs by historical
->    revenue that are currently stocked out. Prioritize restocking these first.
-> 2. **This week:** Implement back-in-stock email notifications so customers
->    waiting for popular items are automatically alerted. Expected recovery:
->    5-10% of lost stockout revenue.
-> 3. **This month:** Set up demand-based reorder points using last 90 days of
->    velocity data. Target: reduce stockout rate from 47.5% to under 10%.
->
-> *Estimated annual impact: $93,256*
-
-### 7. Quick Wins
-
-List 3-5 high-impact items that can be done quickly. For each:
-- What to do (one clear sentence)
-- Why (business impact)
-- How long it takes
-- Expected result
-
----
-
-## Output Format: ACTION-PLAN.md
-
-Write a standalone action plan document:
-1. **Top 3 priorities** with full context and step-by-step instructions
-2. **30-day roadmap** with weekly milestones
-3. **Success metrics** -- what numbers should change and by how much
-
----
-
-## Output Format: QUICK-WINS.md
-
-A concise, scannable list of 3-5 items that can be done in under a day each,
-with clear expected ROI.
-
----
-
-## Review Workflow (MBR/QBR/ABR)
-
-### Phase 1: Compute
-
-```bash
-# Generic review (auto-detects cadence from data span)
-ecom review <orders.csv> --output <output-dir>
-
-# Specific cadence
-ecom review mbr <orders.csv> --products <products.csv> --output <output-dir>
-ecom review qbr <orders.csv> --output <output-dir>
-ecom review abr <orders.csv> --output <output-dir>
-
-# With explicit period boundaries
-ecom review <orders.csv> --period-start 2025-01-01 --period-end 2025-03-31 --output <output-dir>
+```
+          30d Pulse     90d Momentum    365d Structure
+Revenue   $98K (= flat) $340K (+ 8%)    $1.38M (+ 26%)
+Orders    412 (- 3%)    1,280 (+ 5%)    5,784 (+ 10%)
+AOV       $238 (= flat) $266 (+ 12%)    $239 (+ 15%)
+Customers 287 (- 5%)    812 (+ 3%)      2,765 (+ 10%)
 ```
 
-### Cadence Differentiation
+`+` improving, `-` deteriorating, `=` stable.
+Only show periods that data supports.
 
-| Cadence | Focus | Findings Cap | Key Sections |
-|---------|-------|-------------|--------------|
-| MBR | Tactical/operational ("what happened, what to do next month") | 3 | Next Month Actions |
-| QBR | Strategic + tactical (trend analysis, initiative tracking) | 4 | Risk Assessment, Recommendations, Category Growth |
-| ABR | Strategic/high-level (annual performance, YoY growth) | 5 | Growth Drivers, 12-Month Trend, Annual Strategy |
+---
 
-### Phase 2: Interpret
+### Part 2: Period Sections
 
-Read the generated review file and enhance it with natural language insights:
-- **Explain the "so what"** behind every metric change
-- **Connect trends** -- if revenue is down AND orders are down, say "revenue
-  decline is volume-driven, not price-driven"
-- **Provide forward-looking recommendations** based on the trends
-- **Use the Situation-Complication-Decision framework** for key findings
-- **For Risk Assessment** -- contextualize risk severity and connect to business impact
-- **For Recommendations** -- provide specific, time-bound actions matching the cadence
+All periods use the same skeleton. **But they are not equal length:**
+
+| Period | Depth | Findings cap | Role |
+|--------|-------|-------------|------|
+| 30d Pulse | Shallow -- KPI tree + 1-2 sentences + max 1 finding | 1 | Flag fires only |
+| 90d Momentum | Medium -- KPI tree + drivers + max 2 findings | 2 | Main analytical body |
+| 365d Structure | Deep -- KPI tree + drivers + max 3 findings | 3 | Strategic narrative |
+
+If only one period is available, give it the full depth (3 findings).
+
+**The total across all periods must not exceed 5-7 findings.** If a theme
+appears in multiple periods, state it once at the most structural level and
+reference supporting signals from shorter periods.
+
+#### Skeleton
+
+##### [Period Name]: [One-line headline -- the "so what"]
+
+**KPI Tree:**
+
+```
+Revenue $X (vs prior period: +X%)
+|-- 🟢 New Customer Revenue $X (X% of total)
+|   |-- New Customers: X (+X%)
+|   |-- New Customer AOV: $X (+X%)
+|-- 🟡 Existing Customer Revenue $X (X% of total)
+    |-- Returning Customers: X (+X%)
+    |-- Returning AOV: $X (+X%)
+    |-- F2 Rate: X% -- first-to-second purchase conversion
+```
+
+🟢 healthy / 🟡 watch / 🔴 problem (driven by health check results).
+
+**Growth Drivers** (1-2 sentences, 90d and 365d only):
+
+Was the change volume-driven or price-driven? Connect to KPI tree nodes.
+
+**Findings** (within period cap):
+
+Each follows Finding Quality Standards. Findings should weave trend data and
+health check diagnostics together, not present them separately.
+
+---
+
+### Part 3: Action Plan (unified, max 5 items)
+
+One list synthesizing across all periods. Group by time horizon:
+
+```
+Immediate (from 30d signals)
+1. ...
+
+This Month (from 90d findings)
+2. ...
+
+This Quarter (from 365d insights)
+3. ...
+```
+
+For each item:
+- **What** (one concrete sentence)
+- **Why** (reference specific data)
+- **When** (specific deadline)
+- **Success metric** (measurable)
+
+End with:
+> **Guardrails:** [2-3 metrics that must not deteriorate]
+
+---
+
+### Data Notes (2-4 lines)
+
+Always include:
+- Revenue definition (from `metadata.revenue_definition`)
+- Data period and order count
+- Periods included/omitted
+
+---
+
+## Period Interaction Rules
+
+- **Confirm or contradict across periods.** Don't let periods exist in isolation.
+- **Zoom in:** If 90d shows a break, check 30d for continuation.
+- **Never repeat a finding across periods.** State once at the structural level.
+- **Executive Summary synthesizes**, does not summarize sequentially.
+
+---
+
+## Finding Quality Standards
+
+**Every finding follows: What is → Why it matters → What to do**
+
+- **What is:** 1 sentence. Quantitative fact. No interpretation.
+- **Why it matters:** Data-backed tension. Must show contrast ("despite", "however").
+  Abstract concerns like "growth must be validated" are PROHIBITED.
+- **What to do:** Concrete action + deadline + success metric. "Consider",
+  "improve", "optimize", "explore" are PROHIBITED.
+
+**Good:**
+```
+What is:       Annual revenue grew 25.7% YoY.
+Why it matters: However, despite a 25.4% reduction in discount rate, new customer
+               revenue share remains at 42.3% -- growth depends entirely on
+               existing customer AOV increases (+14.8%).
+What to do:    Reallocate 20% of retention budget to acquisition channels. Start
+               channel test by end of this month. Target: CPA below $XX in 3 months.
+```
+
+**Bad (PROHIBITED):**
+```
+What is:       Revenue grew 25.7%.
+Why it matters: Rapid growth must be validated. <-- no data, no tension
+What to do:    Consider improving acquisition. <-- banned verb, no deadline
+```
+
+---
+
+## Handling Incomplete Data
+
+- Omit what you can't measure. No N/A, no empty sections.
+- Don't apologize. Never say "unfortunately..."
+- Shorter data = shorter report.
+- All gaps noted in Data Notes only.
 
 ---
 
 ## Quality Gates
 
-- Never present raw numbers without interpretation
-- Always explain **why** a metric matters, not just its value
-- Always provide **specific, actionable** recommendations (not generic advice)
-- Read `recommended-actions.md` before writing recommendations -- use sourced data
-- When data is insufficient, say so clearly and suggest what data to collect
-- Use business language (revenue, customers, profit) not technical jargon (p-values, coefficients)
-- Connect related findings to show systemic patterns, not isolated issues
+- Never present numbers without interpretation
+- Always explain **why**, not just the value
+- Specific, actionable recommendations only
+- Business language, not jargon (explain terms on first use)
+- Connect related findings into systemic patterns
+- No internal check IDs in the report
+- No check counts in the report
+- No repeated findings across sections
+- **Finding Quality Standards on every finding**
+- **Guardrails on every action plan**
+- **80/20 rule:** ~80% confirmation (builds trust), ~20% surprise (drives action)
 
-## Scoring Methodology
+---
 
-### EC Health Score (0-100)
+## Internal: Health Check Engine
+
+> Implementation details below are never exposed in the report. They power
+> the 🟢/🟡/🔴 markers, inform findings, and prioritize actions.
+
+### Health Score (0-100)
 
 ```
 Category Score = Sum(result * severity_mult) / Sum(severity_mult) * 100
-Overall Score  = Sum(category_score * category_weight)
 ```
 
-### Category Weights (total = 100%)
+### Category Weights
 
-| Category | Weight | Checks |
+| Category | Weight | Covers |
 |----------|--------|--------|
-| Revenue Structure | 25% | R01-R15 |
-| Conversion | 20% | CV01-CV12 |
-| Product | 20% | P01-P20 |
-| Inventory | 10% | O01-O10 |
-| Retention/LTV | 15% | C01-C15 |
-| Pricing | 10% | PR01-PR12 |
-| Site Quality | 10% | SA01-SA15 |
+| Revenue | 40% | Growth, stability, concentration, volatility, discount behavior |
+| Customer | 30% | Repeat behavior, segments, lifecycle, new vs returning |
+| Product | 30% | SKU concentration, basket composition, cross-sell, lifecycle |
 
-> Weights sum to 110% -- `aggregate_score()` renormalizes to only categories present.
+> Pricing checks (discount rate, depth, discounted order ratio) belong to
+> Revenue. They measure revenue quality, not a separate domain.
+>
+> "Product" = what purchase patterns reveal about your product mix.
+> Does not require a product catalog.
 
 ### Severity Multipliers
 
@@ -327,26 +449,33 @@ Overall Score  = Sum(category_score * category_weight)
 | Medium | 1.5x |
 | Low | 0.5x |
 
-### Grading
+### Health Levels
 
-| Grade | Score | Action |
-|-------|-------|--------|
-| A | 90-100 | Minor optimizations only |
-| B | 75-89 | Some improvement opportunities |
-| C | 60-74 | Notable issues need attention |
-| D | 40-59 | Significant problems present |
-| F | <40 | Urgent intervention required |
+| Score | Level | Meaning |
+|-------|-------|---------|
+| 75-100 | strong | Working well |
+| 50-74 | needs_attention | Issues to address |
+| < 50 | weak | Significant problems |
+
+### Check → KPI Tree Mapping
+
+Each check maps to KPI tree nodes. Node marker = worst signal among its checks:
+- 🟢 all checks pass
+- 🟡 any check in watch
+- 🔴 any check failing
+
+Mapping defined in `references/health-checks.md`.
+
+---
 
 ## Python Toolkit
-
-The `claude_ecom` Python package provides computational backends:
 
 ```bash
 cd claude-ecom
 pip install -e .
-ecom audit orders.csv --products products.csv --inventory inventory.csv
+ecom review orders.csv
+ecom review orders.csv --period 90d
 ```
 
-Modules: `loader`, `metrics`, `decomposition`, `cohort`, `product`, `inventory`,
-`pricing`, `scoring`, `report`, `site_audit`, `site_crawler`, `review_engine`,
-`shopify_api`, `sync`, `config`, `normalize`, `periods`.
+Modules: `loader`, `metrics`, `decomposition`, `cohort`, `product`,
+`scoring`, `report`, `review_engine`, `config`, `normalize`, `periods`.

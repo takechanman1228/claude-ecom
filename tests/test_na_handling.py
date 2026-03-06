@@ -8,7 +8,6 @@ import pytest
 from claude_ecom.scoring import (
     CheckResult,
     CategoryScore,
-    HealthScore,
     estimate_revenue_impact,
     score_category,
     score_checks,
@@ -54,8 +53,8 @@ class TestNAScoring:
         checks = [
             CheckResult("R01", "revenue", "high", "pass"),
             CheckResult("R02", "revenue", "medium", "na"),
-            CheckResult("C01", "retention", "critical", "na"),
-            CheckResult("C02", "retention", "high", "fail"),
+            CheckResult("C01", "customer", "critical", "na"),
+            CheckResult("C02", "customer", "high", "fail"),
         ]
         health = score_checks(checks)
         assert health.total_na == 2
@@ -147,10 +146,9 @@ class TestNAChecks:
         rev_kpis = compute_revenue_kpis(orders)
         cohort_kpis = compute_cohort_kpis(orders)
 
-        # Import _build_checks
-        from claude_ecom.cli import _build_checks
+        from claude_ecom.review_engine import _build_checks
 
-        checks = _build_checks(rev_kpis, cohort_kpis, orders, None, None)
+        checks = _build_checks(rev_kpis, cohort_kpis, orders)
         r01 = next(c for c in checks if c.check_id == "R01")
         assert r01.result == "na"
 
@@ -161,9 +159,9 @@ class TestNAChecks:
         rev_kpis = compute_revenue_kpis(orders)
         cohort_kpis = compute_cohort_kpis(orders)
 
-        from claude_ecom.cli import _build_checks
+        from claude_ecom.review_engine import _build_checks
 
-        checks = _build_checks(rev_kpis, cohort_kpis, orders, None, None)
+        checks = _build_checks(rev_kpis, cohort_kpis, orders)
         r08 = next(c for c in checks if c.check_id == "R08")
         assert r08.result == "na"
 
@@ -174,7 +172,7 @@ class TestNumpyNaNRegression:
     def test_numpy_nan_mom_gives_na_result(self):
         import numpy as np
 
-        from claude_ecom.cli import _build_checks
+        from claude_ecom.review_engine import _build_checks
         from claude_ecom.metrics import compute_cohort_kpis, compute_revenue_kpis
 
         orders = pd.DataFrame({
@@ -188,31 +186,9 @@ class TestNumpyNaNRegression:
         rev_kpis["mom_growth_latest"] = np.nan
         cohort_kpis = compute_cohort_kpis(orders)
 
-        checks = _build_checks(rev_kpis, cohort_kpis, orders, None, None)
+        checks = _build_checks(rev_kpis, cohort_kpis, orders)
         r01 = next(c for c in checks if c.check_id == "R01")
         assert r01.result == "na", f"Expected 'na' but got '{r01.result}'"
-
-
-class TestDataPeriodEmpty:
-    """Data Period line must not render as empty ' - ' when dates are missing."""
-
-    def test_empty_dates_no_data_period(self):
-        from claude_ecom.report import generate_audit_report
-        from claude_ecom.scoring import CheckResult, score_checks
-
-        checks = [
-            CheckResult("R01", "revenue", "high", "na"),
-        ]
-        health = score_checks(checks)
-        import tempfile
-
-        with tempfile.TemporaryDirectory() as tmp:
-            path = generate_audit_report(
-                health, annual_revenue=0, data_start="", data_end="", output_dir=tmp,
-            )
-            content = open(path).read()
-        assert "Data Period:  - " not in content
-        assert "Data Period:" not in content or "Data Period: 20" in content
 
 
 class TestFuzzyColumnMapping:

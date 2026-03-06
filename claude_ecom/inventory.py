@@ -1,4 +1,5 @@
 """Inventory and stockout analysis."""
+# NOTE: Not used by the current review flow. Kept for future integration.
 
 from __future__ import annotations
 

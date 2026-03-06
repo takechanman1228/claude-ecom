@@ -5,15 +5,13 @@
 > Business Model: {{ business_model }}
 {% endif %}
 
-## Executive Summary
+## Overview
 
 - **Overall Score:** {{ score }}/100 (Grade: {{ grade }})
 - **Top Issue:** {{ top_issue }}
 - **Estimated Annual Revenue Impact:** {{ total_impact }}
 
 {% if cat_chart %}
-### Category Scores
-
 ```
 {{ cat_chart }}
 ```
@@ -21,21 +19,11 @@
 
 ## Score Breakdown
 
-| Category | Score | Grade | Passed | Warnings | Failed | N/A |
-|----------|-------|-------|--------|----------|--------|-----|
-{% for cat, cs in category_scores.items() -%}
-| {{ cat | capitalize }} | {{ cs.score }}/100 | {{ cs.grade }} | {{ cs.passed }} | {{ cs.warnings }} | {{ cs.failed }} | {{ cs.na }} |
+| Category | Score | Grade | Passed | Warnings | Failed |
+|----------|-------|-------|--------|----------|--------|
+{% for cat, cs in category_scores.items() if cs.na != cs.passed + cs.warnings + cs.failed + cs.na or cs.passed + cs.warnings + cs.failed > 0 -%}
+| {{ cat | capitalize }} | {{ cs.score }}/100 | {{ cs.grade }} | {{ cs.passed }} | {{ cs.warnings }} | {{ cs.failed }} |
 {% endfor %}
-
-{% if data_coverage and data_coverage.na > 0 %}
-### Data Coverage
-
-> {{ data_coverage.ran }}/{{ data_coverage.total_checks }} checks ran, {{ data_coverage.na }} skipped (insufficient data)
-
-{% for nc in data_coverage.na_checks -%}
-- **{{ nc.check_id }}**: {{ nc.message }}
-{% endfor %}
-{% endif %}
 
 {% if benchmarks %}
 ## Benchmark Comparison
@@ -51,11 +39,11 @@
 ## Key Themes
 
 {% for cl in clusters %}
-### {{ loop.index }}. {{ cl.name }} ({{ cl.count }} checks)
+### {{ loop.index }}. {{ cl.name }} ({{ cl.count }} related issues)
 
 > {{ cl.hypothesis }}
 
-**Checks:** {{ cl.check_ids }}
+**Related issues:** {{ cl.related_issues }}
 **Recommended:** {{ cl.approach }}
 
 {% endfor %}
@@ -64,14 +52,20 @@
 ## Detailed Findings
 
 {% for cat, cs in category_scores.items() %}
+{% set cat_checks = [] %}
+{% for c in check_results if c.category == cat and c.result | lower != "na" %}
+{% if cat_checks.append(c) %}{% endif %}
+{% endfor %}
+{% if cat_checks %}
 ### {{ cat | capitalize }} ({{ cs.score }}/100)
 
-| Check | Severity | Result | Details |
-|-------|----------|--------|---------|
-{% for c in check_results if c.category == cat -%}
-| {{ c.check_id }} | {{ c.severity | capitalize }} | {% if c.result | lower == "na" %}N/A{% else %}{{ c.result | upper }}{% endif %} | {{ c.message }} |
+| Severity | Result | Details |
+|----------|--------|---------|
+{% for c in cat_checks -%}
+| {{ c.severity | capitalize }} | {{ c.result | upper }} | {{ c.message }} |
 {% endfor %}
 
+{% endif %}
 {% endfor %}
 
 {% if actions %}
@@ -81,7 +75,7 @@
 ### Critical (Fix Immediately)
 
 {% for a in actions.critical %}
-{{ loop.index }}. **[{{ a.check_id }}] {{ a.message }}**
+{{ loop.index }}. **{{ a.message }}**
    - Result: {{ a.result | upper }}
    - Estimated Annual Impact: {{ "{:,.0f}".format(a.impact) }}
 {% endfor %}
@@ -91,7 +85,7 @@
 ### High Priority (This Week)
 
 {% for a in actions.high %}
-{{ loop.index }}. **[{{ a.check_id }}] {{ a.message }}**
+{{ loop.index }}. **{{ a.message }}**
    - Result: {{ a.result | upper }}
    - Estimated Annual Impact: {{ "{:,.0f}".format(a.impact) }}
 {% endfor %}
@@ -101,7 +95,7 @@
 ### Medium Priority (This Month)
 
 {% for a in actions.medium %}
-{{ loop.index }}. **[{{ a.check_id }}] {{ a.message }}**
+{{ loop.index }}. **{{ a.message }}**
    - Result: {{ a.result | upper }}
    - Estimated Annual Impact: {{ "{:,.0f}".format(a.impact) }}
 {% endfor %}
@@ -111,7 +105,7 @@
 ### Low Priority (Backlog)
 
 {% for a in actions.low %}
-{{ loop.index }}. **[{{ a.check_id }}] {{ a.message }}**
+{{ loop.index }}. **{{ a.message }}**
    - Result: {{ a.result | upper }}
 {% endfor %}
 {% endif %}
@@ -131,10 +125,20 @@
 
 > {{ quick_wins | length }} items | Total estimated impact: {{ quick_wins_total_impact }}
 
-| # | Severity | Action | Est. Annual Impact | Source |
-|---|----------|--------|-------------------|--------|
+| # | Severity | Action | Est. Annual Impact |
+|---|----------|--------|-------------------|
 {% for w in quick_wins -%}
-| {{ loop.index }} | {{ w.severity | capitalize }} | {{ w.message }} | {{ "{:,.0f}".format(w.impact) }} | {{ w.check_id }} |
+| {{ loop.index }} | {{ w.severity | capitalize }} | {{ w.message }} | {{ "{:,.0f}".format(w.impact) }} |
+{% endfor %}
+{% endif %}
+
+{% if data_coverage and data_coverage.categories_skipped %}
+## Data Notes
+
+> This report analyzed {{ data_coverage.categories_analyzed | join(', ') }} based on the data provided.
+
+{% for gap in data_coverage.categories_skipped -%}
+- For deeper analysis, providing **{{ gap.data_type }}** would enable {{ gap.unlocks }}.
 {% endfor %}
 {% endif %}
 

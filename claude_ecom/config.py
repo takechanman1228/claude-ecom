@@ -1,4 +1,5 @@
 """Configuration management for Shopify Admin API integration."""
+# NOTE: Not used by the current review flow. Kept for future integration.
 
 from __future__ import annotations
 

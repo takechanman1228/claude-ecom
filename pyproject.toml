@@ -4,17 +4,17 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "claude-ecom"
-version = "1.0.0"
-description = "Claude-powered ecommerce audit toolkit — run /ecom audit to get a full-store health score with prioritized fixes"
+version = "0.1.0"
+description = "Claude-powered ecommerce analytics toolkit — run /ecom review to get a full-store health review with prioritized fixes"
 readme = "README.md"
 license = {text = "MIT"}
 requires-python = ">=3.10"
 authors = [
     {name = "Hajime Takeda"},
 ]
-keywords = ["ecommerce", "analytics", "audit", "shopify", "data-science", "claude"]
+keywords = ["ecommerce", "analytics", "shopify", "data-science", "claude"]
 classifiers = [
-    "Development Status :: 4 - Beta",
+    "Development Status :: 3 - Alpha",
     "Intended Audience :: Developers",
     "License :: OSI Approved :: MIT License",
     "Programming Language :: Python :: 3",
