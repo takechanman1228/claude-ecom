@@ -290,7 +290,7 @@ NOT invent data that isn't here.
 
 Load on-demand -- do NOT load all at startup.
 
-> **Path:** `ecom/references/`
+> **Path:** `references/`
 
 - `review-narratives.md` -- Narrative templates by health level and growth trajectory, finding templates, period-specific guidance. **Always load.**
 - `finding-clusters.md` -- Cluster model for grouping related issues into themes. **Load to identify themes.**
