@@ -49,9 +49,9 @@ The check descriptions below use only **implemented checks** (those the Python b
 | P07 | Cross-sell pair lift is weak (no strong product affinities found). |
 | P10 | Lifecycle imbalance: too many decline-stage products vs core winners. |
 | P19 | Price tier distribution is too narrow (limited market reach). |
-| R08 | Category/collection concentration signals: revenue overly skewed. |
+| PR07 | Category margin variance signals: negative-margin categories drag down profitability. |
 
-**Activation rule:** Activate when **>= 3** checks are non-pass, including at least **two** Product checks and at least **one** of (R08 or PR07) to ensure this is cross-functional (assortment *and* commercial architecture).
+**Activation rule:** Activate when **>= 3** checks are non-pass, including at least **two** Product checks and at least **one** of PR07 to ensure this is cross-functional (assortment *and* commercial architecture).
 
 **Root cause hypothesis template:**
 

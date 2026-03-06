@@ -117,41 +117,40 @@ trains customers to wait for sales, and devalues the brand.
 
 ---
 
-## R14: Gross Margin (Low)
+## R14: Large Order Dependency (High)
 
-Low gross margin (below industry benchmarks, typically 40-60% for ecommerce) indicates
-pricing issues, excessive discounting, high COGS, or a suboptimal product mix.
+When a small number of large orders account for a disproportionate share of revenue
+(>5-10%), the business faces fragility risk — losing those customers or orders
+would materially impact performance.
 
 ### Actions
 
-1. **Conduct a product-level margin analysis and shift marketing spend toward high-margin SKUs**
+1. **Analyze large-order customers and diversify revenue sources**
    - Time: 1-3 days for analysis; ongoing for execution
-   - Impact: 3-8 percentage point improvement in blended gross margin
-   - Details: Calculate true margin for each SKU (including shipping, returns, payment
-     processing). Identify products dragging down the blended margin. Shift ad spend,
-     homepage placement, and email features toward high-margin products. One case study
-     showed shifting mix from 56% to 65% blended margin while total sales decreased only
-     slightly.
+   - Impact: Reduce single-order concentration below 5% of period revenue
+   - Details: Identify orders exceeding 5% of period revenue. Determine if they are
+     recurring (B2B accounts, wholesale) or one-off. For recurring large accounts,
+     build relationship management but also actively grow the mid-tier customer base.
+     For one-off spikes, discount them from trend analysis to avoid false signals.
 
-2. **Renegotiate supplier terms or find alternative sourcing**
+2. **Grow the mid-tier customer base to reduce concentration**
    - Time: 2-4 weeks
-   - Impact: 3-5 percentage point COGS reduction
-   - Details: Benchmark current supplier prices against alternatives. Negotiate volume
-     discounts, early-payment discounts, or consolidated shipping. Even a $3 reduction
-     per unit on a $20 COGS item improves margin by 15 percentage points at a $65 price.
+   - Impact: 10-20% increase in order count from diversified sources
+   - Details: Shift acquisition spend toward channels that attract higher volumes of
+     mid-value customers rather than fewer high-value ones. Introduce tiered pricing
+     or product bundles that appeal to a broader audience. A healthy revenue
+     distribution has no single order exceeding 5% of monthly revenue.
 
-3. **Introduce premium or private-label product lines**
-   - Time: 4-8 weeks
-   - Impact: 10-20 percentage point higher margin on new lines vs. commodity products
-   - Details: Private-label products typically carry 60-80% gross margins compared to
-     35-50% for branded resale. Start with 2-3 hero SKUs in your best-performing
-     category. Test with a small batch before scaling. Premium positioning with strong
-     brand storytelling justifies higher prices.
+3. **Implement revenue monitoring alerts for concentration risk**
+   - Time: 1-2 days
+   - Impact: Early warning when dependency thresholds are breached
+   - Details: Set up automated alerts when any single order exceeds 5% of trailing-30d
+     revenue, or when the top 3 orders exceed 15%. This enables proactive response
+     before concentration becomes structural.
 
 ### Sources
-- Upcounting, "eCommerce Gross Margin Paradox"
-- Sana Commerce, "E-Commerce Profit Margins: 6 Proven Strategies"
-- Onramp Funds, "9 Ways to Improve eCommerce Profit Margins"
+- Revenue concentration risk management best practices
+- Customer diversification strategies for D2C ecommerce
 
 ---
 
@@ -193,15 +192,15 @@ is overly dependent on a narrow product range, creating risk and limiting growth
 
 ---
 
-## P10: Zero-Sales SKU Ratio (High)
+## P05: Converting SKU Rate (Low)
 
-A high percentage of SKUs with zero sales in the analysis period (above 10-15%)
-indicates catalog bloat, which increases carrying costs, dilutes marketing resources,
-and degrades the customer browsing experience.
+A low converting SKU rate (below 50-70%) indicates catalog bloat — too many SKUs
+with zero or negligible sales. This increases carrying costs, dilutes marketing
+resources, and degrades the customer browsing experience.
 
 ### Actions
 
-1. **Conduct SKU rationalization: discontinue or archive persistently zero-sale SKUs**
+1. **Conduct SKU rationalization: discontinue or archive non-converting SKUs**
    - Time: 1-2 weeks for analysis and decision; ongoing
    - Impact: 5-15% reduction in inventory carrying costs; improved site navigation
    - Details: Flag all SKUs with zero sales in the past 90 days. Categorize as:
@@ -211,18 +210,18 @@ and degrades the customer browsing experience.
      SKU rationalization typically improves profit margins by focusing resources
      on high-performers.
 
-2. **Bundle or promote zero-sale SKUs with bestsellers before discontinuing**
+2. **Bundle or promote non-converting SKUs with bestsellers before discontinuing**
    - Time: 3-5 days
    - Impact: Recover 10-30% of dead stock investment
    - Details: Create "complete the set" bundles pairing slow movers with popular
      items. Run a targeted clearance campaign with email and social promotion.
-     Offer zero-sale items as gifts-with-purchase above a spend threshold.
+     Offer non-converting items as gifts-with-purchase above a spend threshold.
      If products still do not sell after a 30-day promotional push, proceed with
      discontinuation.
 
-3. **Implement a new product launch checklist to prevent future zero-sale additions**
+3. **Implement a new product launch checklist to prevent future non-converting additions**
    - Time: 2-3 days to create process
-   - Impact: 20-40% fewer zero-sale SKUs added over time
+   - Impact: 20-40% fewer non-converting SKUs added over time
    - Details: Before adding a new SKU, require: demand signal validation (search
      data, customer requests), minimum viable product page (6+ images, complete
      description, competitive price analysis), and a 30-day launch marketing plan.
@@ -237,7 +236,7 @@ and degrades the customer browsing experience.
 
 ---
 
-## C01: Returning Customer Ratio (Low)
+## C01: Repeat Purchase Rate (Low)
 
 A low returning customer ratio (below 20-30%) means most revenue comes from one-time
 buyers, indicating weak post-purchase engagement and retention.
@@ -285,8 +284,8 @@ Several actions reinforce multiple metrics simultaneously:
 |--------|----------------|
 | Loyalty/rewards program | R05, C01, R01 |
 | Post-purchase email automation | R05, C01, R01 |
-| SKU rationalization | P01, P10, R14 |
-| Shift from % discounts to value-added incentives | R08, R14 |
+| SKU rationalization | P01, P05 |
+| Shift from % discounts to value-added incentives | R08 |
 
 ---
 

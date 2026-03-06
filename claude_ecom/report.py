@@ -25,7 +25,7 @@ _FINDING_CLUSTERS = [
     },
     {
         "name": "Assortment & Merchandising Misfit",
-        "checks": {"P01", "P05", "P06", "P07", "P10", "P19", "R08"},
+        "checks": {"P01", "P05", "P06", "P07", "P10", "P19", "PR07"},
         "hypothesis": (
             "{n} assortment/merchandising checks flagged, suggesting the catalog "
             "is misaligned to demand and value positioning. "

@@ -7,7 +7,7 @@
 | C01 | Repeat Purchase Rate | `New_Customers * RPR_Improvement_pp/100 * LTV_Repeat` | +3-5 pp | $150K-$500K |
 | R05 | Repeat revenue share | `Total_Revenue * Improvement_pp/100 * (1 - Churn_Volatility)` | +3-5 pp | $75K-$200K |
 | R08 | Avg discount rate | `Discounted_Revenue * Reduction_pp / 100` | -1-2 pp | $50K-$150K |
-| R14 | Gross margin | `Revenue * Improvement_pp / 100` | +1-3 pp | $100K-$300K |
+| R14 | Large order dependency | Severity-based estimate (no specific formula) | varies | varies |
 
 **Note:** "pp" = percentage points. All examples assume a $10M annual revenue baseline. Actual impact varies by category, AOV, and traffic volume.
 
@@ -185,75 +185,6 @@ Effective_Margin_Impact = Margin_Recovery / (Revenue * Gross_Margin_Rate)
 
 ---
 
-## R14 — Gross Margin
-
-### What it measures
-Gross profit as a percentage of net revenue. The fundamental measure of product-level profitability before operating expenses.
-
-### Calculation Formula
-
-```
-Gross_Margin = (Net_Revenue - COGS) / Net_Revenue * 100
-
-Profit_Per_1pp_Improvement = Net_Revenue * 0.01
-
-Adjusted_Gross_Margin = Gross_Margin - (Return_Rate * Cost_Per_Return / AOV * 100)
-  (accounts for return-adjusted true margin)
-```
-
-**Worked example (per 1 pp improvement):**
-- Annual net revenue: $10M
-- Current gross margin: 52%
-- Gross profit increase per 1 pp = $10M * 0.01 = **$100,000/year**
-- With 20% return rate adjustment: effective margin is ~4 pp lower than stated
-
-### Industry Benchmarks (2025)
-
-| Category | Gross Margin Range | Median |
-|----------|-------------------|--------|
-| Beauty & cosmetics | 50-70% | 60% |
-| Apparel & accessories | 40-60% | 50% |
-| Private label fashion | 55-65% | 60% |
-| Third-party seller fashion | 25-35% | 30% |
-| Home goods | 35-45% | 40% |
-| Consumer electronics | 15-25% | 20% |
-| Food & beverage | 30-45% | 38% |
-| Pet & animal | 38-74% | 50% |
-| Sporting goods | 28-66% | 43% |
-| Leisure & lifestyle | 45-75% | 66% |
-
-### Scale Benchmarks (Finaloop, 2024)
-| Revenue Tier | Median Gross Margin |
-|-------------|-------------------|
-| 7-figure brands | 52% |
-| 8-figure brands | 56% |
-| Scaling threshold | ~70% (needed to break into 8 figures reliably) |
-
-### Profitability Thresholds
-| Gross Margin | Assessment |
-|-------------|-----------|
-| 70%+ | Strong pricing power; comfortable scaling |
-| 60-70% | Solid and sustainable for most ecommerce |
-| 50-60% | Operable but scaling is tight |
-| Under 50% | Fragile — small cost increases erase profit |
-
-### Typical Improvement Rates
-- Supplier renegotiation: +2-5 pp
-- Private label / vertical integration: +10-20 pp vs third-party
-- SKU rationalisation (cut low-margin products): +2-4 pp blended margin
-- Price optimisation (dynamic pricing): +1-3 pp
-- Reducing return rate by 5 pp: +1-2 pp effective gross margin
-- Reducing average discount depth by 3 pp: +1-2 pp gross margin
-- High return rates (25-40%) cut net profits by 8-12 pp
-
-### Sources
-- Onramp Funds — 10 Profit Margin Benchmarks for eCommerce 2025
-- TrueProfit — Good Gross Profit Margins for Ecom in 2026 (5,000+ stores)
-- Finaloop — Ecommerce Profit Benchmarks: P&L + Performance Metrics (2024-2025)
-- Amasty — What's a Good Net Profit Margin for E-commerce
-
----
-
 ## Cross-Metric Impact Chains
 
 Many of these metrics are interconnected. Improving one often creates cascading effects on others.
@@ -262,10 +193,10 @@ Many of these metrics are interconnected. Improving one often creates cascading 
 Repeat Purchase Rate Improvement (C01)
   --> Higher repeat revenue share (R05)
        --> Lower blended CAC
-            --> Revenue stability + margin improvement (R14)
+            --> Revenue stability + margin improvement
 
 Discount Reduction (R08)
-  --> Direct margin recovery (R14)
+  --> Direct margin recovery
        --> Better brand perception
             --> Higher full-price conversion
 ```
@@ -276,8 +207,7 @@ Discount Reduction (R08)
 |----------|-------|---------------|----------------|-----------------|
 | 1 | C01 (Repeat purchase rate) | Medium | Very High (LTV) | 4-12 weeks |
 | 2 | R08 (discounting) | Low | Medium-High | Immediate |
-| 3 | R14 (gross margin) | High | High | 8-24 weeks |
-| 4 | R05 (repeat revenue) | Medium | Medium | 8-24 weeks |
+| 3 | R05 (repeat revenue) | Medium | Medium | 8-24 weeks |
 
 ---
 
@@ -326,17 +256,3 @@ def discount_margin_recovery(list_price, cogs, d_current, d_reduction_pp, elasti
 ```
 
 **Example.** \(P_0=\$125\), d=20%, c=$55, Q=100K, 1pp reduction, \(\epsilon=-1.5\): **GP +$38K** (revenue -$65K). Constant-volume: $125K. **Confidence: Medium.** Caveat: elasticity is the key unknown.
-
-### R14 — Gross Margin (Formal)
-
-\(\Delta GP_{\text{per 1pp}} = R \cdot 0.01\). Revenue equivalent: \(\Delta R_{needed} = 0.01 \cdot R / GM\).
-
-```python
-def gross_margin_pp_to_profit(annual_revenue, gm_pp_improvement=0.01):
-    return annual_revenue * gm_pp_improvement
-
-def revenue_growth_equivalent(annual_revenue, gm_current, profit_target):
-    return profit_target / gm_current
-```
-
-**Example.** GM=40%: 1pp = $100K GP = equivalent to $250K (2.5%) revenue growth. **Confidence: High.** Caveat: GM definitions vary by what is in COGS.

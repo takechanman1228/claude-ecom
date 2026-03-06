@@ -1,6 +1,6 @@
 # Vertical-Specific Benchmarks
 
-This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calendars, structural challenges, and strategy playbooks for six ecommerce verticals. Use the KPI tables to contextualize review findings by swapping in vertical-appropriate expectations for four high-variance metrics: Repeat Purchase Rate (C01), AOV, Discount rate (R08), and Gross margin (R14). Thresholds assume a typical ecommerce operator in a competitive market; apply additional modifiers for subscription, marketplace, dropship, luxury, or B2B business models.
+This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calendars, structural challenges, and strategy playbooks for six ecommerce verticals. Use the KPI tables to contextualize review findings by swapping in vertical-appropriate expectations for four high-variance metrics: Repeat Purchase Rate (C01), AOV, Discount rate (R08), and Gross margin. Thresholds assume a typical ecommerce operator in a competitive market; apply additional modifiers for subscription, marketplace, dropship, luxury, or B2B business models.
 
 ---
 
@@ -13,7 +13,7 @@ This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calend
 | Repeat Purchase Rate (C01) | >= 25% | 15%--24.9% | < 15% |
 | AOV | >= $160 | $120--$159 | < $120 |
 | Discount rate (R08) | <= 20% | 20%--30% | > 30% |
-| Gross margin (R14) | >= 50% | 40%--49.9% | < 40% |
+| Gross margin | >= 50% | 40%--49.9% | < 40% |
 
 ### Rationale
 
@@ -43,7 +43,7 @@ Fashion has structurally higher gross margins than electronics or grocery, suppo
 | Repeat Purchase Rate (C01) | ~15%--30% |
 | AOV | ~$150--$220 |
 | Discount rate (R08) | ~10%--25% (event peaks higher) |
-| Gross margin (R14) | ~45%--60% |
+| Gross margin | ~45%--60% |
 
 ---
 
@@ -56,7 +56,7 @@ Fashion has structurally higher gross margins than electronics or grocery, suppo
 | Repeat Purchase Rate (C01) | >= 30% | 20%--29.9% | < 20% |
 | AOV | >= $120 | $80--$119 | < $80 |
 | Discount rate (R08) | <= 15% | 15%--25% | > 25% |
-| Gross margin (R14) | >= 65% | 55%--64.9% | < 55% |
+| Gross margin | >= 65% | 55%--64.9% | < 55% |
 
 ### Rationale
 
@@ -86,7 +86,7 @@ Beauty converts strongly and product margins are structurally high (often ~55%--
 | Repeat Purchase Rate (C01) | ~20%--40% |
 | AOV | ~$80--$170 |
 | Discount rate (R08) | ~10%--20% (event peaks higher) |
-| Gross margin (R14) | ~55%--75% |
+| Gross margin | ~55%--75% |
 
 ---
 
@@ -99,7 +99,7 @@ Beauty converts strongly and product margins are structurally high (often ~55%--
 | Repeat Purchase Rate (C01) | >= 40% | 25%--39.9% | < 25% |
 | AOV | >= $75 | $55--$74 | < $55 |
 | Discount rate (R08) | <= 10% | 10%--15% | > 15% |
-| Gross margin (R14) | >= 25% | 18%--24.9% | < 18% |
+| Gross margin | >= 25% | 18%--24.9% | < 18% |
 
 ### Rationale
 
@@ -129,7 +129,7 @@ Grocery/food retail margin is structurally low (mid-20s gross margin, large groc
 | Repeat Purchase Rate (C01) | ~25%--45% |
 | AOV | ~$55--$90 |
 | Discount rate (R08) | ~5%--15% |
-| Gross margin (R14) | ~18%--35% |
+| Gross margin | ~18%--35% |
 
 ---
 
@@ -142,7 +142,7 @@ Grocery/food retail margin is structurally low (mid-20s gross margin, large groc
 | Repeat Purchase Rate (C01) | >= 15% | 8%--14.9% | < 8% |
 | AOV | >= $180 | $120--$179 | < $120 |
 | Discount rate (R08) | <= 15% | 15%--25% | > 25% |
-| Gross margin (R14) | >= 25% | 15%--24.9% | < 15% |
+| Gross margin | >= 25% | 15%--24.9% | < 15% |
 
 ### Rationale
 
@@ -171,7 +171,7 @@ Electronics is structurally margin-thin compared to beauty and apparel; large el
 | Repeat Purchase Rate (C01) | ~8%--15% |
 | AOV | ~$120--$250+ |
 | Discount rate (R08) | ~10%--25% (event peaks higher) |
-| Gross margin (R14) | ~15%--30% |
+| Gross margin | ~15%--30% |
 
 ---
 
@@ -184,7 +184,7 @@ Electronics is structurally margin-thin compared to beauty and apparel; large el
 | Repeat Purchase Rate (C01) | >= 15% | 10%--14.9% | < 10% |
 | AOV | >= $250 | $150--$249 | < $150 |
 | Discount rate (R08) | <= 15% | 15%--25% | > 25% |
-| Gross margin (R14) | >= 35% | 25%--34.9% | < 25% |
+| Gross margin | >= 35% | 25%--34.9% | < 25% |
 
 ### Rationale
 
@@ -214,7 +214,7 @@ Home & furniture categories have structurally high AOV (~$266 in one benchmark s
 | Repeat Purchase Rate (C01) | ~10%--20% |
 | AOV | ~$200--$350+ |
 | Discount rate (R08) | ~10%--20% (event peaks higher) |
-| Gross margin (R14) | ~25%--35% |
+| Gross margin | ~25%--35% |
 
 ---
 
@@ -227,7 +227,7 @@ Home & furniture categories have structurally high AOV (~$266 in one benchmark s
 | Repeat Purchase Rate (C01) | >= 30% | 18%--29.9% | < 18% |
 | AOV | >= $75 | $55--$74 | < $55 |
 | Discount rate (R08) | <= 15% | 15%--25% | > 25% |
-| Gross margin (R14) | >= 50% | 40%--49.9% | < 40% |
+| Gross margin | >= 50% | 40%--49.9% | < 40% |
 
 ### Rationale
 
@@ -259,4 +259,4 @@ Health & wellness is a blended vertical: consumable products (supplements, routi
 | Repeat Purchase Rate (C01) | ~18%--40% (higher for consumables) |
 | AOV | ~$55--$90 (routine products) |
 | Discount rate (R08) | ~5%--20% |
-| Gross margin (R14) | ~40%--60% |
+| Gross margin | ~40%--60% |

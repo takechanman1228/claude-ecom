@@ -34,8 +34,6 @@ def _check_specific_impact(c: CheckResult, annual_revenue: float) -> float | Non
     formulas: dict[str, tuple[float, object]] = {
         # Discount rate: margin recovery from reducing discounts
         "R08": (0.12, lambda v, rev: rev * max(0, v - 0.12) * 0.5),
-        # Gross margin gap
-        "R14": (0.45, lambda v, rev: rev * max(0, 0.45 - v) if v < 0.45 else None),
     }
 
     entry = formulas.get(c.check_id)
