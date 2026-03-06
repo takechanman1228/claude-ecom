@@ -21,13 +21,13 @@ The check descriptions below use only **implemented checks** (those the Python b
 
 | Check ID | Brief description (what "non-pass" typically implies) |
 |---|---|
-| PR02 | Promo penetration is high (% of orders with discounts/codes). |
-| PR03 | Discount depth trend is escalating (deeper discounts over time). |
-| PR08 | Free-shipping threshold is not driving AOV increase effectively. |
-| R01 | Revenue growth appears driven by discounting rather than underlying demand. |
-| R08 | Average discount rate is rising, eroding margins (subsumes former PR01). |
+| discounted_order_ratio | Promo penetration is high (% of orders with discounts/codes). |
+| discount_depth_trend | Discount depth trend is escalating (deeper discounts over time). |
+| free_shipping_threshold_effectiveness | Free-shipping threshold is not driving AOV increase effectively. |
+| monthly_revenue_trend | Revenue growth appears driven by discounting rather than underlying demand. |
+| avg_discount_rate_trend | Average discount rate is rising, eroding margins (subsumes former PR01). |
 
-**Activation rule:** Activate when **>= 2** checks are non-pass, **including at least one** discount intensity check (PR02/PR03) **and** at least one revenue or margin signal (R01/R08/PR08).
+**Activation rule:** Activate when **>= 2** checks are non-pass, **including at least one** discount intensity check (discounted_order_ratio/discount_depth_trend) **and** at least one revenue or margin signal (monthly_revenue_trend/avg_discount_rate_trend/free_shipping_threshold_effectiveness).
 
 **Root cause hypothesis template:**
 
@@ -43,15 +43,15 @@ The check descriptions below use only **implemented checks** (those the Python b
 
 | Check ID | Brief description (what "non-pass" typically implies) |
 |---|---|
-| P01 | Assortment breadth misfit: too many or too few SKUs for demand (dilution or lack of choice). |
-| P05 | Converting SKU rate is low: many SKUs are inactive/low-velocity. |
-| P06 | Multi-item order rate is low (weak cross-sell / product adjacency). |
-| P07 | Cross-sell pair lift is weak (no strong product affinities found). |
-| P10 | Lifecycle imbalance: too many decline-stage products vs core winners. |
-| P19 | Price tier distribution is too narrow (limited market reach). |
-| PR07 | Category margin variance signals: negative-margin categories drag down profitability. |
+| top20_revenue_concentration | Assortment breadth misfit: too many or too few SKUs for demand (dilution or lack of choice). |
+| converting_sku_rate | Converting SKU rate is low: many SKUs are inactive/low-velocity. |
+| multi_item_order_rate | Multi-item order rate is low (weak cross-sell / product adjacency). |
+| cross_sell_pair_lift | Cross-sell pair lift is weak (no strong product affinities found). |
+| lifecycle_stage_distribution | Lifecycle imbalance: too many decline-stage products vs core winners. |
+| price_tier_distribution | Price tier distribution is too narrow (limited market reach). |
+| category_margin_variance | Category margin variance signals: negative-margin categories drag down profitability. |
 
-**Activation rule:** Activate when **>= 3** checks are non-pass, including at least **two** Product checks and at least **one** of PR07 to ensure this is cross-functional (assortment *and* commercial architecture).
+**Activation rule:** Activate when **>= 3** checks are non-pass, including at least **two** Product checks and at least **one** of category_margin_variance to ensure this is cross-functional (assortment *and* commercial architecture).
 
 **Root cause hypothesis template:**
 
@@ -67,15 +67,15 @@ The check descriptions below use only **implemented checks** (those the Python b
 
 | Check ID | Brief description (what "non-pass" typically implies) |
 |---|---|
-| C01 | Repeat purchase rate is low for the business model/category. |
-| C08 | Champions + Loyal segment share is low (not enough high-value customers). |
-| C09 | At-Risk segment share is high (engaged customers drifting away). |
-| C10 | Lost segment share is high (chronic retention failure). |
-| C11 | Days to second purchase is too long (slow second-order conversion). |
-| R05 | New vs returning revenue mix is skewed toward new (repeat base not contributing). |
-| R14 | Large order dependency suggests fragile, non-recurring revenue. |
+| repeat_purchase_rate | Repeat purchase rate is low for the business model/category. |
+| champions_loyal_share | Champions + Loyal segment share is low (not enough high-value customers). |
+| at_risk_segment_share | At-Risk segment share is high (engaged customers drifting away). |
+| lost_segment_share | Lost segment share is high (chronic retention failure). |
+| days_to_second_purchase | Days to second purchase is too long (slow second-order conversion). |
+| repeat_customer_revenue_share | New vs returning revenue mix is skewed toward new (repeat base not contributing). |
+| large_order_dependency | Large order dependency suggests fragile, non-recurring revenue. |
 
-**Activation rule:** Activate when **>= 3** checks are non-pass, including at least one RFM segment check (C08/C09/C10) and at least one value check (C01/C11/R05).
+**Activation rule:** Activate when **>= 3** checks are non-pass, including at least one RFM segment check (champions_loyal_share/at_risk_segment_share/lost_segment_share) and at least one value check (repeat_purchase_rate/days_to_second_purchase/repeat_customer_revenue_share).
 
 **Root cause hypothesis template:**
 
@@ -91,11 +91,11 @@ The check descriptions below use only **implemented checks** (those the Python b
 
 | Check ID | Brief description (what "non-pass" typically implies) |
 |---|---|
-| R04 | Order count trend declining (demand concentration risk). |
-| R07 | Revenue concentration: top 10% of customers drive too much revenue. |
-| P01 | Product concentration: top 20% of SKUs overly dominant. |
+| order_count_trend | Order count trend declining (demand concentration risk). |
+| revenue_concentration_top10 | Revenue concentration: top 10% of customers drive too much revenue. |
+| top20_revenue_concentration | Product concentration: top 20% of SKUs overly dominant. |
 
-**Activation rule:** Activate when **>= 2** checks are non-pass, including at least one concentration check (R07/P01).
+**Activation rule:** Activate when **>= 2** checks are non-pass, including at least one concentration check (revenue_concentration_top10/top20_revenue_concentration).
 
 **Root cause hypothesis template:**
 
@@ -111,8 +111,8 @@ These checks are intentionally **not included in cluster activation logic** beca
 
 | Check ID | Why it is standalone | Brief description |
 |---|---|---|
-| PR07 | Model-dependent | Category margin variance signal is category-specific; cluster activation would be noise. |
-| R13 | Can be incident-like | Daily revenue volatility may reflect one-off events rather than structural issues. |
+| category_margin_variance | Model-dependent | Category margin variance signal is category-specific; cluster activation would be noise. |
+| daily_revenue_volatility | Can be incident-like | Daily revenue volatility may reflect one-off events rather than structural issues. |
 
 ---
 

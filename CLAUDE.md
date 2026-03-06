@@ -54,7 +54,7 @@ ecom review orders.csv --period 90d  # Focus on specific period
 
 - Package name: `claude-ecom` (pip), `claude_ecom` (import)
 - CLI entry point: `ecom` (defined in pyproject.toml)
-- All check IDs follow pattern: `{CATEGORY}{NUMBER}` (e.g., R01, C01, P06)
+- Check IDs are semantic snake_case keys (e.g., `monthly_revenue_trend`, `repeat_purchase_rate`, `multi_item_order_rate`)
 - 3 categories: Revenue, Customer, Product
 - Each check returns pass / watch / fail (no numeric scores)
 - Python handles computation; Claude handles interpretation

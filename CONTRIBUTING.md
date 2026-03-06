@@ -17,7 +17,7 @@ Each check produces a `CheckResult` with these fields:
 
 ```python
 CheckResult(
-    check_id="R16",
+    check_id="new_check_name",  # semantic snake_case key
     category="revenue",       # revenue | customer | product
     severity="high",          # critical | high | medium | low
     result="fail",            # pass | watch | warning | fail | na

@@ -6,7 +6,7 @@ implementation time and expected improvement range based on industry research an
 
 ---
 
-## R01: MoM Revenue Growth (Low)
+## monthly_revenue_trend: MoM Revenue Growth (Low)
 
 When month-over-month revenue growth is stagnant or declining, the root cause is typically
 a combination of weakening acquisition, poor retention, or seasonal patterns not being leveraged.
@@ -42,7 +42,7 @@ a combination of weakening acquisition, poor retention, or seasonal patterns not
 
 ---
 
-## R05: Repeat Customer Revenue Share (Low)
+## repeat_customer_revenue_share: Repeat Customer Revenue Share (Low)
 
 A low share of revenue from repeat customers (typically below 30%) signals over-reliance
 on new customer acquisition, which is 5-7x more expensive than retention.
@@ -81,7 +81,7 @@ on new customer acquisition, which is 5-7x more expensive than retention.
 
 ---
 
-## R08: Average Discount Rate (High)
+## avg_discount_rate_trend: Average Discount Rate (High)
 
 An excessively high average discount rate (typically above 15-20%) erodes margins,
 trains customers to wait for sales, and devalues the brand.
@@ -117,7 +117,7 @@ trains customers to wait for sales, and devalues the brand.
 
 ---
 
-## R14: Large Order Dependency (High)
+## large_order_dependency: Large Order Dependency (High)
 
 When a small number of large orders account for a disproportionate share of revenue
 (>5-10%), the business faces fragility risk — losing those customers or orders
@@ -154,7 +154,7 @@ would materially impact performance.
 
 ---
 
-## P01: Top 20% SKU Revenue Concentration (Too High)
+## top20_revenue_concentration: Top 20% SKU Revenue Concentration (Too High)
 
 When the top 20% of SKUs account for >80% of revenue (extreme Pareto), the business
 is overly dependent on a narrow product range, creating risk and limiting growth.
@@ -192,7 +192,7 @@ is overly dependent on a narrow product range, creating risk and limiting growth
 
 ---
 
-## P05: Converting SKU Rate (Low)
+## converting_sku_rate: Converting SKU Rate (Low)
 
 A low converting SKU rate (below 50-70%) indicates catalog bloat — too many SKUs
 with zero or negligible sales. This increases carrying costs, dilutes marketing
@@ -236,7 +236,7 @@ resources, and degrades the customer browsing experience.
 
 ---
 
-## C01: Repeat Purchase Rate (Low)
+## repeat_purchase_rate: Repeat Purchase Rate (Low)
 
 A low returning customer ratio (below 20-30%) means most revenue comes from one-time
 buyers, indicating weak post-purchase engagement and retention.
@@ -282,10 +282,10 @@ Several actions reinforce multiple metrics simultaneously:
 
 | Action | Checks Improved |
 |--------|----------------|
-| Loyalty/rewards program | R05, C01, R01 |
-| Post-purchase email automation | R05, C01, R01 |
-| SKU rationalization | P01, P05 |
-| Shift from % discounts to value-added incentives | R08 |
+| Loyalty/rewards program | repeat_customer_revenue_share, repeat_purchase_rate, monthly_revenue_trend |
+| Post-purchase email automation | repeat_customer_revenue_share, repeat_purchase_rate, monthly_revenue_trend |
+| SKU rationalization | top20_revenue_concentration, converting_sku_rate |
+| Shift from % discounts to value-added incentives | avg_discount_rate_trend |
 
 ---
 
@@ -300,8 +300,8 @@ When multiple checks are flagged, prioritize actions by:
 3. **Strategic initiatives** (2-8 weeks, transformational): Private-label
    development, supplier renegotiation, subscription model
 
-Focus on the highest-impact items first, typically retention automation (R05, C01)
-and discount governance (R08), as these have the fastest payback period.
+Focus on the highest-impact items first, typically retention automation (repeat_customer_revenue_share, repeat_purchase_rate)
+and discount governance (avg_discount_rate_trend), as these have the fastest payback period.
 
 ---
 

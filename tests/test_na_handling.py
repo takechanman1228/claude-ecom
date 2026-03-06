@@ -13,23 +13,23 @@ from claude_ecom.checks import (
 class TestNAImpactEstimation:
     def test_na_checks_skipped_in_impact(self):
         checks = [
-            CheckResult("R01", "revenue", "high", "na"),
-            CheckResult("R02", "revenue", "critical", "fail"),
+            CheckResult("monthly_revenue_trend", "revenue", "high", "na"),
+            CheckResult("test_check_r02", "revenue", "critical", "fail"),
         ]
         impacts = estimate_revenue_impact(checks, 1_000_000)
-        assert "R01" not in impacts
-        assert "R02" in impacts
+        assert "monthly_revenue_trend" not in impacts
+        assert "test_check_r02" in impacts
 
     def test_zero_revenue_returns_empty(self):
         checks = [
-            CheckResult("R01", "revenue", "critical", "fail"),
+            CheckResult("monthly_revenue_trend", "revenue", "critical", "fail"),
         ]
         impacts = estimate_revenue_impact(checks, 0)
         assert len(impacts) == 0
 
     def test_negative_revenue_returns_empty(self):
         checks = [
-            CheckResult("R01", "revenue", "critical", "fail"),
+            CheckResult("monthly_revenue_trend", "revenue", "critical", "fail"),
         ]
         impacts = estimate_revenue_impact(checks, -100)
         assert len(impacts) == 0
@@ -108,7 +108,7 @@ class TestNAChecks:
         from claude_ecom.review_engine import _build_checks
 
         checks = _build_checks(rev_kpis, cohort_kpis, orders)
-        r01 = next(c for c in checks if c.check_id == "R01")
+        r01 = next(c for c in checks if c.check_id == "monthly_revenue_trend")
         assert r01.result == "na"
 
     def test_no_discount_r08_is_na(self):
@@ -121,7 +121,7 @@ class TestNAChecks:
         from claude_ecom.review_engine import _build_checks
 
         checks = _build_checks(rev_kpis, cohort_kpis, orders)
-        r08 = next(c for c in checks if c.check_id == "R08")
+        r08 = next(c for c in checks if c.check_id == "avg_discount_rate_trend")
         assert r08.result == "na"
 
 
@@ -148,7 +148,7 @@ class TestNumpyNaNRegression:
         cohort_kpis = compute_cohort_kpis(orders)
 
         checks = _build_checks(rev_kpis, cohort_kpis, orders)
-        r01 = next(c for c in checks if c.check_id == "R01")
+        r01 = next(c for c in checks if c.check_id == "monthly_revenue_trend")
         assert r01.result == "na", f"Expected 'na' but got '{r01.result}'"
 
 

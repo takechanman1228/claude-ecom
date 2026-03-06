@@ -323,7 +323,7 @@ class TestPartialMonth:
         from claude_ecom.review_engine import _build_checks
 
         checks = _build_checks(rev_kpis, cohort_kpis, orders)
-        r01 = [c for c in checks if c.check_id == "R01"][0]
+        r01 = [c for c in checks if c.check_id == "monthly_revenue_trend"][0]
         assert "partial month excluded" in r01.message
 
 

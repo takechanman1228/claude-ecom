@@ -234,7 +234,7 @@ NOT invent data that isn't here.
   "health": {
     "checks": [
       {
-        "id": "R01",                    // internal only, never expose
+        "id": "monthly_revenue_trend",   // internal only, never expose
         "category": "revenue",
         "severity": "high",
         "result": "watch",              // pass | watch | fail
@@ -247,7 +247,7 @@ NOT invent data that isn't here.
     "top_issues": [
       // Pre-sorted by severity * impact. Max 10.
       {
-        "id": "P06",
+        "id": "multi_item_order_rate",
         "category": "product",
         "severity": "high",
         "result": "fail",
@@ -262,7 +262,7 @@ NOT invent data that isn't here.
   "action_candidates": [
     {
       "action": "Introduce product bundles to increase multi-item orders",
-      "source_check": "P06",            // internal reference
+      "source_check": "multi_item_order_rate",  // internal reference
       "severity": "high",
       "estimated_annual_impact": 77573,
       "timeline": "this_month"

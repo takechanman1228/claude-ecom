@@ -33,7 +33,7 @@ def _check_specific_impact(c: CheckResult, annual_revenue: float) -> float | Non
 
     formulas: dict[str, tuple[float, object]] = {
         # Discount rate: margin recovery from reducing discounts
-        "R08": (0.12, lambda v, rev: rev * max(0, v - 0.12) * 0.5),
+        "avg_discount_rate_trend": (0.12, lambda v, rev: rev * max(0, v - 0.12) * 0.5),
     }
 
     entry = formulas.get(c.check_id)
@@ -140,29 +140,29 @@ _SEVERITY_TIMELINE = {
 
 # Action suggestion templates keyed by check_id
 _ACTION_TEMPLATES: dict[str, str] = {
-    "R01": "Audit acquisition channels for spend or efficiency changes",
-    "R03": "Analyze category mix shift and review promotional calendar",
-    "R04": "Review traffic sources and conversion funnel for volume drops",
-    "R05": "Launch tiered loyalty program and post-purchase email automation",
-    "R07": "Diversify customer acquisition channels to reduce concentration",
-    "R08": "Cap discount depth and shift to value-added incentives",
-    "R13": "Shift promotional budget from flash sales to always-on acquisition",
-    "R14": "Analyze large-order dependency and diversify revenue sources",
-    "PR02": "Restrict promo code distribution to targeted segments",
-    "PR03": "Freeze discount escalation and introduce non-discount incentives",
-    "PR07": "Review pricing for negative-margin categories",
-    "PR08": "Adjust free-shipping threshold to 1.2x median AOV",
-    "C01": "Deploy post-purchase engagement sequence to improve repeat purchase conversion",
-    "C08": "Build VIP program for top customers to grow Champions segment",
-    "C09": "Launch win-back campaigns for At-Risk customer segment",
-    "C10": "Implement automated reactivation flows for Lost customers",
-    "C11": "Shorten second-purchase window with replenishment reminders",
-    "P01": "Create discovery merchandising for mid-tier products",
-    "P05": "Conduct SKU rationalization for non-converting products",
-    "P06": "Introduce product bundles to increase multi-item orders",
-    "P07": "Build cross-sell recommendations from high-lift product pairs",
-    "P10": "Accelerate new product launches to replace declining SKUs",
-    "P19": "Expand price tier coverage with entry-level or premium options",
+    "monthly_revenue_trend": "Audit acquisition channels for spend or efficiency changes",
+    "aov_trend": "Analyze category mix shift and review promotional calendar",
+    "order_count_trend": "Review traffic sources and conversion funnel for volume drops",
+    "repeat_customer_revenue_share": "Launch tiered loyalty program and post-purchase email automation",
+    "revenue_concentration_top10": "Diversify customer acquisition channels to reduce concentration",
+    "avg_discount_rate_trend": "Cap discount depth and shift to value-added incentives",
+    "daily_revenue_volatility": "Shift promotional budget from flash sales to always-on acquisition",
+    "large_order_dependency": "Analyze large-order dependency and diversify revenue sources",
+    "discounted_order_ratio": "Restrict promo code distribution to targeted segments",
+    "discount_depth_trend": "Freeze discount escalation and introduce non-discount incentives",
+    "category_margin_variance": "Review pricing for negative-margin categories",
+    "free_shipping_threshold_effectiveness": "Adjust free-shipping threshold to 1.2x median AOV",
+    "repeat_purchase_rate": "Deploy post-purchase engagement sequence to improve repeat purchase conversion",
+    "champions_loyal_share": "Build VIP program for top customers to grow Champions segment",
+    "at_risk_segment_share": "Launch win-back campaigns for At-Risk customer segment",
+    "lost_segment_share": "Implement automated reactivation flows for Lost customers",
+    "days_to_second_purchase": "Shorten second-purchase window with replenishment reminders",
+    "top20_revenue_concentration": "Create discovery merchandising for mid-tier products",
+    "converting_sku_rate": "Conduct SKU rationalization for non-converting products",
+    "multi_item_order_rate": "Introduce product bundles to increase multi-item orders",
+    "cross_sell_pair_lift": "Build cross-sell recommendations from high-lift product pairs",
+    "lifecycle_stage_distribution": "Accelerate new product launches to replace declining SKUs",
+    "price_tier_distribution": "Expand price tier coverage with entry-level or premium options",
 }
 
 

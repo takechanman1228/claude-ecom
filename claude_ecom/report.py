@@ -15,7 +15,7 @@ _SEVERITY_ORDER = {"critical": 0, "high": 1, "medium": 2, "low": 3}
 _FINDING_CLUSTERS = [
     {
         "name": "Discount Dependency",
-        "checks": {"R08", "PR02", "PR03", "PR08", "R01"},
+        "checks": {"avg_discount_rate_trend", "discounted_order_ratio", "discount_depth_trend", "free_shipping_threshold_effectiveness", "monthly_revenue_trend"},
         "hypothesis": (
             "{n} discount/pricing checks flagged, indicating the store "
             "may be conditioning customers to wait for sales. "
@@ -25,7 +25,7 @@ _FINDING_CLUSTERS = [
     },
     {
         "name": "Assortment & Merchandising Misfit",
-        "checks": {"P01", "P05", "P06", "P07", "P10", "P19", "PR07"},
+        "checks": {"top20_revenue_concentration", "converting_sku_rate", "multi_item_order_rate", "cross_sell_pair_lift", "lifecycle_stage_distribution", "price_tier_distribution", "category_margin_variance"},
         "hypothesis": (
             "{n} assortment/merchandising checks flagged, suggesting the catalog "
             "is misaligned to demand and value positioning. "
@@ -38,7 +38,7 @@ _FINDING_CLUSTERS = [
     },
     {
         "name": "Customer & LTV Engine Weakness",
-        "checks": {"C01", "C08", "C09", "C10", "C11", "R05", "R14"},
+        "checks": {"repeat_purchase_rate", "champions_loyal_share", "at_risk_segment_share", "lost_segment_share", "days_to_second_purchase", "repeat_customer_revenue_share", "large_order_dependency"},
         "hypothesis": (
             "{n} customer and value checks flagged — the store is failing to "
             "convert first-time buyers into repeat buyers at profitable frequency. "
@@ -51,7 +51,7 @@ _FINDING_CLUSTERS = [
     },
     {
         "name": "Revenue Concentration Risk",
-        "checks": {"R04", "R07", "P01"},
+        "checks": {"order_count_trend", "revenue_concentration_top10", "top20_revenue_concentration"},
         "hypothesis": (
             "{n} concentration-related checks show risk — revenue depends on "
             "a narrow set of customers or SKUs. "

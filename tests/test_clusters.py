@@ -26,17 +26,17 @@ class TestClusterActivation:
 
     def test_no_clusters_when_all_pass(self):
         checks = [
-            _make_check("R08", "revenue", "high", "pass"),
-            _make_check("PR02", "revenue", "high", "pass"),
-            _make_check("C01", "customer", "critical", "pass"),
+            _make_check("avg_discount_rate_trend", "revenue", "high", "pass"),
+            _make_check("discounted_order_ratio", "revenue", "high", "pass"),
+            _make_check("repeat_purchase_rate", "customer", "critical", "pass"),
         ]
         clusters = _build_clusters(checks)
         assert len(clusters) == 0
 
     def test_no_cluster_with_single_fail(self):
         checks = [
-            _make_check("R08", "revenue", "high", "fail"),
-            _make_check("PR02", "revenue", "high", "pass"),
+            _make_check("avg_discount_rate_trend", "revenue", "high", "fail"),
+            _make_check("discounted_order_ratio", "revenue", "high", "pass"),
         ]
         clusters = _build_clusters(checks)
         discount_clusters = [c for c in clusters if c["name"] == "Discount Dependency"]
@@ -44,8 +44,8 @@ class TestClusterActivation:
 
     def test_discount_dependency_activates(self):
         checks = [
-            _make_check("R08", "revenue", "high", "fail"),
-            _make_check("PR02", "revenue", "high", "fail"),
+            _make_check("avg_discount_rate_trend", "revenue", "high", "fail"),
+            _make_check("discounted_order_ratio", "revenue", "high", "fail"),
         ]
         clusters = _build_clusters(checks)
         names = [c["name"] for c in clusters]
@@ -53,9 +53,9 @@ class TestClusterActivation:
 
     def test_customer_ltv_activates(self):
         checks = [
-            _make_check("R05", "revenue", "critical", "fail"),
-            _make_check("C01", "customer", "critical", "fail"),
-            _make_check("C09", "customer", "high", "watch"),
+            _make_check("repeat_customer_revenue_share", "revenue", "critical", "fail"),
+            _make_check("repeat_purchase_rate", "customer", "critical", "fail"),
+            _make_check("at_risk_segment_share", "customer", "high", "watch"),
         ]
         clusters = _build_clusters(checks)
         names = [c["name"] for c in clusters]
@@ -63,8 +63,8 @@ class TestClusterActivation:
 
     def test_revenue_concentration_activates(self):
         checks = [
-            _make_check("R07", "revenue", "medium", "watch"),
-            _make_check("P01", "product", "medium", "fail"),
+            _make_check("revenue_concentration_top10", "revenue", "medium", "watch"),
+            _make_check("top20_revenue_concentration", "product", "medium", "fail"),
         ]
         clusters = _build_clusters(checks)
         names = [c["name"] for c in clusters]
@@ -72,8 +72,8 @@ class TestClusterActivation:
 
     def test_assortment_activates(self):
         checks = [
-            _make_check("P05", "product", "high", "fail"),
-            _make_check("P06", "product", "medium", "fail"),
+            _make_check("converting_sku_rate", "product", "high", "fail"),
+            _make_check("multi_item_order_rate", "product", "medium", "fail"),
         ]
         clusters = _build_clusters(checks)
         names = [c["name"] for c in clusters]
@@ -85,40 +85,40 @@ class TestClusterContent:
 
     def test_cluster_has_name(self):
         checks = [
-            _make_check("P05", "product", "high", "fail"),
-            _make_check("P06", "product", "medium", "fail"),
+            _make_check("converting_sku_rate", "product", "high", "fail"),
+            _make_check("multi_item_order_rate", "product", "medium", "fail"),
         ]
         clusters = _build_clusters(checks)
         assert clusters[0]["name"]
 
     def test_cluster_has_count(self):
         checks = [
-            _make_check("P05", "product", "high", "fail"),
-            _make_check("P06", "product", "medium", "fail"),
+            _make_check("converting_sku_rate", "product", "high", "fail"),
+            _make_check("multi_item_order_rate", "product", "medium", "fail"),
         ]
         clusters = _build_clusters(checks)
         assert clusters[0]["count"] == 2
 
     def test_cluster_has_hypothesis(self):
         checks = [
-            _make_check("P05", "product", "high", "fail"),
-            _make_check("P06", "product", "medium", "fail"),
+            _make_check("converting_sku_rate", "product", "high", "fail"),
+            _make_check("multi_item_order_rate", "product", "medium", "fail"),
         ]
         clusters = _build_clusters(checks)
         assert len(clusters[0]["hypothesis"]) > 10
 
     def test_cluster_has_approach(self):
         checks = [
-            _make_check("P05", "product", "high", "fail"),
-            _make_check("P06", "product", "medium", "fail"),
+            _make_check("converting_sku_rate", "product", "high", "fail"),
+            _make_check("multi_item_order_rate", "product", "medium", "fail"),
         ]
         clusters = _build_clusters(checks)
         assert len(clusters[0]["approach"]) > 10
 
     def test_cluster_has_related_issues(self):
         checks = [
-            _make_check("P05", "product", "high", "fail"),
-            _make_check("P06", "product", "medium", "fail"),
+            _make_check("converting_sku_rate", "product", "high", "fail"),
+            _make_check("multi_item_order_rate", "product", "medium", "fail"),
         ]
         clusters = _build_clusters(checks)
         assert "related_issues" in clusters[0]
@@ -130,24 +130,24 @@ class TestClusterWorstCheck:
 
     def test_critical_fail_is_worst(self):
         checks = [
-            _make_check("R05", "revenue", "critical", "fail"),
-            _make_check("C01", "customer", "critical", "watch"),
-            _make_check("C08", "customer", "medium", "fail"),
+            _make_check("repeat_customer_revenue_share", "revenue", "critical", "fail"),
+            _make_check("repeat_purchase_rate", "customer", "critical", "watch"),
+            _make_check("champions_loyal_share", "customer", "medium", "fail"),
         ]
         clusters = _build_clusters(checks)
         customer_cluster = [c for c in clusters if c["name"] == "Customer & LTV Engine Weakness"]
         if customer_cluster:
-            assert "R05" in customer_cluster[0]["hypothesis"] or "C01" in customer_cluster[0]["hypothesis"]
+            assert "repeat_customer_revenue_share" in customer_cluster[0]["hypothesis"] or "repeat_purchase_rate" in customer_cluster[0]["hypothesis"]
 
     def test_fail_beats_watch_at_same_severity(self):
         checks = [
-            _make_check("R08", "revenue", "high", "watch"),
-            _make_check("PR02", "revenue", "high", "fail"),
+            _make_check("avg_discount_rate_trend", "revenue", "high", "watch"),
+            _make_check("discounted_order_ratio", "revenue", "high", "fail"),
         ]
         clusters = _build_clusters(checks)
         discount_cluster = [c for c in clusters if c["name"] == "Discount Dependency"]
         if discount_cluster:
-            assert "PR02" in discount_cluster[0]["hypothesis"]
+            assert "discounted_order_ratio" in discount_cluster[0]["hypothesis"]
 
 
 class TestMultipleClusters:
@@ -156,11 +156,11 @@ class TestMultipleClusters:
     def test_two_clusters_activate(self):
         checks = [
             # Discount Dependency
-            _make_check("R08", "revenue", "high", "fail"),
-            _make_check("PR02", "revenue", "high", "fail"),
+            _make_check("avg_discount_rate_trend", "revenue", "high", "fail"),
+            _make_check("discounted_order_ratio", "revenue", "high", "fail"),
             # Assortment
-            _make_check("P05", "product", "high", "fail"),
-            _make_check("P06", "product", "medium", "fail"),
+            _make_check("converting_sku_rate", "product", "high", "fail"),
+            _make_check("multi_item_order_rate", "product", "medium", "fail"),
         ]
         clusters = _build_clusters(checks)
         names = [c["name"] for c in clusters]
@@ -169,16 +169,16 @@ class TestMultipleClusters:
 
     def test_na_checks_do_not_activate_clusters(self):
         checks = [
-            _make_check("R08", "revenue", "high", "na"),
-            _make_check("PR02", "revenue", "high", "na"),
+            _make_check("avg_discount_rate_trend", "revenue", "high", "na"),
+            _make_check("discounted_order_ratio", "revenue", "high", "na"),
         ]
         clusters = _build_clusters(checks)
         assert len(clusters) == 0
 
     def test_pass_checks_do_not_activate_clusters(self):
         checks = [
-            _make_check("R08", "revenue", "high", "pass"),
-            _make_check("PR02", "revenue", "high", "fail"),
+            _make_check("avg_discount_rate_trend", "revenue", "high", "pass"),
+            _make_check("discounted_order_ratio", "revenue", "high", "fail"),
         ]
         clusters = _build_clusters(checks)
         discount_clusters = [c for c in clusters if c["name"] == "Discount Dependency"]
