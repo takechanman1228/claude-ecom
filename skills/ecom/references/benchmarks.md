@@ -1,5 +1,4 @@
 # Vertical-Specific Benchmarks
-<!-- Updated: 2026-03-06 | Source: DR1 -->
 
 This file contains pass/watch/fail thresholds, benchmark ranges, seasonal calendars, structural challenges, and strategy playbooks for six ecommerce verticals. Use the KPI tables to contextualize review findings by swapping in vertical-appropriate expectations for four high-variance metrics: Repeat Purchase Rate (C01), AOV, Discount rate (R08), and Gross margin (R14). Thresholds assume a typical ecommerce operator in a competitive market; apply additional modifiers for subscription, marketplace, dropship, luxury, or B2B business models.
 

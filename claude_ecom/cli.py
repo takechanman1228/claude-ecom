@@ -18,7 +18,7 @@ from claude_ecom.report import generate_review_json
 @click.group()
 @click.version_option(version=__version__)
 def cli():
-    """claude-ecom: EC-specialized data analytics toolkit."""
+    """claude-ecom: Ecommerce data analytics toolkit."""
     pass
 
 

@@ -25,7 +25,7 @@ $RepoUrl    = "https://github.com/takechanman1228/claude-ecom"
 Write-Host ""
 Write-Host ([char]0x2550 * 40)
 Write-Host "   claude-ecom - Installer"
-Write-Host "   EC Data Analytics Skill"
+Write-Host "   Ecom Data Analytics Skill"
 Write-Host ([char]0x2550 * 40)
 Write-Host ""
 

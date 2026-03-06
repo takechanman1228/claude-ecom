@@ -2,7 +2,7 @@
 
 ## Project: claude-ecom
 
-EC-specialized data analytics toolkit -- review and improve ecommerce stores.
+Ecommerce data analytics toolkit -- review and improve online stores.
 
 ## Architecture: Hybrid (Python Compute + LLM Interpretation)
 

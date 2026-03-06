@@ -1,6 +1,5 @@
 # Finding Clusters for Ecommerce Review
 
-<!-- Updated: 2026-03-06 | Source: DR5 4-cluster model, trimmed to implemented checks -->
 
 ## Purpose and design assumptions
 

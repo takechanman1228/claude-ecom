@@ -1,7 +1,5 @@
 # Health Checks Reference
 
-<!-- Consolidated: R, C, P checks -- implemented only -->
-
 Only checks that the Python backend actively evaluates are listed here.
 Three categories: Revenue, Customer, Product.
 

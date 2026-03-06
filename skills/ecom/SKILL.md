@@ -2,7 +2,7 @@
 name: ecom
 version: 0.1.0
 description: >
-  Claude-powered ecommerce analytics toolkit for D2C stores.
+  Claude-powered ecommerce business review toolkit for D2C stores.
   Single command: review. Analyzes order transaction data across multiple
   time periods (30d/90d/365d), produces KPI trees with health signals,
   structured findings, and concrete action plans.
@@ -18,7 +18,7 @@ allowed-tools:
   - Write
 ---
 
-# ecom -- Ecommerce Analytics Toolkit
+# ecom -- Ecommerce Business Review Toolkit
 
 D2C ecommerce analytics system. The Python backend computes KPIs, runs
 health checks, and scores performance from order transaction data;

@@ -19,7 +19,7 @@ main() {
 
     echo "════════════════════════════════════════"
     echo "║   claude-ecom - Installer            ║"
-    echo "║   EC Data Analytics Skill            ║"
+    echo "║   Ecom Data Analytics Skill          ║"
     echo "════════════════════════════════════════"
     echo ""
 

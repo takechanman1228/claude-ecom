@@ -1,6 +1,4 @@
-# EC Health Check — Revenue Impact Calculation Formulas
-
-<!-- Updated: 2026-03-05 | Trimmed to implemented checks only -->
+# Ecom Health Check — Revenue Impact Calculation Formulas
 
 ## Quick Reference Table
 
