@@ -48,7 +48,8 @@ main() {
     mkdir -p "${SKILL_DIR}/references"
 
     # Determine install mode: dev (local source) vs stable (PyPI)
-    if [ -f "${SCRIPT_DIR}/pyproject.toml" ]; then
+    # When piped via curl|bash, $0 is "bash" — not "install.sh"
+    if [ "$(basename "$0")" = "install.sh" ] && [ -f "${SCRIPT_DIR}/pyproject.toml" ]; then
         # Dev mode: running from cloned repo — install from local source
         echo "[..] Installing from local source (dev mode)..."
 
