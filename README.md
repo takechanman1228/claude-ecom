@@ -35,7 +35,36 @@ Executive summary → KPI trees → findings with "what / why / what to do" → 
 
 Health checks across Revenue (40%), Customer (30%), and Product (30%) power the signals automatically.
 
-<!-- TODO: sample REVIEW.md screenshot -->
+## Example
+
+Tested on [Online Retail II](https://archive.ics.uci.edu/dataset/502/online+retail+ii) (UCI, CC BY 4.0) — a real UK retailer with ~1M transactions over 2 years.
+
+> Revenue reached $8.6M for the year but was essentially flat YoY (-2.3%), masking a dramatic shift underneath: new customer acquisition collapsed 57.7% while the returning customer base expanded nearly 4x. Short-term momentum is strong — the last 90 days surged 87% on Q4 seasonal demand — but this growth is built entirely on an aging customer base and aging catalog (60% of SKUs in decline stage). The most urgent priority is relaunching acquisition channels to replenish the customer pipeline before retention gains plateau.
+
+```
+            30d Pulse        90d Momentum      365d Structure
+Revenue     $1.32M (+ 27%)   $3.46M (+ 87%)    $8.6M (- 2%)
+Orders      2,681 (+ 28%)    6,626 (+ 68%)     17,756 (- 4%)
+AOV         $494 (- 1%)      $522 (+ 11%)      $484 (+ 1%)
+Customers   1,628 (+ 12%)    2,889 (+ 52%)     4,264 (= flat)
+```
+
+The report surfaces findings with business context and concrete actions:
+
+### New customer acquisition collapsed (365d)
+
+**What is:** New customer count fell 57.7% YoY (from ~3,700 to 1,566), and new customer revenue share dropped to 20.3%.
+
+**Why it matters:** The 72.4% repeat purchase rate and 5-day median time-to-second-purchase are exceptional — well above D2C benchmarks. However, even the strongest retention engine needs fresh customers entering the top of the funnel. At the current rate of decline, the returning customer base will begin shrinking within 2-3 quarters as natural churn outpaces new-to-repeat conversion.
+
+**What to do:** Reactivate acquisition channels with dedicated budget, separate from retention spend, targeting a return to 200+ new customers per month.
+
+[See the full report →](examples/online-retail-ii/REVIEW.md) | [Try it yourself →](examples/online-retail-ii/)
+
+## Prerequisites
+
+- **Python 3.10+** — [python.org](https://python.org) or `brew install python@3.12`
+- **git** — [git-scm.com](https://git-scm.com) or `brew install git`
 
 ## Install
 
@@ -50,7 +79,7 @@ git clone https://github.com/takechanman1228/claude-ecom.git
 cd claude-ecom && bash install.sh
 ```
 
-That's it. The skill is ready in Claude Code.
+The installer creates a private Python environment in `~/.claude/skills/ecom/.venv/` — no global packages are modified. The skill is ready in Claude Code.
 
 ## Usage
 
@@ -80,14 +109,12 @@ Python computes every KPI and runs health checks. Claude reads the structured ou
 <details>
 <summary>Using the Python CLI directly</summary>
 
-```bash
-bash install.sh --with-cli
-# or
-pip install -e .
+After installation, the CLI is available via the wrapper:
 
-ecom review orders.csv
-ecom review orders.csv --period 90d
-ecom validate orders.csv
+```bash
+~/.claude/skills/ecom/bin/ecom review orders.csv
+~/.claude/skills/ecom/bin/ecom review orders.csv --period 90d
+~/.claude/skills/ecom/bin/ecom validate orders.csv
 ```
 
 </details>

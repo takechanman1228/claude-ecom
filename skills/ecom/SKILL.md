@@ -113,8 +113,8 @@ Required columns:
 - Discount amount (if available)
 
 ```bash
-ecom review orders.csv --output <output-dir>
-ecom review orders.csv --period 90d --output <output-dir>
+~/.claude/skills/ecom/bin/ecom review orders.csv --output <output-dir>
+~/.claude/skills/ecom/bin/ecom review orders.csv --period 90d --output <output-dir>
 ```
 
 ---
@@ -124,7 +124,7 @@ ecom review orders.csv --period 90d --output <output-dir>
 ### Phase 1: Compute (Python)
 
 ```bash
-ecom review orders.csv --output <output-dir>
+~/.claude/skills/ecom/bin/ecom review orders.csv --output <output-dir>
 ```
 
 The engine internally:
@@ -550,13 +550,14 @@ What to do:    Consider improving acquisition. <-- banned verb, no deadline
 
 ---
 
-## Python Toolkit
+## Runtime
+
+The skill uses a local Python runtime installed in `~/.claude/skills/ecom/.venv/`.
+Use the wrapper command:
 
 ```bash
-cd claude-ecom
-pip install -e .
-ecom review orders.csv
-ecom review orders.csv --period 90d
+~/.claude/skills/ecom/bin/ecom review orders.csv --output <output-dir>
+~/.claude/skills/ecom/bin/ecom review orders.csv --period 90d --output <output-dir>
 ```
 
 Modules: `loader`, `metrics`, `decomposition`, `cohort`, `product`,
