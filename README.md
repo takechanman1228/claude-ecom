@@ -6,7 +6,7 @@
 
 # claude-ecom
 
-Turn an ecommerce orders CSV into an executive-grade business review — KPI decomposition, prioritized findings, and concrete next actions. One command.
+Turn order/sales CSV into a business review — KPI decomposition, prioritized findings, and concrete next actions. One command.
 
 <p align="center">
   <img src="assets/claude_ecom_demo.gif" alt="claude-ecom demo" width="100%">
@@ -75,7 +75,7 @@ Executive summary → Multi-horizon dashboard → KPI trees with 🔴/🟢 signa
 
 ## Input
 
-Any e-commerce orders CSV works. 
+Any e-commerce/retail orders CSV works. 
 
 Required columns: order ID, order date, customer ID or email, revenue (after discounts, before tax/shipping).
 Optional (enables deeper analysis): quantity, SKU or product name, discount amount. In many cases, column names don't need to match exactly.
