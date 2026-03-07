@@ -17,7 +17,7 @@ Turn an ecommerce orders CSV into an executive-grade business review — KPI dec
 ## Who This Is For
 
 - Data Analysts / Marketers who write monthly business reviews from scratch every time
-- Sales managers / D2C brand owners, but no analyst on staff
+- D2C brand owners or ecommerce managers without an analyst on staff
 - Anyone who knows revenue dropped but can't explain why
 
 ## Quick Start
