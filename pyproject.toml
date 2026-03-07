@@ -36,6 +36,11 @@ dev = [
 ]
 parquet = ["pyarrow>=14.0"]
 
+[project.urls]
+Homepage = "https://github.com/takechanman1228/claude-ecom"
+Repository = "https://github.com/takechanman1228/claude-ecom"
+Issues = "https://github.com/takechanman1228/claude-ecom/issues"
+
 [project.scripts]
 ecom = "claude_ecom.cli:cli"
 

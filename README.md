@@ -68,16 +68,29 @@ The report surfaces findings with business context and concrete actions:
 
 ## Install
 
+### Claude Code skill (recommended)
+
 ```bash
-curl -fsSL https://raw.githubusercontent.com/takechanman1228/claude-ecom/main/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/takechanman1228/claude-ecom/v0.1.0/install.sh | bash
 ```
 
-Or clone and run:
+### CLI only (for developers)
+
+```bash
+pipx install claude-ecom
+```
+
+<details>
+<summary>Development install (from source)</summary>
 
 ```bash
 git clone https://github.com/takechanman1228/claude-ecom.git
 cd claude-ecom && bash install.sh
 ```
+
+This installs from local source instead of PyPI — useful for development and testing.
+
+</details>
 
 The installer creates a private Python environment in `~/.claude/skills/ecom/.venv/` — no global packages are modified. The skill is ready in Claude Code.
 

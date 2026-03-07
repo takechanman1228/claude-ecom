@@ -5,9 +5,11 @@ set -euo pipefail
 # Wraps in main() to prevent partial execution on network failure
 
 main() {
+    VERSION="0.1.0"
     SKILL_DIR="${HOME}/.claude/skills/ecom"
     VENV_DIR="${SKILL_DIR}/.venv"
     REPO_URL="https://github.com/takechanman1228/claude-ecom"
+    SCRIPT_DIR="$(cd "$(dirname "$0")" && pwd)"
 
     echo "════════════════════════════════════════"
     echo "║   claude-ecom - Installer            ║"
@@ -45,29 +47,49 @@ main() {
     # Create directories
     mkdir -p "${SKILL_DIR}/references"
 
-    # Clone to temp dir
-    TEMP_DIR=$(mktemp -d)
-    trap "rm -rf ${TEMP_DIR}" EXIT
+    # Determine install mode: dev (local source) vs stable (PyPI)
+    if [ -f "${SCRIPT_DIR}/pyproject.toml" ]; then
+        # Dev mode: running from cloned repo — install from local source
+        echo "[..] Installing from local source (dev mode)..."
 
-    echo "[..] Downloading claude-ecom..."
-    if ! git clone --depth 1 "${REPO_URL}" "${TEMP_DIR}/claude-ecom" 2>/dev/null; then
-        echo "Error: Failed to clone from ${REPO_URL}"
-        echo "  If the repository hasn't been created yet, update REPO_URL in this script."
-        exit 1
+        # Copy skill + references
+        echo "[..] Installing skill files..."
+        cp "${SCRIPT_DIR}/skills/ecom/SKILL.md" "${SKILL_DIR}/SKILL.md"
+        cp "${SCRIPT_DIR}/skills/ecom/references/"*.md "${SKILL_DIR}/references/"
+
+        # Create private venv and install Python CLI from source
+        echo "[..] Creating Python environment..."
+        python3 -m venv "${VENV_DIR}"
+
+        echo "[..] Installing Python CLI (this may take a minute)..."
+        "${VENV_DIR}/bin/pip" install --upgrade pip --quiet 2>/dev/null
+        "${VENV_DIR}/bin/pip" install "${SCRIPT_DIR}" --quiet
+    else
+        # Stable mode: downloaded via curl — install from tagged release + PyPI
+        echo "[..] Installing claude-ecom v${VERSION}..."
+
+        TEMP_DIR=$(mktemp -d)
+        trap "rm -rf ${TEMP_DIR}" EXIT
+
+        echo "[..] Downloading tagged release v${VERSION}..."
+        if ! git clone --depth 1 --branch "v${VERSION}" "${REPO_URL}" "${TEMP_DIR}/claude-ecom" 2>/dev/null; then
+            echo "Error: Failed to download v${VERSION} from ${REPO_URL}"
+            exit 1
+        fi
+
+        # Copy skill + references from tagged release
+        echo "[..] Installing skill files..."
+        cp "${TEMP_DIR}/claude-ecom/skills/ecom/SKILL.md" "${SKILL_DIR}/SKILL.md"
+        cp "${TEMP_DIR}/claude-ecom/skills/ecom/references/"*.md "${SKILL_DIR}/references/"
+
+        # Create private venv and install Python CLI from PyPI
+        echo "[..] Creating Python environment..."
+        python3 -m venv "${VENV_DIR}"
+
+        echo "[..] Installing Python CLI (this may take a minute)..."
+        "${VENV_DIR}/bin/pip" install --upgrade pip --quiet 2>/dev/null
+        "${VENV_DIR}/bin/pip" install "claude-ecom==${VERSION}" --quiet
     fi
-
-    # Copy skill + references
-    echo "[..] Installing skill files..."
-    cp "${TEMP_DIR}/claude-ecom/skills/ecom/SKILL.md" "${SKILL_DIR}/SKILL.md"
-    cp "${TEMP_DIR}/claude-ecom/skills/ecom/references/"*.md "${SKILL_DIR}/references/"
-
-    # Create private venv and install Python CLI
-    echo "[..] Creating Python environment..."
-    python3 -m venv "${VENV_DIR}"
-
-    echo "[..] Installing Python CLI (this may take a minute)..."
-    "${VENV_DIR}/bin/pip" install --upgrade pip --quiet 2>/dev/null
-    "${VENV_DIR}/bin/pip" install "${TEMP_DIR}/claude-ecom" --quiet
 
     # Create wrapper script
     mkdir -p "${SKILL_DIR}/bin"
