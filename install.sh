@@ -5,7 +5,7 @@ set -euo pipefail
 # Wraps in main() to prevent partial execution on network failure
 
 main() {
-    VERSION="0.1.1"
+    VERSION="0.1.2"
     SKILL_DIR="${HOME}/.claude/skills/ecom"
     VENV_DIR="${SKILL_DIR}/.venv"
     REPO_URL="https://github.com/takechanman1228/claude-ecom"

@@ -101,7 +101,7 @@ def _get_version() -> str:
                 data = tomllib.load(f)
             return data["project"]["version"]
         except Exception:
-            return "0.1.0"
+            return "0.1.2"
 
 
 def _build_clusters(check_results: list[CheckResult]) -> list[dict]:
