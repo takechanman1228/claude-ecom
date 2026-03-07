@@ -71,7 +71,7 @@ The report surfaces findings with business context and concrete actions:
 ### Claude Code skill (recommended)
 
 ```bash
-curl -fsSL https://raw.githubusercontent.com/takechanman1228/claude-ecom/v0.1.0/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/takechanman1228/claude-ecom/v0.1.1/install.sh | bash
 ```
 
 ### CLI only (for developers)
