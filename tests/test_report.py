@@ -23,22 +23,28 @@ def orders():
     return load_orders(ORDERS_CSV)
 
 
-@pytest.mark.parametrize("period,expected", [
-    (None, "review.json"),
-    ("30d", "review_30d.json"),
-    ("90d", "review_90d.json"),
-    ("365d", "review_365d.json"),
-])
+@pytest.mark.parametrize(
+    "period,expected",
+    [
+        (None, "review.json"),
+        ("30d", "review_30d.json"),
+        ("90d", "review_90d.json"),
+        ("365d", "review_365d.json"),
+    ],
+)
 def test_review_json_filename(period, expected):
     assert review_json_filename(period) == expected
 
 
-@pytest.mark.parametrize("period,expected", [
-    (None, "REVIEW.md"),
-    ("30d", "REVIEW_30D.md"),
-    ("90d", "REVIEW_90D.md"),
-    ("365d", "REVIEW_365D.md"),
-])
+@pytest.mark.parametrize(
+    "period,expected",
+    [
+        (None, "REVIEW.md"),
+        ("30d", "REVIEW_30D.md"),
+        ("90d", "REVIEW_90D.md"),
+        ("365d", "REVIEW_365D.md"),
+    ],
+)
 def test_review_md_filename(period, expected):
     assert review_md_filename(period) == expected
 
@@ -78,12 +84,15 @@ class TestGenerateReviewJson:
         assert "NaN" not in content
         assert "Infinity" not in content
 
-    @pytest.mark.parametrize("period,expected", [
-        (None, "review.json"),
-        ("30d", "review_30d.json"),
-        ("90d", "review_90d.json"),
-        ("365d", "review_365d.json"),
-    ])
+    @pytest.mark.parametrize(
+        "period,expected",
+        [
+            (None, "review.json"),
+            ("30d", "review_30d.json"),
+            ("90d", "review_90d.json"),
+            ("365d", "review_365d.json"),
+        ],
+    )
     def test_filename_by_period(self, orders, tmp_path, period, expected):
         from pathlib import Path
 
