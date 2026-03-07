@@ -67,6 +67,9 @@ _ORDER_COLUMN_ALIASES: dict[str, list[str]] = {
         "transaction_date",
         "transaction date",
         "day",
+        "invoicedate",
+        "invoice_date",
+        "invoice date",
     ],
     "amount": [
         "amount",
@@ -106,6 +109,9 @@ _ORDER_COLUMN_OPTIONAL_ALIASES: dict[str, list[str]] = {
         "item",
         "lineitem name",
         "product title",
+        "description",
+        "item_name",
+        "item name",
     ],
     "quantity": [
         "quantity",
@@ -121,6 +127,11 @@ _ORDER_COLUMN_OPTIONAL_ALIASES: dict[str, list[str]] = {
         "item_number",
         "variant_id",
         "lineitem sku",
+        "stockcode",
+        "stock_code",
+        "stock code",
+        "product_code",
+        "product code",
     ],
     "discount": [
         "discount",
@@ -139,6 +150,14 @@ _ORDER_COLUMN_OPTIONAL_ALIASES: dict[str, list[str]] = {
         "city",
         "billing city",
         "shipping city",
+    ],
+    "item_price": [
+        "item_price",
+        "item price",
+        "unit_price",
+        "unit price",
+        "lineitem price",
+        "price",
     ],
 }
 
@@ -182,7 +201,7 @@ def _infer_column_type(series: pd.Series) -> str:
         return "unknown"
     # Date-like
     try:
-        pd.to_datetime(sample)
+        pd.to_datetime(sample, format="mixed")
         return "date"
     except (ValueError, TypeError):
         pass
@@ -201,7 +220,9 @@ def _infer_column_type(series: pd.Series) -> str:
     return "unknown"
 
 
-def _fuzzy_map_columns(df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, str]]:
+def _fuzzy_map_columns(
+    df: pd.DataFrame, already_mapped: dict[str, str] | None = None
+) -> tuple[pd.DataFrame, dict[str, str]]:
     """Tier 2: Token + value-type inference for unmapped required columns.
 
     Only maps columns that are still missing after exact alias matching.
@@ -209,6 +230,11 @@ def _fuzzy_map_columns(df: pd.DataFrame) -> tuple[pd.DataFrame, dict[str, str]]:
     all_aliases = {**_ORDER_COLUMN_ALIASES, **_ORDER_COLUMN_OPTIONAL_ALIASES}
     rename_map: dict[str, str] = {}
     used_cols: set[str] = set()
+    if already_mapped:
+        # already_mapped is {original_col: canonical_name}.
+        # After Tier 1 rename, canonical names are now the df column names.
+        # Protect them from being re-consumed as fuzzy source columns.
+        used_cols.update(already_mapped.values())
 
     # Type hints for canonical columns
     expected_types = {
@@ -329,14 +355,19 @@ def _normalise_generic_orders(df: pd.DataFrame) -> pd.DataFrame:
     # Tier 2: Fuzzy matching for still-missing required columns
     missing = GENERIC_ORDER_REQUIRED - set(df.columns)
     if missing:
-        df, fuzzy_mapped = _fuzzy_map_columns(df)
+        df, fuzzy_mapped = _fuzzy_map_columns(df, already_mapped=mapped)
         if fuzzy_mapped:
             import logging
 
             logging.getLogger(__name__).info("Fuzzy-mapped columns: %s", fuzzy_mapped)
             mapped.update(fuzzy_mapped)
+    # Derive amount from quantity * item_price when amount is missing
+    if "amount" not in df.columns and "quantity" in df.columns and "item_price" in df.columns:
+        df["item_price"] = pd.to_numeric(df["item_price"], errors="coerce")
+        df["quantity"] = pd.to_numeric(df["quantity"], errors="coerce")
+        df["amount"] = df["quantity"] * df["item_price"]
     if "order_date" in df.columns:
-        df["order_date"] = pd.to_datetime(df["order_date"])
+        df["order_date"] = pd.to_datetime(df["order_date"], format="mixed")
     if "amount" in df.columns:
         df["amount"] = pd.to_numeric(df["amount"], errors="coerce")
     if "discount" in df.columns:
