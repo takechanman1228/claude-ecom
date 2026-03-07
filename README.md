@@ -24,7 +24,7 @@ Turn an ecommerce orders CSV into an executive-grade business review — KPI dec
 
 ```bash
 # Install
-curl -fsSL https://raw.githubusercontent.com/takechanman1228/claude-ecom/v0.1.2/install.sh | bash
+curl -fsSL https://raw.githubusercontent.com/takechanman1228/claude-ecom/v0.1.3/install.sh | bash
 
 # Drop your orders CSV, Start Claude Code, and run:
 /ecom review
