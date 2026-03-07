@@ -89,25 +89,29 @@ class TestOnlineRetailFormat:
 
     def test_amount_not_overwritten(self):
         """When amount already present in CSV, derivation is skipped."""
-        df = pd.DataFrame({
-            "order_id": ["A1"],
-            "order_date": ["2024-01-01"],
-            "amount": [100.0],
-            "customer_id": ["C1"],
-            "quantity": [10],
-            "item_price": [5.0],
-        })
+        df = pd.DataFrame(
+            {
+                "order_id": ["A1"],
+                "order_date": ["2024-01-01"],
+                "amount": [100.0],
+                "customer_id": ["C1"],
+                "quantity": [10],
+                "item_price": [5.0],
+            }
+        )
         df = _normalise_generic_orders(df)
         assert df["amount"].iloc[0] == 100.0
 
     def test_fuzzy_does_not_overwrite_tier1(self):
         """Tier 1 mapped columns should not be re-consumed by fuzzy mapper."""
-        df = pd.DataFrame({
-            "Invoice": ["A1"],
-            "order_date": ["2024-01-01"],
-            "amount": [50.0],
-            "customer_id": ["C1"],
-        })
+        df = pd.DataFrame(
+            {
+                "Invoice": ["A1"],
+                "order_date": ["2024-01-01"],
+                "amount": [50.0],
+                "customer_id": ["C1"],
+            }
+        )
         df, mapped = _auto_map_columns(df)
         assert mapped.get("Invoice") == "order_id"
         # Fuzzy should not remap order_id to something else

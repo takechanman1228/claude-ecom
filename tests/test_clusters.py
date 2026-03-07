@@ -137,7 +137,10 @@ class TestClusterWorstCheck:
         clusters = _build_clusters(checks)
         customer_cluster = [c for c in clusters if c["name"] == "Customer & LTV Engine Weakness"]
         if customer_cluster:
-            assert "repeat_customer_revenue_share" in customer_cluster[0]["hypothesis"] or "repeat_purchase_rate" in customer_cluster[0]["hypothesis"]
+            assert (
+                "repeat_customer_revenue_share" in customer_cluster[0]["hypothesis"]
+                or "repeat_purchase_rate" in customer_cluster[0]["hypothesis"]
+            )
 
     def test_fail_beats_watch_at_same_severity(self):
         checks = [

@@ -316,7 +316,15 @@ def _build_checks(
         mom = float("nan")
     if math.isnan(mom):
         checks.append(
-            CheckResult("monthly_revenue_trend", "revenue", "high", "na", "Insufficient data for MoM growth (<2 months)", None, 0.0)
+            CheckResult(
+                "monthly_revenue_trend",
+                "revenue",
+                "high",
+                "na",
+                "Insufficient data for MoM growth (<2 months)",
+                None,
+                0.0,
+            )
         )
     else:
         suffix = " (partial month excluded)" if partial_last else ""
@@ -425,7 +433,15 @@ def _build_checks(
     top10 = rev_kpis.get("top10_customer_share", 0)
     if rev_kpis.get("total_revenue", 0) == 0:
         checks.append(
-            CheckResult("revenue_concentration_top10", "revenue", "medium", "na", "No revenue data for concentration analysis", None, 0.6)
+            CheckResult(
+                "revenue_concentration_top10",
+                "revenue",
+                "medium",
+                "na",
+                "No revenue data for concentration analysis",
+                None,
+                0.6,
+            )
         )
     else:
         checks.append(
@@ -443,7 +459,17 @@ def _build_checks(
     # avg_discount_rate_trend — Average Discount Rate (subsumes old PR01)
     discount_rate = rev_kpis.get("avg_discount_rate", 0)
     if "discount" not in orders.columns and discount_rate == 0:
-        checks.append(CheckResult("avg_discount_rate_trend", "revenue", "high", "na", "No discount data available", None, 0.15))
+        checks.append(
+            CheckResult(
+                "avg_discount_rate_trend",
+                "revenue",
+                "high",
+                "na",
+                "No discount data available",
+                None,
+                0.15,
+            )
+        )
     else:
         checks.append(
             CheckResult(
@@ -461,10 +487,28 @@ def _build_checks(
     daily_cv = rev_kpis.get("daily_revenue_cv", 0)
     if isinstance(daily_cv, float) and math.isnan(daily_cv):
         checks.append(
-            CheckResult("daily_revenue_volatility", "revenue", "medium", "na", "Insufficient daily data for CV calculation", None, 0.5)
+            CheckResult(
+                "daily_revenue_volatility",
+                "revenue",
+                "medium",
+                "na",
+                "Insufficient daily data for CV calculation",
+                None,
+                0.5,
+            )
         )
     elif rev_kpis.get("total_revenue", 0) == 0:
-        checks.append(CheckResult("daily_revenue_volatility", "revenue", "medium", "na", "No revenue data for CV calculation", None, 0.5))
+        checks.append(
+            CheckResult(
+                "daily_revenue_volatility",
+                "revenue",
+                "medium",
+                "na",
+                "No revenue data for CV calculation",
+                None,
+                0.5,
+            )
+        )
     else:
         checks.append(
             CheckResult(
@@ -589,7 +633,13 @@ def _build_checks(
     if isinstance(avg_interval, float) and math.isnan(avg_interval):
         checks.append(
             CheckResult(
-                "days_to_second_purchase", "customer", "high", "na", "Insufficient data for purchase interval calculation", None, 60
+                "days_to_second_purchase",
+                "customer",
+                "high",
+                "na",
+                "Insufficient data for purchase interval calculation",
+                None,
+                60,
             )
         )
     else:
@@ -687,7 +737,13 @@ def _build_checks(
         if total_active == 0:
             checks.append(
                 CheckResult(
-                    "converting_sku_rate", "product", "high", "na", "No SKU/product data available for conversion analysis", None, 0.7
+                    "converting_sku_rate",
+                    "product",
+                    "high",
+                    "na",
+                    "No SKU/product data available for conversion analysis",
+                    None,
+                    0.7,
                 )
             )
         else:
@@ -761,7 +817,15 @@ def _build_checks(
         prices = orders.groupby(key)["amount"].mean()
         if len(prices) == 0:
             checks.append(
-                CheckResult("price_tier_distribution", "product", "medium", "na", "No price data available for tier analysis", None, 3)
+                CheckResult(
+                    "price_tier_distribution",
+                    "product",
+                    "medium",
+                    "na",
+                    "No price data available for tier analysis",
+                    None,
+                    3,
+                )
             )
         else:
             try:
