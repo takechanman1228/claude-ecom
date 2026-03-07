@@ -31,9 +31,9 @@ health checks, and scores performance from order transaction data;
 | Command | What it does | Output |
 |---------|-------------|--------|
 | /ecom review | Full business review (auto-selects periods from data) | REVIEW.md |
-| /ecom review 30d | Focused on the last 30 days | REVIEW.md |
-| /ecom review 90d | Focused on the last 90 days | REVIEW.md |
-| /ecom review 365d | Focused on the last 365 days | REVIEW.md |
+| /ecom review 30d | Focused on the last 30 days | REVIEW_30D.md |
+| /ecom review 90d | Focused on the last 90 days | REVIEW_90D.md |
+| /ecom review 365d | Focused on the last 365 days | REVIEW_365D.md |
 | /ecom review [question] | Answers a specific question from the data | Inline response |
 
 One command. Two modes: full report or focused answer.
@@ -45,7 +45,7 @@ One command. Two modes: full report or focused answer.
 ### Mode 1: Full Review (default)
 
 Triggered when: no natural-language question in the user's input.
-Output: REVIEW.md file following the full 6-part structure defined below.
+Output: REVIEW.md (or REVIEW_{PERIOD}.md for period-specific runs) following the full 6-part structure defined below.
 
 Examples: `/ecom review`, `/ecom review 30d`, `/ecom review 365d`
 
@@ -135,13 +135,13 @@ The engine internally:
    Product. Each check produces a pass/watch/fail signal with severity
    weighting. These power the 🟢/🟡/🔴 markers in the KPI tree.
 
-Output: `review.json` (see Schema section below).
+Output: `review.json` (or `review_{period}.json` for period-specific runs). See Schema section below.
 
 ### Phase 2: Interpret (You -- Claude)
 
-1. **Read `review.json`**
+1. **Read `review.json`** (or `review_{period}.json` for period-specific runs)
 2. **Load reference files on demand** (see Reference Files below)
-3. **Write REVIEW.md** following the Output Format below
+3. **Write REVIEW.md** (or `REVIEW_{PERIOD}.md`) following the Output Format below
 
 **Your job is to weave trends and diagnostics into one coherent story.**
 Period analysis tells you *where things are heading*. Health checks tell you
@@ -301,7 +301,7 @@ Load on-demand -- do NOT load all at startup.
 
 ---
 
-## Output Format: REVIEW.md
+## Output Format: REVIEW.md / REVIEW_{PERIOD}.md
 
 The following structure applies to Full Review mode only. See Response Modes for Focused Query.
 

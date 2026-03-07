@@ -12,7 +12,7 @@ from claude_ecom.loader import (
     _fuzzy_map_columns,
     load_orders,
 )
-from claude_ecom.report import generate_review_json
+from claude_ecom.report import generate_review_json, review_json_filename
 
 
 @click.group()
@@ -55,8 +55,8 @@ def review(orders_path, period, output, fmt, nrows):
     covered = [p for p, v in cov.items() if v]
     click.echo(f"  Data coverage: {', '.join(covered) if covered else 'insufficient data'}")
 
-    click.echo(f"\nGenerating review.json to {output} ...")
-    path = generate_review_json(review_data, output_dir=output)
+    click.echo(f"\nGenerating {review_json_filename(period)} to {output} ...")
+    path = generate_review_json(review_data, output_dir=output, period=period)
     click.echo(f"Done. Output: {path}")
 
 

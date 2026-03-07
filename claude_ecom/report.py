@@ -146,16 +146,29 @@ def _sanitize_for_json(obj):
     return obj
 
 
+def review_json_filename(period: str | None = None) -> str:
+    """Return the JSON output filename for a given period."""
+    suffix = f"_{period}" if period else ""
+    return f"review{suffix}.json"
+
+
+def review_md_filename(period: str | None = None) -> str:
+    """Return the Markdown output filename for a given period."""
+    suffix = f"_{period.upper()}" if period else ""
+    return f"REVIEW{suffix}.md"
+
+
 def generate_review_json(
     review_data: dict,
     output_dir: str = ".",
+    period: str | None = None,
 ) -> str:
-    """Write review.json from review engine output.
+    """Write review.json (or review_{period}.json) from review engine output.
 
     Returns the output file path.
     """
     sanitized = _sanitize_for_json(review_data)
-    out = Path(output_dir) / "review.json"
+    out = Path(output_dir) / review_json_filename(period)
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(json_mod.dumps(sanitized, indent=2, default=str), encoding="utf-8")
     return str(out)

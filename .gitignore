@@ -15,4 +15,6 @@ htmlcov/
 .claude-ecom/
 .DS_Store
 /review.json
+/review_*.json
 /REVIEW.md
+/REVIEW_*.md
