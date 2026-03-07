@@ -70,7 +70,7 @@ Executive summary → Multi-horizon dashboard → KPI trees with 🔴/🟢 signa
 | Command | Description |
 |---------|-------------|
 | `/ecom review` | Full business review — auto-selects 30d / 90d / 365d |
-| `/ecom review 90d` | Quarterly focus |
+| `/ecom review 30d` / `90d` / `365d` | Focus on a specific period |
 | `/ecom review How's retention?` | Ask a question instead of a full report |
 
 ## Input
