@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "claude-ecom"
-version = "0.1.2"
+version = "0.1.3"
 description = "Claude-powered ecommerce business review toolkit — run /ecom review to get a full-store business review with prioritized fixes"
 readme = "README.md"
 license = {text = "MIT"}
