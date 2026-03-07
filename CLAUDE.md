@@ -13,13 +13,13 @@ Order CSV Data
 Python CLI (ecom review)    <-- Deterministic: KPI calc, scoring, check evaluation
     |
     v
-review.json / review_{period}.json   <-- Machine-readable structured data
+review.json                 <-- Machine-readable structured data
     |
     v
 Claude (SKILL.md)           <-- LLM: reads review.json + reference files, generates
     |                            natural language report with business interpretation
     v
-REVIEW.md / REVIEW_{PERIOD}.md       <-- Human-readable: narrative insights, not just numbers
+REVIEW.md                   <-- Human-readable: narrative insights, not just numbers
 ```
 
 **Key principle:** Python computes the numbers. Claude interprets them.
