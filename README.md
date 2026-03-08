@@ -103,6 +103,10 @@ Tested on [Online Retail II](https://archive.ics.uci.edu/dataset/502/online+reta
 - [ ] Weekly digest mode
 - [ ] Multi-store comparison
 
+## Acknowledgements
+
+Inspired by [claude-ads](https://github.com/AgriciDaniel/claude-ads) by [@AgriciDaniel](https://github.com/AgriciDaniel).
+
 ## License
 
 MIT
