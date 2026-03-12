@@ -1,0 +1,24 @@
+{
+  "name": "claude-ecom",
+  "owner": {
+    "name": "Hajime Takeda",
+    "email": ""
+  },
+  "metadata": {
+    "description": "Ecommerce analytics plugins for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "claude-ecom",
+      "source": {
+        "source": "github",
+        "repo": "takechanman1228/claude-ecom"
+      },
+      "description": "D2C ecommerce business review toolkit",
+      "version": "0.1.3",
+      "keywords": ["ecommerce", "analytics", "review"],
+      "category": "analytics"
+    }
+  ]
+}

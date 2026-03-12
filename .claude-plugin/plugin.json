@@ -1,0 +1,13 @@
+{
+  "name": "claude-ecom",
+  "version": "0.1.3",
+  "description": "Ecommerce data analytics toolkit for D2C stores",
+  "author": {
+    "name": "Hajime Takeda",
+    "url": "https://github.com/takechanman1228"
+  },
+  "homepage": "https://github.com/takechanman1228/claude-ecom",
+  "repository": "https://github.com/takechanman1228/claude-ecom",
+  "license": "MIT",
+  "keywords": ["ecommerce", "analytics", "d2c", "shopify"]
+}

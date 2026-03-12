@@ -29,7 +29,19 @@ curl -fsSL https://raw.githubusercontent.com/takechanman1228/claude-ecom/v0.1.3/
 # Drop your orders CSV, Start Claude Code, and run:
 /ecom review
 ```
+
 Requires: Claude Code CLI, Python 3.10+, and git
+
+### Alternative: Install as a Claude Code plugin
+
+```
+/plugin marketplace add takechanman1228/claude-ecom
+/plugin install claude-ecom@claude-ecom
+/reload-plugins
+```
+
+Restart Claude Code. The Python backend installs automatically on session start.
+The command becomes `/claude-ecom:ecom review` when installed as a plugin.
 
 ## What You Get
 

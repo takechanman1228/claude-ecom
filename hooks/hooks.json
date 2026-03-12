@@ -1,0 +1,17 @@
+{
+  "description": "Installs the claude-ecom Python backend on session start",
+  "hooks": {
+    "SessionStart": [
+      {
+        "matcher": "startup|resume",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "${CLAUDE_PLUGIN_ROOT}/scripts/setup.sh",
+            "timeout": 300
+          }
+        ]
+      }
+    ]
+  }
+}
