@@ -1,0 +1,14 @@
+{
+  "name": "claude-ecom",
+  "owner": {
+    "name": "Hajime Takeda"
+  },
+  "plugins": [
+    {
+      "name": "claude-ecom",
+      "source": ".",
+      "description": "D2C ecommerce business review toolkit",
+      "version": "0.1.3"
+    }
+  ]
+}
